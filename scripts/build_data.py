@@ -411,6 +411,36 @@ def scan_bonus_tools():
     if not os.path.isdir(BONUS_ROOT):
         return tools
     descriptions = {
+        "Turnip_v27.0.0-R1.zip": {
+            "label": "Driver GPU Turnip StevenMXZ v27.0.0-R1 / V38 (Adreno 740 / Snapdragon 8 Gen 2)",
+            "type": "Driver GPU Vulkan 1.4.363 (.zip)",
+            "target": "/sdcard/Download/Turnip_v27.0.0-R1.zip",
+            "usage": "Nouveau driver StevenMXZ V38 / Mesa 27.0.0-R1 (A6xx/A7xx) — Optimal sur AYN Thor pour XenDroid (Xbox 360), Eden / Eden Duo (Switch), Azahar / Dusk (3DS) et Cemu.",
+        },
+        "Turnip_Gen8_V38.zip": {
+            "label": "Driver GPU Turnip StevenMXZ Gen8 V38 (Mesa 27.0.0-R1 · Vulkan 1.4.363)",
+            "type": "Driver GPU Vulkan 1.4.363 (.zip)",
+            "target": "/sdcard/Download/Turnip_Gen8_V38.zip",
+            "usage": "Build StevenMXZ V38 unifié (Mesa 27.0.0 + patches Vauzi/Hugo) présenté par Graves pour XenDroid Plus, Switch et Winlator.",
+        },
+        "Turnip_Gen8_V38_Patched.zip": {
+            "label": "Driver GPU Turnip StevenMXZ Gen8 V38-Patched (WinNative + Vauzi Hacks)",
+            "type": "Driver GPU Vulkan 1.4.363 (.zip)",
+            "target": "/sdcard/Download/Turnip_Gen8_V38_Patched.zip",
+            "usage": "Variante V38 patchée avec les hacks WinNative & Vauzi-17 pour les jeux Xbox 360 (XenDroid) et PC (Winlator/GameHub) exigeants.",
+        },
+        "Turnip_v27.0.0-R1-Oneui.zip": {
+            "label": "Driver GPU Turnip StevenMXZ v27.0.0-R1 OneUI Fix (A6xx/A7xx)",
+            "type": "Driver GPU Vulkan 1.4.363 (.zip)",
+            "target": "/sdcard/Download/Turnip_v27.0.0-R1-Oneui.zip",
+            "usage": "Variante anti-glitch de Turnip v27.0.0-R1 (V38) en cas d'artéfacts graphiques sur certains moteurs Vulkan.",
+        },
+        "turnip_mrpurple_T30-toasted.adpkg.zip": {
+            "label": "Driver GPU Turnip MrPurple T30-Toasted (Adreno 740 / Snapdragon 8 Gen 2)",
+            "type": "Driver GPU Vulkan 1.4.359 (.adpkg.zip)",
+            "target": "/sdcard/Download/turnip_mrpurple_T30-toasted.adpkg.zip",
+            "usage": "Build MrPurple T30 (Mesa 26.3.0) pour BOTW Recomp, Eden Switch et Cemu.",
+        },
         "turnip_mrpurple_T29-toasted.adpkg.zip": {
             "label": "Driver GPU Turnip MrPurple T29-Toasted (Adreno 740 / Snapdragon 8 Gen 2)",
             "type": "Driver GPU Vulkan (.adpkg.zip)",
@@ -463,12 +493,27 @@ def scan_bonus_tools():
 def get_emulator_presets():
     return [
         {
+            "id": "xendroid_x360",
+            "name": "XenDroid / Xenia Canary (Xbox 360)",
+            "package": "xendroid.compose",
+            "icon": "🟢",
+            "socProfile": "Mode Performance Max / Ventilateur Sport",
+            "gpuDriver": "Turnip_v27.0.0-R1.zip (StevenMXZ V38)",
+            "resolution": "1x (720p Natif Xbox 360) — Vulkan 1.4.363",
+            "settings": [
+                "Driver GPU : `Turnip_v27.0.0-R1.zip` (StevenMXZ V38 A7xx) ou `Turnip_Gen8_V38_Patched.zip`",
+                "Vulkan : `vulkan_in_pass_resolve = true` | `vulkan_dynamic_rendering = true`",
+                "Pipeline : `vulkan_pipeline_creation_threads = 4` | `vulkan_fast_register_ranges = true`",
+                "Drivers pré-déployés dans `/sdcard/Download/` et prêts à sélectionner dans XenDroid",
+            ],
+        },
+        {
             "id": "wwhd_recomp",
             "name": "Zelda: The Wind Waker HD Recomp (Portage Natif v0.5.0)",
             "package": "org.wwhdrecomp.wwhd",
             "icon": "⛵",
             "socProfile": "Mode Standard / Ventilateur Intelligent (60 FPS)",
-            "gpuDriver": "Vulkan 1.3 Natif (Adreno 740)",
+            "gpuDriver": "Vulkan 1.4 Turnip v27.0.0-R1 (V38)",
             "resolution": "1.5x à 2x (1080p/1440p) — 60 FPS",
             "settings": [
                 "Compilation AOT native arm64 depuis `The Wind Waker HD (EU).wua` (Français inclus)",
@@ -479,14 +524,14 @@ def get_emulator_presets():
         },
         {
             "id": "eden_switch",
-            "name": "Eden / Citron (Nintendo Switch)",
+            "name": "Eden / Eden Duo (Nintendo Switch)",
             "package": "dev.eden.eden_emulator",
             "icon": "🔴",
             "socProfile": "Mode Performance / Ventilateur Intelligent",
-            "gpuDriver": "turnip_mrpurple_T29-toasted.adpkg.zip",
+            "gpuDriver": "Turnip_v27.0.0-R1.zip (StevenMXZ V38)",
             "resolution": "1x (720p/1080p Docked) — FSR 80%",
             "settings": [
-                "Graphics > GPU Driver : installer `turnip_mrpurple_T29-toasted.adpkg.zip`",
+                "Graphics > GPU Driver : `Turnip_v27.0.0-R1.zip` (StevenMXZ V38 · Vulkan 1.4.363) activé",
                 "Graphics > API : Vulkan | Disk Shader Cache : ON | Async Shaders : ON",
                 "CPU > Accuracy : Auto | NCE (Native Code Execution) : Activé (arm64 natif)",
                 "Audio > Output Engine : cubeb",
@@ -494,32 +539,32 @@ def get_emulator_presets():
         },
         {
             "id": "azahar_3ds",
-            "name": "Azahar / Lime3DS (Nintendo 3DS)",
-            "package": "io.github.lime3ds.android",
+            "name": "Azahar / Citra Dusk (Nintendo 3DS)",
+            "package": "org.azahar_emu.azahar",
             "icon": "🕹️",
             "socProfile": "Mode Standard / Équilibré",
-            "gpuDriver": "turnip_mrpurple_T29-toasted.adpkg.zip",
+            "gpuDriver": "Turnip_v27.0.0-R1.zip (StevenMXZ V38)",
             "resolution": "3x à 4x (1080p OLED)",
             "settings": [
-                "Graphics > Graphics API : Vulkan",
-                "Graphics > Async Shader Compilation : ON | Hardware Shaders : ON",
+                "Graphics > GPU Driver : `Turnip_v27.0.0-R1.zip` (StevenMXZ V38)",
+                "Graphics > Graphics API : Vulkan | Async Shader Compilation : ON",
                 "Audio > Audio Stretching : ON (évite les craquements)",
-                "Layout : Large Screen + Small Screen (ou bascule écran avec L3/R3)",
+                "Layout : Double écran natif AYN Thor (Haut 1080p + Bas Tactile 1240×1080)",
             ],
         },
         {
             "id": "aethersx2_ps2",
-            "name": "AetherSX2 / NetherSX2 (PlayStation 2)",
-            "package": "xyz.aethersx2.android",
+            "name": "AetherSX2 / NetherSX2 Turnip (PlayStation 2)",
+            "package": "xyz.aethersx2.tturnip",
             "icon": "💿",
             "socProfile": "Mode Performance",
-            "gpuDriver": "Pilote Système ou Turnip T23",
+            "gpuDriver": "Turnip v27.0.0-R1 (V38) ou Pilote Système",
             "resolution": "2.5x à 3x (1080p) — Widescreen Patches ON",
             "settings": [
                 "Graphics > GPU Renderer : Vulkan",
                 "Graphics > Threaded Presentation : ON",
                 "System > Multi-Threaded VU1 (MTVU) : ON | Instant VU1 : ON",
-                "Memory Cards : pointer vers `/sdcard/Android/data/xyz.aethersx2.android/files/memcards`",
+                "Memory Cards : pointer vers `/sdcard/Android/data/xyz.aethersx2.tturnip/files/memcards`",
             ],
         },
         {
