@@ -1,27 +1,21 @@
-const CACHE_NAME = "ayn-thor-studio-v1";
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./data/embedded_data.js",
-  "./assets/icon.svg"
-];
+// Self-clearing Service Worker v3 — purges any old cached index.html from ayn-thor-studio-v1
+const CACHE_NAME = "ayn-thor-switch-dl-v3";
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.map((k) => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.url.includes("/api/") || event.request.url.includes("endpoint.json")) {
-    return;
-  }
+  // Always network-first so updates appear immediately
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+    fetch(event.request, { cache: "no-store" }).catch(() => caches.match(event.request))
   );
 });

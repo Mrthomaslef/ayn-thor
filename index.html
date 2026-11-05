@@ -8,8 +8,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Switch DL" />
   <title>Rom et Emulation — Téléchargement Switch & Recomp M4 / AYN Thor</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+  <link rel="manifest" href="manifest.json?v=3" />
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg?v=3" />
+  <link rel="apple-touch-icon" href="assets/icon.svg?v=3" />
   <style>
     :root {
       --bg: #070b14;
@@ -386,7 +387,7 @@
     <!-- Minimal Download-Dedicated Header -->
     <header class="top-header">
       <div class="brand-row">
-        <div class="brand-icon">📥</div>
+        <img src="assets/icon.svg?v=3" alt="Rom et Emulation" style="width:48px;height:48px;border-radius:13px;flex-shrink:0;box-shadow:0 6px 18px rgba(56,189,248,0.28);" />
         <div class="brand-title">
           <h1>Index de Téléchargement Switch</h1>
           <p>7 767 Jeux Switch (NSP/XCI) · Statut Recomp Mac mini M4 & AYN Thor vérifié sur chaque jeu</p>
@@ -507,6 +508,17 @@
   <div id="toast"></div>
 
   <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(r => r.unregister());
+      }).catch(() => {});
+    }
+    if ("caches" in window) {
+      caches.keys().then(keys => {
+        keys.forEach(k => caches.delete(k));
+      }).catch(() => {});
+    }
+
     let API_BASE = "";
     let NXBREW_FORMAT = "all";
     let NXBREW_RECOMP = "all";
