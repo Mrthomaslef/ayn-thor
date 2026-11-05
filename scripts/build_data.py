@@ -137,9 +137,9 @@ SAVE_TARGET_MAP = {
         "icon": "👾",
     },
     "Standalone_Saves": {
-        "label": "Portages Natifs & Decomps (PokéEmerald DualScreen, PokéRogue, MinishCap, Zelda3, Red Recomp)",
-        "emulator": "Ports Android Natifs",
-        "androidPath": "/sdcard/Android/data/com.pokeemerald.dualscreen/files",
+        "label": "Portages Natifs & Decomps (Wind Waker HD Recomp, PokéEmerald DualScreen, PokéRogue, MinishCap, Zelda3, Red Recomp)",
+        "emulator": "Ports Android Natifs (`org.wwhdrecomp.wwhd`, etc.)",
+        "androidPath": "/sdcard/Android/data/org.wwhdrecomp.wwhd/files/save",
         "category": "Ports & Decomps",
         "icon": "💎",
     },
@@ -462,6 +462,21 @@ def scan_bonus_tools():
 
 def get_emulator_presets():
     return [
+        {
+            "id": "wwhd_recomp",
+            "name": "Zelda: The Wind Waker HD Recomp (Portage Natif v0.5.0)",
+            "package": "org.wwhdrecomp.wwhd",
+            "icon": "⛵",
+            "socProfile": "Mode Standard / Ventilateur Intelligent (60 FPS)",
+            "gpuDriver": "Vulkan 1.3 Natif (Adreno 740)",
+            "resolution": "1.5x à 2x (1080p/1440p) — 60 FPS",
+            "settings": [
+                "Compilation AOT native arm64 depuis `The Wind Waker HD (EU).wua` (Français inclus)",
+                "Graphics > Frame rate : 60 fps (Interpolé ou True 60) | Heat guard : Normal (adapté AYN Thor)",
+                "Display > GamePad Screen : Bascule instantanée sur `+` (Pause) ou PiP tactile",
+                "Sauvegardes synchronisées Mac mini ↔ AYN Thor ↔ Cemu (`save/user/cking.sav`)",
+            ],
+        },
         {
             "id": "eden_switch",
             "name": "Eden / Citron (Nintendo Switch)",

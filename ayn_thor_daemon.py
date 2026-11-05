@@ -617,6 +617,14 @@ def usb_adb_watchdog():
             is_ready = bool(st["adb"].get("ready"))
             now = time.time()
             # Synchronisation automatique dès le branchement ou toutes les 120 secondes
+            if is_ready and not was_ready:
+                marker = "/Volumes/GamingSSD/Games/BotW_AYN_Thor/.installed_on_thor"
+                installer = "/Volumes/GamingSSD/Games/BotW_AYN_Thor/install_botw_thor.sh"
+                if os.path.exists(installer) and not os.path.exists(marker):
+                    rc_inst, _, _ = run_cmd([installer], timeout=900)
+                    if rc_inst == 0:
+                        with open(marker, "w") as mf:
+                            mf.write(datetime.datetime.now().isoformat())
             if is_ready and (not was_ready or (now - last_auto_sync) >= 120.0):
                 last_auto_sync = now
                 run_cmd(

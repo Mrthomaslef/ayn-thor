@@ -1,10 +1,10 @@
 window.AYN_THOR_DATA = {
-  "generatedAt": "05/11/2026 12:38:03",
+  "generatedAt": "05/11/2026 17:57:06",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
     "daemonPort": 8798,
-    "gamingSsdMounted": false
+    "gamingSsdMounted": true
   },
   "device": {
     "connected": true,
@@ -26,8 +26,8 @@ window.AYN_THOR_DATA = {
   },
   "summary": {
     "saveFoldersCount": 23,
-    "saveFilesCount": 52171,
-    "saveTotalMB": 10079.2,
+    "saveFilesCount": 52220,
+    "saveTotalMB": 10092.2,
     "romSystemsCount": 18,
     "romGamesCount": 122,
     "romTotalGB": 103.1,
@@ -84,9 +84,9 @@ window.AYN_THOR_DATA = {
       "icon": "🎮",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/3DS_n3ds2",
       "androidPath": "/storage/6531-3035/ROMs/n3ds2",
-      "fileCount": 25,
-      "sizeBytes": 17221388,
-      "sizeMB": 16.42,
+      "fileCount": 27,
+      "sizeBytes": 17704732,
+      "sizeMB": 16.88,
       "sampleFiles": [
         "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/000011C5/icon",
         "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/000011C5/metadata",
@@ -95,7 +95,7 @@ window.AYN_THOR_DATA = {
         "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/00001B50/icon",
         "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/00001B50/metadata"
       ],
-      "updatedAt": "30/07/2026 00:38"
+      "updatedAt": "31/10/2026 18:06"
     },
     {
       "id": "Dolphin_GC",
@@ -182,15 +182,16 @@ window.AYN_THOR_DATA = {
       "icon": "📱",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/NDS_melonDS_Android",
       "androidPath": "/sdcard/Android/data/me.magnum.melondualds",
-      "fileCount": 3,
-      "sizeBytes": 19514535,
-      "sizeMB": 18.61,
+      "fileCount": 4,
+      "sizeBytes": 20038823,
+      "sizeMB": 19.11,
       "sampleFiles": [
         "files/saves/Mario Kart DS (Europe) (En,Fr,De,Es,It).sav",
         "files/saves/New Super Mario Bros. (Europe) (En,Fr,De,Es,It).ml0",
-        "files/saves/New Super Mario Bros. (Europe) (En,Fr,De,Es,It).sav"
+        "files/saves/New Super Mario Bros. (Europe) (En,Fr,De,Es,It).sav",
+        "files/saves/Pokemon - SoulSilver Version (Europe).sav"
       ],
-      "updatedAt": "23/06/2026 18:29"
+      "updatedAt": "31/10/2026 18:05"
     },
     {
       "id": "PS1_DuckStation_States",
@@ -256,7 +257,7 @@ window.AYN_THOR_DATA = {
         "memcards/Mcd001.ps2",
         "memcards/Mcd002.ps2"
       ],
-      "updatedAt": "08/08/2026 23:55"
+      "updatedAt": "31/10/2026 18:05"
     },
     {
       "id": "PS2_AetherSX2_Turnip_States",
@@ -312,18 +313,18 @@ window.AYN_THOR_DATA = {
       "icon": "👾",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/RetroArch_Saves",
       "androidPath": "/sdcard/RetroArch",
-      "fileCount": 15,
-      "sizeBytes": 1593864,
-      "sizeMB": 1.52,
+      "fileCount": 20,
+      "sizeBytes": 2388768,
+      "sizeMB": 2.28,
       "sampleFiles": [
+        "saves/FORESTIA.pure.zip",
+        "saves/melonDS DS/Mario Kart DS (Europe) (En,Fr,De,Es,It).sav",
+        "saves/melonDS DS/New Super Mario Bros. (Europe) (En,Fr,De,Es,It).sav",
+        "saves/melonDS DS/Pokemon - SoulSilver Version (Europe).sav",
         "saves/Gambatte/Legend of Zelda, The - Link's Awakening (France).srm",
-        "saves/Gambatte/Pokemon - Crystal Version (USA, Europe) (Rev 1).rtc",
-        "saves/Gambatte/Pokemon - Crystal Version (USA, Europe) (Rev 1).srm",
-        "saves/Gambatte/Pokemon - Red Version (USA, Europe) (SGB Enhanced).srm",
-        "saves/mGBA/Celia's Stupid Romhack (1.1.4).srm",
-        "saves/mGBA/Metal Slug Advance (Europe).srm"
+        "saves/Gambatte/Pokemon - Crystal Version (USA, Europe) (Rev 1).rtc"
       ],
-      "updatedAt": "22/08/2026 10:28"
+      "updatedAt": "03/11/2026 23:51"
     },
     {
       "id": "RetroArch_States",
@@ -346,22 +347,22 @@ window.AYN_THOR_DATA = {
     },
     {
       "id": "Standalone_Saves",
-      "label": "Portages Natifs & Decomps (PokéEmerald DualScreen, PokéRogue, MinishCap, Zelda3, Red Recomp)",
-      "emulator": "Ports Android Natifs",
+      "label": "Portages Natifs & Decomps (Wind Waker HD Recomp, PokéEmerald DualScreen, PokéRogue, MinishCap, Zelda3, Red Recomp)",
+      "emulator": "Ports Android Natifs (`org.wwhdrecomp.wwhd`, etc.)",
       "category": "Ports & Decomps",
       "icon": "💎",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Standalone_Saves",
-      "androidPath": "/sdcard/Android/data/com.pokeemerald.dualscreen/files",
-      "fileCount": 36957,
-      "sizeBytes": 794583639,
-      "sizeMB": 757.77,
+      "androidPath": "/sdcard/Android/data/org.wwhdrecomp.wwhd/files/save",
+      "fileCount": 36998,
+      "sizeBytes": 806390072,
+      "sizeMB": 769.03,
       "sampleFiles": [
-        "PokeRogue/files/game/biome-bgm-loop-points.json",
-        "PokeRogue/files/game/currentVersion.txt",
-        "PokeRogue/files/game/exp-sprites.json",
-        "PokeRogue/files/game/index.html",
-        "PokeRogue/files/game/logo128.png",
-        "PokeRogue/files/game/logo512.png"
+        "WindWakerHD_Recomp/save/user/cking.sav",
+        "WindWakerHD_Recomp/save/user/cking_pic0_0.sav",
+        "WindWakerHD_Recomp/save/user/cking_pic0_1.sav",
+        "WindWakerHD_Recomp/save/user/cking_pic0_10.sav",
+        "WindWakerHD_Recomp/save/user/cking_pic0_11.sav",
+        "WindWakerHD_Recomp/save/user/cking_pic0_2.sav"
       ],
       "updatedAt": "25/08/2026 10:43"
     },
@@ -384,7 +385,7 @@ window.AYN_THOR_DATA = {
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100152000022000/rp001011530330000abec00000.dat",
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100152000022000/rp012d11510300001d21000000.dat"
       ],
-      "updatedAt": "28/08/2026 11:55"
+      "updatedAt": "31/10/2026 17:48"
     },
     {
       "id": "Switch_Eden_System",
@@ -1229,6 +1230,21 @@ window.AYN_THOR_DATA = {
     }
   ],
   "presets": [
+    {
+      "id": "wwhd_recomp",
+      "name": "Zelda: The Wind Waker HD Recomp (Portage Natif v0.5.0)",
+      "package": "org.wwhdrecomp.wwhd",
+      "icon": "⛵",
+      "socProfile": "Mode Standard / Ventilateur Intelligent (60 FPS)",
+      "gpuDriver": "Vulkan 1.3 Natif (Adreno 740)",
+      "resolution": "1.5x à 2x (1080p/1440p) — 60 FPS",
+      "settings": [
+        "Compilation AOT native arm64 depuis `The Wind Waker HD (EU).wua` (Français inclus)",
+        "Graphics > Frame rate : 60 fps (Interpolé ou True 60) | Heat guard : Normal (adapté AYN Thor)",
+        "Display > GamePad Screen : Bascule instantanée sur `+` (Pause) ou PiP tactile",
+        "Sauvegardes synchronisées Mac mini ↔ AYN Thor ↔ Cemu (`save/user/cking.sav`)"
+      ]
+    },
     {
       "id": "eden_switch",
       "name": "Eden / Citron (Nintendo Switch)",
