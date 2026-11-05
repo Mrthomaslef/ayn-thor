@@ -1,0 +1,555 @@
+#!/usr/bin/env python3
+"""
+Daemon de contrôle et configuration à distance de l'AYN Thor branchée au Mac mini :
+1. Serveur HTTP + API REST sur le port 8795 (CORS activé pour GitHub Pages / iPhone / Mac).
+2. Détection temps réel USB IOKit (AYN Thor QCS_KALAMAP) + ADB USB & Wi-Fi.
+3. Écran interactif à distance (/api/screen.jpg + /api/input tap/swipe/key/text/launch).
+4. Synchronisation 1-clic des 23 dossiers de Sauvegardes, 18 systèmes ROMs (103 Go) et Drivers Turnip.
+5. Watchdog USB -> ADB Wi-Fi automatique (active `adb tcpip 5555` dès que l'interface ADB apparaît).
+6. Tunnel Cloudflare HTTPS permanent avec mise à jour automatique de `endpoint.json` sur GitHub Pages.
+"""
+import datetime
+import glob
+import http.server
+import json
+import mimetypes
+import os
+import re
+import socket
+import socketserver
+import subprocess
+import threading
+import time
+import urllib.parse
+
+ROOT_DIR = "/Users/thomaslefevre/.t3/projects/ayn-thor"
+DATA_DIR = os.path.join(ROOT_DIR, "data")
+INVENTORY_JSON = os.path.join(DATA_DIR, "inventory.json")
+ENDPOINT_JSON = os.path.join(ROOT_DIR, "endpoint.json")
+SAVES_ROOT = "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor"
+ROMS_ROOT = "/Volumes/GamingSSD/Games/ROMs"
+BONUS_ROOT = "/Volumes/GamingSSD/Games/Outils_Bonus"
+ADB_BIN = "/Users/thomaslefevre/.local/bin/adb"
+PORT = 8798
+LAN_URL = f"http://192.168.1.111:{PORT}"
+
+TRANSFER_JOBS = {}
+JOBS_LOCK = threading.Lock()
+CURRENT_TUNNEL_URL = ""
+
+
+def run_cmd(args, timeout=8):
+    try:
+        p = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
+        return p.returncode, p.stdout.strip(), p.stderr.strip()
+    except Exception as e:
+        return -1, "", str(e)
+
+
+def get_live_status():
+    status = {
+        "timestamp": datetime.datetime.now().strftime("%H:%M:%S"),
+        "lanUrl": LAN_URL,
+        "tunnelUrl": CURRENT_TUNNEL_URL,
+        "usb": {
+            "connected": False,
+            "vendor": "AYN",
+            "productName": "",
+            "serial": "",
+            "idVendor": 0,
+            "idProduct": 0,
+            "idProductHex": "",
+            "usbMode": "disconnected",
+            "usbModeLabel": "Non détectée sur le bus USB",
+        },
+        "adb": {
+            "ready": False,
+            "devices": [],
+            "serial": "",
+            "transport": "none",
+            "battery": None,
+            "storage": None,
+            "wifiIp": None,
+            "model": "AYN Thor (QCS8550)",
+            "androidVersion": "",
+            "resolution": "1920x1080",
+        },
+    }
+
+    # 1. Inspect USB via ioreg
+    rc, out, _ = run_cmd(["/usr/sbin/ioreg", "-p", "IOUSB", "-l", "-w", "0"], timeout=4)
+    if rc == 0 and ("QCS_KALAMAP" in out or '"USB Vendor Name" = "AYN"' in out):
+        status["usb"]["connected"] = True
+        idx = out.find("QCS_KALAMAP")
+        if idx == -1:
+            idx = out.find('"USB Vendor Name" = "AYN"')
+        chunk = out[max(0, idx - 600) : min(len(out), idx + 1600)]
+        m_prod = re.search(r'"USB Product Name" = "([^"]+)"', chunk)
+        if m_prod:
+            status["usb"]["productName"] = m_prod.group(1)
+        m_ser = re.search(r'"USB Serial Number" = "([^"]+)"', chunk)
+        if m_ser:
+            status["usb"]["serial"] = m_ser.group(1)
+        m_vid = re.search(r'"idVendor" = (\d+)', chunk)
+        if m_vid:
+            status["usb"]["idVendor"] = int(m_vid.group(1))
+        m_pid = re.search(r'"idProduct" = (\d+)', chunk)
+        if m_pid:
+            pid = int(m_pid.group(1))
+            status["usb"]["idProduct"] = pid
+            status["usb"]["idProductHex"] = hex(pid)
+            if pid == 20193:  # 0x4ee1
+                status["usb"]["usbMode"] = "mtp_only_no_adb"
+                status["usb"]["usbModeLabel"] = "Branchée en USB (MTP 0x4EE1) — Débogage USB inactif ou écran verrouillé"
+            elif pid in (20194, 20199):
+                status["usb"]["usbMode"] = "adb_enabled"
+                status["usb"]["usbModeLabel"] = f"Branchée en USB — MTP + ADB Actif ({hex(pid)})"
+            else:
+                status["usb"]["usbMode"] = f"usb_{hex(pid)}"
+                status["usb"]["usbModeLabel"] = f"Branchée en USB ({hex(pid)})"
+
+    # 2. Inspect ADB
+    if os.path.exists(ADB_BIN):
+        rc, adb_out, _ = run_cmd([ADB_BIN, "devices", "-l"], timeout=3)
+        if rc == 0:
+            devs = []
+            for line in adb_out.splitlines()[1:]:
+                line = line.strip()
+                if not line:
+                    continue
+                parts = line.split()
+                if len(parts) >= 2:
+                    devs.append({"id": parts[0], "state": parts[1], "raw": line})
+            status["adb"]["devices"] = devs
+            ready_devs = [d for d in devs if d["state"] == "device"]
+            if ready_devs:
+                active = ready_devs[0]["id"]
+                status["adb"]["ready"] = True
+                status["adb"]["serial"] = active
+                status["adb"]["transport"] = "wifi" if ":" in active else "usb"
+
+                # Query battery, storage, wifi IP
+                _, bat_out, _ = run_cmd([ADB_BIN, "-s", active, "shell", "dumpsys", "battery"], timeout=2)
+                m_lvl = re.search(r"level:\s*(\d+)", bat_out)
+                if m_lvl:
+                    status["adb"]["battery"] = int(m_lvl.group(1))
+
+                _, df_out, _ = run_cmd([ADB_BIN, "-s", active, "shell", "df", "-h", "/sdcard"], timeout=2)
+                lines = [l.strip() for l in df_out.splitlines() if l.strip()]
+                if len(lines) >= 2:
+                    cols = lines[-1].split()
+                    if len(cols) >= 5:
+                        status["adb"]["storage"] = {
+                            "total": cols[1],
+                            "used": cols[2],
+                            "avail": cols[3],
+                            "percent": cols[4],
+                        }
+
+                _, ip_out, _ = run_cmd([ADB_BIN, "-s", active, "shell", "ip", "route"], timeout=2)
+                m_ip = re.search(r"src\s+(\d+\.\d+\.\d+\.\d+)", ip_out)
+                if m_ip:
+                    status["adb"]["wifiIp"] = m_ip.group(1)
+
+                _, ver_out, _ = run_cmd([ADB_BIN, "-s", active, "shell", "getprop", "ro.build.version.release"], timeout=2)
+                if ver_out:
+                    status["adb"]["androidVersion"] = ver_out
+
+                _, wm_out, _ = run_cmd([ADB_BIN, "-s", active, "shell", "wm", "size"], timeout=2)
+                m_wm = re.search(r"(\d+x\d+)", wm_out)
+                if m_wm:
+                    status["adb"]["resolution"] = m_wm.group(1)
+
+    return status
+
+
+def start_transfer_job(title, cmd_args):
+    job_id = f"job-{int(time.time() * 1000)}"
+    job = {
+        "id": job_id,
+        "title": title,
+        "status": "running",
+        "startedAt": datetime.datetime.now().strftime("%H:%M:%S"),
+        "output": "",
+    }
+    with JOBS_LOCK:
+        TRANSFER_JOBS[job_id] = job
+
+    def worker():
+        rc, out, err = run_cmd(cmd_args, timeout=600)
+        with JOBS_LOCK:
+            job["status"] = "done" if rc == 0 else "error"
+            job["output"] = (out + "\n" + err).strip()
+            job["finishedAt"] = datetime.datetime.now().strftime("%H:%M:%S")
+
+    threading.Thread(target=worker, daemon=True).start()
+    return job
+
+
+class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
+class AynThorHandler(http.server.BaseHTTPRequestHandler):
+    def log_message(self, fmt, *args):
+        pass
+
+    def _send_cors(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+
+    def _send_json(self, payload, code=200):
+        raw = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(raw)))
+        self._send_cors()
+        self.end_headers()
+        self.wfile.write(raw)
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self._send_cors()
+        self.end_headers()
+
+    def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+        qs = urllib.parse.parse_qs(parsed.query)
+
+        if path == "/api/status":
+            with JOBS_LOCK:
+                jobs = list(TRANSFER_JOBS.values())[-10:]
+            st = get_live_status()
+            st["jobs"] = jobs
+            return self._send_json(st)
+
+        if path == "/api/inventory":
+            if os.path.exists(INVENTORY_JSON):
+                with open(INVENTORY_JSON, "r", encoding="utf-8") as f:
+                    inv = json.load(f)
+            else:
+                inv = {}
+            inv["live"] = get_live_status()
+            return self._send_json(inv)
+
+        if path == "/api/fs":
+            target = qs.get("path", ["/sdcard"])[0]
+            st = get_live_status()
+            if not st["adb"]["ready"]:
+                return self._send_json(
+                    {
+                        "ok": False,
+                        "error": "ADB non connecté. Activez le Débogage USB ou ADB Wi-Fi sur l'AYN Thor.",
+                        "entries": [],
+                    }
+                )
+            rc, out, err = run_cmd([ADB_BIN, "shell", "ls", "-la", target], timeout=5)
+            entries = []
+            for line in out.splitlines():
+                line = line.strip()
+                if not line or line.startswith("total "):
+                    continue
+                parts = line.split(None, 7)
+                if len(parts) >= 8:
+                    perms, _, owner, group, size, date_str, time_str, name = parts
+                    if name in (".", ".."):
+                        continue
+                    is_dir = perms.startswith("d") or perms.startswith("l")
+                    entries.append(
+                        {
+                            "name": name,
+                            "isDir": is_dir,
+                            "size": size,
+                            "date": f"{date_str} {time_str}",
+                            "perms": perms,
+                        }
+                    )
+            return self._send_json({"ok": rc == 0, "path": target, "entries": entries, "error": err})
+
+        if path == "/api/screen.png" or path == "/api/screen.jpg":
+            st = get_live_status()
+            if not st["adb"]["ready"]:
+                self.send_response(503)
+                self._send_cors()
+                self.end_headers()
+                return
+            try:
+                raw_png = subprocess.check_output(
+                    [ADB_BIN, "exec-out", "screencap", "-p"],
+                    stderr=subprocess.DEVNULL,
+                    timeout=4,
+                )
+                self.send_response(200)
+                self.send_header("Content-Type", "image/png")
+                self.send_header("Content-Length", str(len(raw_png)))
+                self._send_cors()
+                self.end_headers()
+                self.wfile.write(raw_png)
+            except Exception:
+                self.send_response(500)
+                self._send_cors()
+                self.end_headers()
+            return
+
+        # Serve static files from ROOT_DIR
+        rel = path.lstrip("/") or "index.html"
+        full_path = os.path.realpath(os.path.join(ROOT_DIR, rel))
+        if not full_path.startswith(os.path.realpath(ROOT_DIR)) or not os.path.isfile(full_path):
+            self.send_response(404)
+            self._send_cors()
+            self.end_headers()
+            return
+        ctype, _ = mimetypes.guess_type(full_path)
+        with open(full_path, "rb") as f:
+            data = f.read()
+        self.send_response(200)
+        self.send_header("Content-Type", ctype or "application/octet-stream")
+        self.send_header("Content-Length", str(len(data)))
+        self._send_cors()
+        self.end_headers()
+        self.wfile.write(data)
+
+    def do_POST(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+        length = int(self.headers.get("Content-Length", "0"))
+        body = {}
+        if length > 0:
+            try:
+                body = json.loads(self.rfile.read(length).decode("utf-8"))
+            except Exception:
+                body = {}
+
+        if path == "/api/adb-connect":
+            action = body.get("action", "scan")
+            if action == "tcpip":
+                rc, out, err = run_cmd([ADB_BIN, "tcpip", "5555"], timeout=5)
+                return self._send_json({"ok": rc == 0, "message": out or err})
+            elif action == "pair":
+                addr = body.get("address", "").strip()
+                code = body.get("code", "").strip()
+                if not addr or not code:
+                    return self._send_json({"ok": False, "message": "Adresse IP:Port et code requis."})
+                rc, out, err = run_cmd([ADB_BIN, "pair", addr, code], timeout=8)
+                return self._send_json({"ok": rc == 0, "message": out or err})
+            elif action == "connect":
+                addr = body.get("address", "").strip()
+                if not addr:
+                    return self._send_json({"ok": False, "message": "Adresse IP:Port requise."})
+                if ":" not in addr:
+                    addr += ":5555"
+                rc, out, err = run_cmd([ADB_BIN, "connect", addr], timeout=6)
+                return self._send_json({"ok": rc == 0 and "connected" in out.lower(), "message": out or err})
+            else:
+                # Scan LAN for port 5555
+                found = []
+                _, arp_out, _ = run_cmd(["/usr/sbin/arp", "-an"], timeout=3)
+                ips = re.findall(r"\((\d+\.\d+\.\d+\.\d+)\)", arp_out)
+                for ip in ips:
+                    if ip.endswith(".1") or ip.endswith(".255") or ip == "192.168.1.111":
+                        continue
+                    s = socket.socket()
+                    s.settimeout(0.15)
+                    if s.connect_ex((ip, 5555)) == 0:
+                        found.append(f"{ip}:5555")
+                        run_cmd([ADB_BIN, "connect", f"{ip}:5555"], timeout=3)
+                    s.close()
+                return self._send_json(
+                    {
+                        "ok": True,
+                        "found": found,
+                        "message": f"Scan LAN terminé ({len(ips)} hôtes testés, {len(found)} port ADB 5555 trouvé).",
+                    }
+                )
+
+        if path == "/api/input":
+            st = get_live_status()
+            if not st["adb"]["ready"]:
+                return self._send_json({"ok": False, "error": "ADB non connecté sur l'AYN Thor."})
+            kind = body.get("type", "")
+            if kind == "tap":
+                x = int(body.get("x", 0))
+                y = int(body.get("y", 0))
+                rc, out, err = run_cmd([ADB_BIN, "shell", "input", "tap", str(x), str(y)], timeout=3)
+                return self._send_json({"ok": rc == 0, "output": out or err})
+            elif kind == "swipe":
+                x1 = int(body.get("x1", 960))
+                y1 = int(body.get("y1", 900))
+                x2 = int(body.get("x2", 960))
+                y2 = int(body.get("y2", 200))
+                dur = int(body.get("duration", 250))
+                rc, out, err = run_cmd(
+                    [ADB_BIN, "shell", "input", "swipe", str(x1), str(y1), str(x2), str(y2), str(dur)],
+                    timeout=4,
+                )
+                return self._send_json({"ok": rc == 0, "output": out or err})
+            elif kind == "key":
+                keycode = str(body.get("keycode", "KEYCODE_HOME"))
+                rc, out, err = run_cmd([ADB_BIN, "shell", "input", "keyevent", keycode], timeout=3)
+                return self._send_json({"ok": rc == 0, "output": out or err})
+            elif kind == "text":
+                txt = str(body.get("text", "")).replace(" ", "%s")
+                rc, out, err = run_cmd([ADB_BIN, "shell", "input", "text", txt], timeout=4)
+                return self._send_json({"ok": rc == 0, "output": out or err})
+            elif kind == "launch":
+                pkg = str(body.get("package", ""))
+                rc, out, err = run_cmd(
+                    [ADB_BIN, "shell", "monkey", "-p", pkg, "-c", "android.intent.category.LAUNCHER", "1"],
+                    timeout=5,
+                )
+                return self._send_json({"ok": rc == 0, "output": out or err})
+            return self._send_json({"ok": False, "error": "Type d'entrée inconnu."})
+
+        if path == "/api/sync-save":
+            st = get_live_status()
+            if not st["adb"]["ready"]:
+                return self._send_json(
+                    {
+                        "ok": False,
+                        "error": "ADB non actif sur l'AYN Thor. Déverrouillez la console et activez le Débogage USB.",
+                    }
+                )
+            save_id = body.get("id", "")
+            direction = body.get("direction", "push")
+            android_path = body.get("androidPath", f"/sdcard/Saves/{save_id}")
+            local_path = os.path.join(SAVES_ROOT, save_id)
+            if not os.path.isdir(local_path):
+                return self._send_json({"ok": False, "error": f"Dossier introuvable : {local_path}"})
+
+            if direction == "push":
+                run_cmd([ADB_BIN, "shell", "mkdir", "-p", android_path], timeout=4)
+                job = start_transfer_job(
+                    f"Push Save {save_id} -> {android_path}",
+                    [ADB_BIN, "push", f"{local_path}/.", android_path],
+                )
+            else:
+                os.makedirs(local_path, exist_ok=True)
+                job = start_transfer_job(
+                    f"Pull Save {android_path} -> {save_id}",
+                    [ADB_BIN, "pull", f"{android_path}/.", local_path],
+                )
+            return self._send_json({"ok": True, "job": job})
+
+        if path == "/api/push-file":
+            st = get_live_status()
+            if not st["adb"]["ready"]:
+                return self._send_json(
+                    {
+                        "ok": False,
+                        "error": "ADB non actif sur l'AYN Thor. Déverrouillez la console et activez le Débogage USB.",
+                    }
+                )
+            local_path = body.get("localPath", "")
+            android_path = body.get("androidPath", "/sdcard/Download/")
+            if not (local_path.startswith(ROMS_ROOT) or local_path.startswith(BONUS_ROOT) or local_path.startswith(SAVES_ROOT)):
+                return self._send_json({"ok": False, "error": "Chemin local non autorisé."})
+            if not os.path.exists(local_path):
+                return self._send_json({"ok": False, "error": f"Fichier introuvable : {local_path}"})
+            parent_dir = os.path.dirname(android_path.rstrip("/")) or "/sdcard/Download"
+            run_cmd([ADB_BIN, "shell", "mkdir", "-p", parent_dir], timeout=4)
+            job = start_transfer_job(
+                f"Push {os.path.basename(local_path)} -> {android_path}",
+                [ADB_BIN, "push", local_path, android_path],
+            )
+            return self._send_json({"ok": True, "job": job})
+
+        self._send_json({"ok": False, "error": "Endpoint inconnu"}, code=404)
+
+
+def usb_adb_watchdog():
+    """Active automatiquement `adb tcpip 5555` dès que l'AYN Thor apparaît en USB ADB."""
+    last_usb_adb = False
+    while True:
+        try:
+            st = get_live_status()
+            if st["adb"]["ready"] and st["adb"]["transport"] == "usb" and not last_usb_adb:
+                last_usb_adb = True
+                wifi_ip = st["adb"].get("wifiIp")
+                run_cmd([ADB_BIN, "tcpip", "5555"], timeout=5)
+                if wifi_ip:
+                    time.sleep(2)
+                    run_cmd([ADB_BIN, "connect", f"{wifi_ip}:5555"], timeout=5)
+            elif not st["adb"]["ready"]:
+                last_usb_adb = False
+        except Exception:
+            pass
+        time.sleep(6)
+
+
+def save_and_push_endpoint(tunnel_url: str) -> None:
+    global CURRENT_TUNNEL_URL
+    CURRENT_TUNNEL_URL = tunnel_url
+    try:
+        if os.path.exists(ENDPOINT_JSON):
+            with open(ENDPOINT_JSON, "r", encoding="utf-8") as f:
+                existing = json.load(f)
+            if existing.get("tunnelUrl") == tunnel_url and existing.get("lanUrl") == LAN_URL:
+                return
+    except Exception:
+        pass
+
+    payload = {
+        "tunnelUrl": tunnel_url,
+        "lanUrl": LAN_URL,
+        "updatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    }
+    with open(ENDPOINT_JSON, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+
+    try:
+        subprocess.run(["git", "add", "endpoint.json"], cwd=ROOT_DIR, check=True)
+        diff = subprocess.run(["git", "diff", "--cached", "--quiet", "--", "endpoint.json"], cwd=ROOT_DIR)
+        if diff.returncode != 0:
+            subprocess.run(
+                ["git", "commit", "-m", "chore(tunnel): update live AYN Thor cloudflare tunnel endpoint"],
+                cwd=ROOT_DIR,
+                check=True,
+            )
+            subprocess.run(["git", "pull", "--rebase", "--autostash", "origin", "main"], cwd=ROOT_DIR)
+            subprocess.run(["git", "push", "origin", "main"], cwd=ROOT_DIR, check=True)
+    except Exception as e:
+        print("Git sync error:", e, flush=True)
+
+
+def run_tunnel_forever() -> None:
+    cf_candidates = glob.glob(os.path.expanduser("~/.t3/tools/cloudflared/*/*/cloudflared"))
+    if not cf_candidates:
+        print("cloudflared not found", flush=True)
+        return
+    cf_bin = cf_candidates[0]
+
+    while True:
+        try:
+            proc = subprocess.Popen(
+                [cf_bin, "tunnel", "--url", f"http://127.0.0.1:{PORT}", "--no-autoupdate"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+            )
+            for line in proc.stdout:
+                m = re.search(r"https://[a-zA-Z0-9-]+\.trycloudflare\.com", line)
+                if m:
+                    url = m.group(0)
+                    print("Active AYN Thor Tunnel URL:", url, flush=True)
+                    save_and_push_endpoint(url)
+            proc.wait()
+        except Exception as e:
+            print("Tunnel error:", e, flush=True)
+        time.sleep(5)
+
+
+def main():
+    os.makedirs(DATA_DIR, exist_ok=True)
+    threading.Thread(target=usb_adb_watchdog, daemon=True).start()
+    threading.Thread(target=run_tunnel_forever, daemon=True).start()
+    server = ThreadedHTTPServer(("0.0.0.0", PORT), AynThorHandler)
+    print(f"AYN Thor Remote Daemon listening on {LAN_URL}", flush=True)
+    server.serve_forever()
+
+
+if __name__ == "__main__":
+    main()
