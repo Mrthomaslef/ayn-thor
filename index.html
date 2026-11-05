@@ -988,6 +988,30 @@
     </section>
   </div>
 
+  <!-- MOBILE STICKY BOTTOM NAVIGATION -->
+  <nav class="mobile-bottom-nav" aria-label="Navigation principale">
+    <button class="mnav-btn active" data-tab="nxbrew" onclick="switchTab('nxbrew', this)">
+      <span class="mnav-icon">📥</span>
+      <span>Switch DL</span>
+    </button>
+    <button class="mnav-btn" data-tab="roms" onclick="switchTab('roms', this)">
+      <span class="mnav-icon">🎮</span>
+      <span>ROMs</span>
+    </button>
+    <button class="mnav-btn" data-tab="saves" onclick="switchTab('saves', this)">
+      <span class="mnav-icon">💾</span>
+      <span>Saves</span>
+    </button>
+    <button class="mnav-btn" data-tab="tvgames" onclick="switchTab('tvgames', this)">
+      <span class="mnav-icon">📺</span>
+      <span>Télé M4</span>
+    </button>
+    <button class="mnav-btn" data-tab="remote" onclick="switchTab('remote', this)">
+      <span class="mnav-icon">📡</span>
+      <span>AYN Thor</span>
+    </button>
+  </nav>
+
   <div id="toast"></div>
 
   <script src="data/embedded_data.js"></script>
@@ -996,6 +1020,7 @@
     let APP_DATA = window.AYN_THOR_DATA || {};
     let ACTIVE_SAVE_CAT = "Tous";
     let STREAM_TIMER = null;
+    let NXBREW_INITIAL_LOADED = false;
 
     function showToast(msg) {
       const el = document.getElementById("toast");
@@ -1011,7 +1036,13 @@
 
     function switchTab(id, btn) {
       document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(b => {
+        const oc = b.getAttribute("onclick") || "";
+        b.classList.toggle("active", oc.includes("'" + id + "'"));
+      });
+      document.querySelectorAll(".mnav-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.tab === id);
+      });
       document.getElementById("tab-" + id).classList.add("active");
       if (btn) btn.classList.add("active");
       if (id === "explorer" && API_BASE) {
@@ -1028,11 +1059,18 @@
           : "http://192.168.1.152:8765/";
         if (ifr && ifr.src !== target) ifr.src = target;
       }
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function debounceNxbrewSearch() {
       clearTimeout(NXBREW_SEARCH_TIMER);
       NXBREW_SEARCH_TIMER = setTimeout(() => searchNxbrewCatalog(), 240);
+    }
+
+    function quickNxbrewSearch(q) {
+      const inp = document.getElementById("nxbrew-search-input");
+      if (inp) inp.value = q;
+      searchNxbrewCatalog();
     }
 
     function setNxbrewFormat(fmt, btn) {
@@ -1058,13 +1096,14 @@
           listEl.innerHTML = "Impossible de charger le catalogue NXBrew.";
           return;
         }
+        NXBREW_INITIAL_LOADED = true;
         countEl.textContent = `${res.games.length} affichés / ${res.totalCatalog.toLocaleString("fr-FR")} jeux`;
         if (res.installedFiles && instEl) {
           const romFiles = res.installedFiles.filter(f => /\.(nsp|xci|nsz)$/i.test(f));
           instEl.innerHTML = romFiles.map(fn => `
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#090d16;border:1px solid var(--border);border-radius:8px;">
-              <span>✅ <strong>${fn}</strong></span>
-              <button class="btn" style="padding:4px 8px;font-size:0.72rem;" onclick="pushFile('/Volumes/GamingSSD/Games/ROMs/Switch/${fn.replace(/'/g, "\\'")}', '/storage/6531-3035/ROMs/switch/${fn.replace(/'/g, "\\'")}')">⬆️ AYN Thor</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px;background:#090d16;border:1px solid var(--border);border-radius:8px;">
+              <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">✅ <strong>${fn}</strong></span>
+              <button class="btn" style="flex-shrink:0;padding:5px 9px;font-size:0.74rem;" onclick="pushFile('/Volumes/GamingSSD/Games/ROMs/Switch/${fn.replace(/'/g, "\\'")}', '/storage/6531-3035/ROMs/switch/${fn.replace(/'/g, "\\'")}')">⬆️ AYN Thor</button>
             </div>
           `).join("") || "Aucun fichier NSP/XCI.";
         }
@@ -1078,11 +1117,11 @@
           if (g.hasXci) badges.push('<span class="sample-tag" style="background:rgba(168,85,247,0.2);color:#c084fc;">XCI</span>');
           if (g.hasUpdate) badges.push('<span class="sample-tag" style="background:rgba(34,197,94,0.18);color:#4ade80;">+ Update</span>');
           if (g.hasDlc) badges.push('<span class="sample-tag" style="background:rgba(245,158,11,0.2);color:#fbbf24;">+ DLC</span>');
-          if (g.installed) badges.push('<span class="sample-tag" style="background:rgba(34,197,94,0.3);color:#86efac;font-weight:700;">✅ Déjà sur Mac mini</span>');
+          if (g.installed) badges.push('<span class="sample-tag" style="background:rgba(34,197,94,0.3);color:#86efac;font-weight:700;">✅ Déjà sur Mac</span>');
           const safeUrl = g.url.replace(/'/g, "\\'");
           const safeTitle = g.shortName.replace(/'/g, "\\'");
           return `
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:#0a0f1c;border:1px solid var(--border);border-radius:11px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:#0a0f1c;border:1px solid var(--border);border-radius:11px;cursor:pointer;" onclick="inspectNxbrewGame('${safeUrl}', '${safeTitle}')">
               <div style="min-width:0;flex:1;">
                 <div style="font-weight:700;font-size:0.88rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${g.title}">
                   ${g.shortName}
@@ -1092,8 +1131,8 @@
                 </div>
                 <div class="sample-tags" style="margin-top:5px;">${badges.join("")}</div>
               </div>
-              <button class="btn primary" style="flex-shrink:0;padding:7px 11px;font-size:0.78rem;" onclick="inspectNxbrewGame('${safeUrl}', '${safeTitle}')">
-                📦 Choisir & Télécharger
+              <button class="btn primary" style="flex-shrink:0;padding:8px 11px;font-size:0.78rem;" onclick="event.stopPropagation();inspectNxbrewGame('${safeUrl}', '${safeTitle}')">
+                📥 Choisir
               </button>
             </div>
           `;
@@ -1111,6 +1150,10 @@
 
     async function inspectNxbrewGame(url, shortTitle = "") {
       if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
+      const cardEl = document.getElementById("nxbrew-inspector-card");
+      if (cardEl && window.innerWidth <= 980) {
+        cardEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
       const bodyEl = document.getElementById("nxbrew-inspector-body");
       bodyEl.innerHTML = `
         <div style="padding:18px;text-align:center;color:var(--accent);">
@@ -1743,10 +1786,17 @@
       renderInventory();
       const st = await resolveBackend();
       updateStatusUI(st);
+      if (API_BASE) {
+        const nxTab = document.getElementById("tab-nxbrew");
+        if ((nxTab && nxTab.classList.contains("active") && !NXBREW_INITIAL_LOADED) || withFeedback) {
+          searchNxbrewCatalog();
+        }
+        refreshNxbrewJobs();
+      }
       if (st && st.adb && st.adb.ready) {
         refreshScreen();
       }
-      if (withFeedback) showToast("État USB & ADB de l'AYN Thor actualisé.");
+      if (withFeedback) showToast("Rom et Emulation : Catalogue & AYN Thor actualisés.");
     }
 
     // Pull-to-Refresh (Touch + Mouse)

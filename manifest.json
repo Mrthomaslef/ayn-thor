@@ -1,7 +1,7 @@
 {
-  "name": "AYN Thor Studio — Contrôle & Sync à Distance",
-  "short_name": "AYN Thor",
-  "description": "Cockpit de configuration à distance de l'AYN Thor branchée au Mac mini (Écran ADB Live, 23 dossiers de Sauvegardes, 103 Go de ROMs & Drivers Turnip).",
+  "name": "Rom et Emulation — Switch NXBrew, Mac mini & AYN Thor",
+  "short_name": "Rom & Emulation",
+  "description": "Catalogue NXBrew Switch (7 772 jeux en téléchargement direct), 82 jeux Mac mini M4, 23 dossiers de Sauvegardes Cross-Play & Télécommande AYN Thor.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0b0f19",
