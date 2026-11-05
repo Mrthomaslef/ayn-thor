@@ -564,27 +564,41 @@
       <div class="two-col">
         <div class="panel-card">
           <h2>
-            <span>🖥️ Écran Interactif AYN Thor (1920×1080)</span>
-            <label style="font-size:0.78rem;font-weight:500;display:flex;align-items:center;gap:6px;cursor:pointer;">
-              <input type="checkbox" id="chk-autostream" onchange="toggleAutoStream(this.checked)" />
-              Flux continu (1.5 fps)
-            </label>
+            <span>🖥️ Double Écran Interactif AYN Thor (OLED 120 Hz)</span>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <button class="btn" id="btn-disp-both" onclick="setDisplayMode('both')">📱+🖥️ Double Écran</button>
+              <button class="btn" id="btn-disp-top" onclick="setDisplayMode('top')">🖥️ Haut (1920×1080)</button>
+              <button class="btn" id="btn-disp-bottom" onclick="setDisplayMode('bottom')">📱 Bas (1240×1080)</button>
+              <label style="font-size:0.78rem;font-weight:500;display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="checkbox" id="chk-autostream" onchange="toggleAutoStream(this.checked)" />
+                Flux continu
+              </label>
+            </div>
           </h2>
-          <div class="screen-stage" id="screen-stage" onclick="handleScreenTap(event)">
-            <img id="live-screen-img" alt="Écran AYN Thor" />
-            <div class="screen-placeholder" id="screen-placeholder">
-              <div style="font-size:2.2rem;margin-bottom:8px;">🎮</div>
-              <strong>Flux écran ADB en attente de connexion</strong>
-              <p style="margin:6px 0 12px;">
-                Dès que l'AYN Thor a le Débogage USB ou ADB Wi-Fi actif, cliquez sur « Capturer l'écran » ou activez le flux continu pour toucher et piloter Android à distance.
-              </p>
-              <button class="btn primary" onclick="event.stopPropagation(); refreshScreen()">📸 Capturer l'écran maintenant</button>
+
+          <div id="screens-wrapper" style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+            <div class="screen-stage" id="screen-stage-top" onclick="handleScreenTap(event, 'top')" title="Cliquer pour toucher l'Écran Haut (Display 0)">
+              <img id="live-screen-top" alt="Écran Haut AYN Thor" />
+              <div class="screen-placeholder" id="screen-placeholder-top">
+                <div style="font-size:2rem;margin-bottom:6px;">🖥️</div>
+                <strong>Écran Haut (1920×1080 · Display 0)</strong>
+                <p style="margin:6px 0 10px;">Cliquez sur « Capturer les 2 écrans » pour afficher et toucher l'AYN Thor en direct.</p>
+                <button class="btn primary" onclick="event.stopPropagation(); refreshScreen()">📸 Capturer les 2 écrans maintenant</button>
+              </div>
+            </div>
+
+            <div class="screen-stage" id="screen-stage-bottom" style="max-width:72%;aspect-ratio:1240/1080;" onclick="handleScreenTap(event, 'bottom')" title="Cliquer pour toucher l'Écran Bas Tactile (Display 4)">
+              <img id="live-screen-bottom" alt="Écran Bas Tactile AYN Thor" />
+              <div class="screen-placeholder" id="screen-placeholder-bottom">
+                <div style="font-size:1.8rem;margin-bottom:4px;">📱</div>
+                <strong>Écran Bas Tactile (1240×1080 · Display 4)</strong>
+              </div>
             </div>
           </div>
 
           <div class="hw-controls">
             <button class="btn primary" onclick="sendInput({type:'key', keycode:'KEYCODE_WAKEUP'})">☀️ Réveiller</button>
-            <button class="btn" onclick="sendInput({type:'swipe', x1:960, y1:920, x2:960, y2:180, duration:260})">🔓 Glisser-Déverrouiller</button>
+            <button class="btn" onclick="sendInput({type:'swipe', display:'top', x1:960, y1:920, x2:960, y2:180, duration:260})">🔓 Déverrouiller</button>
             <button class="btn" onclick="sendInput({type:'key', keycode:'KEYCODE_HOME'})">🏠 Accueil</button>
             <button class="btn" onclick="sendInput({type:'key', keycode:'KEYCODE_BACK'})">◀️ Retour</button>
             <button class="btn" onclick="sendInput({type:'key', keycode:'KEYCODE_APP_SWITCH'})">🗂️ Récents</button>
@@ -602,20 +616,28 @@
 
         <div>
           <div class="panel-card">
-            <h2>🚀 Lanceur Rapide d'Émulateurs sur l'AYN Thor</h2>
+            <h2>🚀 Lanceur Rapide — Vos Émulateurs & Jeux Installés</h2>
             <p style="margin:0 0 10px;font-size:0.8rem;color:var(--text-muted);">
-              Ouvre directement l'application sur l'écran de l'AYN Thor via ADB :
+              Applications détectées sur votre AYN Thor (lance directement sur la console via ADB) :
             </p>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <button class="btn" onclick="launchApp('org.es_de.frontend')">🚀 ES-DE Frontend</button>
+              <button class="btn primary" onclick="launchApp('rip.moth.cocoonshell')">🦋 Cocoon Dual-Screen</button>
+              <button class="btn primary" onclick="launchApp('xyz.blacksheep.mjolnir')">⚡ Mjolnir Dual-Screen</button>
+              <button class="btn" onclick="launchApp('org.azahar_emu.azahar')">🕹️ Azahar (3DS)</button>
+              <button class="btn" onclick="launchApp('dev.twilitrealm.dusk')">🌙 Citra Dusk (3DS)</button>
+              <button class="btn" onclick="launchApp('me.magnum.melondualds')">📱 melonDS Dual-Screen</button>
+              <button class="btn" onclick="launchApp('com.pokeemerald.dualscreen')">🟢 PokéEmerald DualScreen</button>
               <button class="btn" onclick="launchApp('dev.eden.eden_emulator')">🔴 Eden (Switch)</button>
-              <button class="btn" onclick="launchApp('io.github.lime3ds.android')">🕹️ Azahar / Lime3DS</button>
-              <button class="btn" onclick="launchApp('xyz.aethersx2.android')">💿 AetherSX2 (PS2)</button>
+              <button class="btn" onclick="launchApp('info.cemu.cemu')">🟦 Cemu (Wii U)</button>
               <button class="btn" onclick="launchApp('org.dolphinemu.dolphinemu')">🐬 Dolphin (GC/Wii)</button>
-              <button class="btn" onclick="launchApp('me.magnum.melonds')">📱 melonDS (NDS)</button>
-              <button class="btn" onclick="launchApp('com.retroarch.aarch64')">👾 RetroArch 64</button>
+              <button class="btn" onclick="launchApp('xyz.aethersx2.tturnip')">💿 AetherSX2 Turnip (PS2)</button>
               <button class="btn" onclick="launchApp('com.github.stenzek.duckstation')">🦆 DuckStation (PS1)</button>
-              <button class="btn" onclick="launchApp('org.ppsspp.ppsspp')">🛸 PPSSPP</button>
+              <button class="btn" onclick="launchApp('com.retroarch.aarch64')">👾 RetroArch 64</button>
+              <button class="btn" onclick="launchApp('com.dishii.zelda3')">🗡️ Zelda 3 (ALTTP)</button>
+              <button class="btn" onclick="launchApp('dev.picori.tmc')">🍀 Zelda Minish Cap</button>
+              <button class="btn" onclick="launchApp('com.example.pokerogueoffline')">🔥 PokéRogue Offline</button>
+              <button class="btn" onclick="launchApp('eu.pokemmo.client')">🌐 PokéMMO</button>
+              <button class="btn" onclick="launchApp('aenu.aps3e')">🎮 aPS3e (PS3)</button>
               <button class="btn" onclick="launchApp('com.android.settings')">⚙️ Paramètres Android</button>
             </div>
           </div>
@@ -623,15 +645,15 @@
           <div class="panel-card">
             <h2>📶 Connexion ADB Sans Fil & Pont USB</h2>
             <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-              <button class="btn primary" onclick="adbAction('scan')">🔍 Scanner le Wi-Fi local (port 5555)</button>
-              <button class="btn success" onclick="adbAction('tcpip')">⚡ Activer ADB Wi-Fi permanent (USB → 5555)</button>
+              <button class="btn primary" onclick="adbAction('scan')">🔍 Scanner le Wi-Fi local (mDNS / 5555)</button>
+              <button class="btn success" onclick="adbAction('tcpip')">⚡ Activer ADB Wi-Fi (192.168.1.192)</button>
             </div>
             <div class="input-row">
-              <input type="text" id="adb-ip-input" class="text-input" placeholder="IP:Port AYN Thor (ex: 192.168.1.145:5555)" />
+              <input type="text" id="adb-ip-input" class="text-input" placeholder="IP:Port AYN Thor (ex: 192.168.1.192:5555)" />
               <button class="btn" onclick="adbConnectManual()">🔌 Connecter</button>
             </div>
             <div class="input-row">
-              <input type="text" id="adb-pair-addr" class="text-input" placeholder="IP:Port Jumelage Android 11+" />
+              <input type="text" id="adb-pair-addr" class="text-input" placeholder="IP:Port Jumelage (optionnel via mDNS)" />
               <input type="text" id="adb-pair-code" class="text-input" style="max-width:120px;" placeholder="Code 6 ch." />
               <button class="btn" onclick="adbPairManual()">🔗 Jumeler</button>
             </div>
@@ -665,7 +687,7 @@
           <span>🎮 Catalogue ROMs & BIOS sur le Mac mini (`/Volumes/GamingSSD/Games/ROMs`)</span>
         </h2>
         <p style="margin:0 0 14px;font-size:0.84rem;color:var(--text-muted);">
-          Cliquez sur « ⬆️ Envoyer sur AYN Thor » pour pousser un jeu ou un dossier complet depuis le SSD du Mac mini vers la carte `/sdcard/ROMs/` de votre AYN Thor.
+          Cliquez sur « ⬆️ Synchroniser » pour pousser un jeu ou un dossier complet depuis le SSD du Mac mini vers votre AYN Thor.
         </p>
         <div class="cards-grid" id="roms-grid"></div>
       </div>
@@ -688,19 +710,21 @@
     <section id="tab-explorer" class="tab-panel">
       <div class="panel-card">
         <h2>
-          <span>🗂️ Explorateur Direct `/sdcard` (AYN Thor)</span>
-          <div style="display:flex;gap:8px;">
-            <button class="btn" onclick="browseSdcard('/sdcard')">Racine /sdcard</button>
-            <button class="btn" onclick="browseSdcard('/sdcard/ROMs')">/sdcard/ROMs</button>
-            <button class="btn" onclick="browseSdcard('/sdcard/Download')">/sdcard/Download</button>
+          <span>🗂️ Explorateur Direct Stockage Interne (227 Go) & Carte MicroSD (512 Go)</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn primary" onclick="browseSdcard('/sdcard')">📱 Interne (/sdcard)</button>
+            <button class="btn primary" onclick="browseSdcard('/storage/6531-3035')">💾 MicroSD 512 Go (/storage/6531-3035)</button>
+            <button class="btn" onclick="browseSdcard('/storage/6531-3035/ROMs')">🎮 ROMs MicroSD</button>
+            <button class="btn" onclick="browseSdcard('/sdcard/driver')">⚡ Drivers Turnip (/sdcard/driver)</button>
+            <button class="btn" onclick="browseSdcard('/sdcard/Download')">📥 /sdcard/Download</button>
           </div>
         </h2>
         <div class="input-row" style="margin-bottom:14px;">
-          <input type="text" id="fs-path-input" class="text-input" value="/sdcard" />
+          <input type="text" id="fs-path-input" class="text-input" value="/storage/6531-3035" />
           <button class="btn primary" onclick="browseSdcard(document.getElementById('fs-path-input').value)">📂 Ouvrir</button>
         </div>
         <div id="fs-entries-box" style="font-size:0.85rem;color:var(--text-muted);">
-          Connectez ADB pour parcourir en direct le stockage de l'AYN Thor.
+          Chargement du stockage de l'AYN Thor…
         </div>
       </div>
     </section>
@@ -805,15 +829,16 @@
         dotAdb.className = "dot ok";
         lblAdb.textContent = `ADB : Actif (${adb.transport.toUpperCase()} ${adb.serial})`;
         diagBox.className = "diag-banner ready";
-        document.getElementById("diag-title").innerHTML = "✅ AYN Thor connectée en ADB — Contrôle à distance & Synchronisation 100 % opérationnels";
+        document.getElementById("diag-title").innerHTML = "✅ AYN Thor connectée en ADB — Double Écran OLED & Synchronisation 100 % opérationnels";
         document.getElementById("diag-desc").innerHTML =
           `Connectée via <strong>${adb.transport.toUpperCase()} (${adb.serial})</strong>` +
           (adb.wifiIp ? ` · IP Wi-Fi : <code>${adb.wifiIp}</code>` : "") +
           (adb.battery !== null ? ` · Batterie : <strong>${adb.battery}%</strong>` : "") +
-          (adb.storage ? ` · Stockage /sdcard : <strong>${adb.storage.avail} libres sur ${adb.storage.total}</strong>` : "");
+          (adb.storage ? ` · Interne (/sdcard) : <strong>${adb.storage.avail} libres / ${adb.storage.total}</strong>` : "") +
+          (adb.sdCard ? ` · MicroSD (6531-3035) : <strong>${adb.sdCard.avail} libres / ${adb.sdCard.total}</strong>` : "");
         document.getElementById("diag-steps").style.display = "none";
         if (adb.battery !== null) {
-          document.getElementById("kpi-battery").textContent = `Batterie AYN Thor : ${adb.battery}%`;
+          document.getElementById("kpi-battery").textContent = `Batterie : ${adb.battery}% · MicroSD : ${adb.sdCard ? adb.sdCard.avail + ' libres' : 'Active'}`;
         }
       } else if (adb.unauthorized) {
         dotAdb.className = "dot warn";
@@ -966,26 +991,42 @@
       renderInventory();
     }
 
+    let DISPLAY_MODE = "both";
+
+    function setDisplayMode(mode) {
+      DISPLAY_MODE = mode;
+      const topStage = document.getElementById("screen-stage-top");
+      const botStage = document.getElementById("screen-stage-bottom");
+      topStage.style.display = (mode === "both" || mode === "top") ? "flex" : "none";
+      botStage.style.display = (mode === "both" || mode === "bottom") ? "flex" : "none";
+      botStage.style.maxWidth = mode === "bottom" ? "100%" : "72%";
+      refreshScreen();
+    }
+
+    function loadSingleScreen(disp) {
+      const img = document.getElementById("live-screen-" + disp);
+      const ph = document.getElementById("screen-placeholder-" + disp);
+      const url = `${API_BASE}/api/screen.png?display=${disp}&t=${Date.now()}`;
+      const probe = new Image();
+      probe.onload = () => {
+        img.src = url;
+        img.style.display = "block";
+        if (ph) ph.style.display = "none";
+      };
+      probe.src = url;
+    }
+
     async function refreshScreen() {
       if (!API_BASE) {
         showToast("Daemon Mac mini non joignable.");
         return;
       }
-      const img = document.getElementById("live-screen-img");
-      const ph = document.getElementById("screen-placeholder");
-      const url = `${API_BASE}/api/screen.png?t=${Date.now()}`;
-      const probe = new Image();
-      probe.onload = () => {
-        img.src = url;
-        img.style.display = "block";
-        ph.style.display = "none";
-      };
-      probe.onerror = () => {
-        if (!STREAM_TIMER) {
-          showToast("Écran indisponible : activez le Débogage USB sur l'AYN Thor.");
-        }
-      };
-      probe.src = url;
+      if (DISPLAY_MODE === "both" || DISPLAY_MODE === "top") {
+        loadSingleScreen("top");
+      }
+      if (DISPLAY_MODE === "both" || DISPLAY_MODE === "bottom") {
+        loadSingleScreen("bottom");
+      }
     }
 
     function toggleAutoStream(on) {
@@ -993,21 +1034,21 @@
       STREAM_TIMER = null;
       if (on) {
         refreshScreen();
-        STREAM_TIMER = setInterval(refreshScreen, 850);
+        STREAM_TIMER = setInterval(refreshScreen, 1100);
       }
     }
 
-    async function handleScreenTap(ev) {
-      const img = document.getElementById("live-screen-img");
-      if (img.style.display !== "block" || !API_BASE) return;
+    async function handleScreenTap(ev, disp = "top") {
+      const img = document.getElementById("live-screen-" + disp);
+      if (!img || img.style.display !== "block" || !API_BASE) return;
       const rect = img.getBoundingClientRect();
       const relX = (ev.clientX - rect.left) / rect.width;
       const relY = (ev.clientY - rect.top) / rect.height;
-      const natW = img.naturalWidth || 1920;
+      const natW = img.naturalWidth || (disp === "bottom" ? 1240 : 1920);
       const natH = img.naturalHeight || 1080;
       const x = Math.round(relX * natW);
       const y = Math.round(relY * natH);
-      await sendInput({ type: "tap", x, y });
+      await sendInput({ type: "tap", display: disp, x, y });
     }
 
     async function sendInput(payload) {

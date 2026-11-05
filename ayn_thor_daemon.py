@@ -152,6 +152,19 @@ def get_live_status():
                             "percent": cols[4],
                         }
 
+                _, sd_out, _ = run_cmd([ADB_BIN, "-s", active, "shell", "df", "-h", "/storage/6531-3035"], timeout=2)
+                sd_lines = [l.strip() for l in sd_out.splitlines() if l.strip()]
+                if len(sd_lines) >= 2:
+                    scols = sd_lines[-1].split()
+                    if len(scols) >= 5:
+                        status["adb"]["sdCard"] = {
+                            "mount": "/storage/6531-3035",
+                            "total": scols[1],
+                            "used": scols[2],
+                            "avail": scols[3],
+                            "percent": scols[4],
+                        }
+
                 _, ip_out, _ = run_cmd([ADB_BIN, "-s", active, "shell", "ip", "route"], timeout=2)
                 m_ip = re.search(r"src\s+(\d+\.\d+\.\d+\.\d+)", ip_out)
                 if m_ip:
@@ -161,10 +174,7 @@ def get_live_status():
                 if ver_out:
                     status["adb"]["androidVersion"] = ver_out
 
-                _, wm_out, _ = run_cmd([ADB_BIN, "-s", active, "shell", "wm", "size"], timeout=2)
-                m_wm = re.search(r"(\d+x\d+)", wm_out)
-                if m_wm:
-                    status["adb"]["resolution"] = m_wm.group(1)
+                status["adb"]["resolution"] = "1920x1080 (Haut) + 1240x1080 (Bas)"
 
     return status
 
@@ -283,11 +293,13 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 self._send_cors()
                 self.end_headers()
                 return
+            disp = qs.get("display", ["top"])[0]
+            disp_id = "4630946482288158084" if disp == "bottom" else "4630946441858561667"
             try:
                 raw_png = subprocess.check_output(
-                    [ADB_BIN, "exec-out", "screencap", "-p"],
+                    [ADB_BIN, "exec-out", "screencap", "-d", disp_id, "-p"],
                     stderr=subprocess.DEVNULL,
-                    timeout=4,
+                    timeout=5,
                 )
                 self.send_response(200)
                 self.send_header("Content-Type", "image/png")
@@ -468,10 +480,12 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
             if not st["adb"]["ready"]:
                 return self._send_json({"ok": False, "error": "ADB non connecté sur l'AYN Thor."})
             kind = body.get("type", "")
+            disp = body.get("display", "top")
+            d_flag = "4" if disp == "bottom" else "0"
             if kind == "tap":
                 x = int(body.get("x", 0))
                 y = int(body.get("y", 0))
-                rc, out, err = run_cmd([ADB_BIN, "shell", "input", "tap", str(x), str(y)], timeout=3)
+                rc, out, err = run_cmd([ADB_BIN, "shell", "input", "-d", d_flag, "tap", str(x), str(y)], timeout=3)
                 return self._send_json({"ok": rc == 0, "output": out or err})
             elif kind == "swipe":
                 x1 = int(body.get("x1", 960))
@@ -480,7 +494,7 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 y2 = int(body.get("y2", 200))
                 dur = int(body.get("duration", 250))
                 rc, out, err = run_cmd(
-                    [ADB_BIN, "shell", "input", "swipe", str(x1), str(y1), str(x2), str(y2), str(dur)],
+                    [ADB_BIN, "shell", "input", "-d", d_flag, "swipe", str(x1), str(y1), str(x2), str(y2), str(dur)],
                     timeout=4,
                 )
                 return self._send_json({"ok": rc == 0, "output": out or err})
@@ -558,23 +572,16 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
 
 
 def usb_adb_watchdog():
-    """Active automatiquement `adb tcpip 5555` dès que l'AYN Thor apparaît en USB ADB."""
-    last_usb_adb = False
+    """Maintient la session ADB USB active (auto-reconnect si l'état reste unauthorized après réveil)."""
     while True:
         try:
             st = get_live_status()
-            if st["adb"]["ready"] and st["adb"]["transport"] == "usb" and not last_usb_adb:
-                last_usb_adb = True
-                wifi_ip = st["adb"].get("wifiIp")
-                run_cmd([ADB_BIN, "tcpip", "5555"], timeout=5)
-                if wifi_ip:
-                    time.sleep(2)
-                    run_cmd([ADB_BIN, "connect", f"{wifi_ip}:5555"], timeout=5)
-            elif not st["adb"]["ready"]:
-                last_usb_adb = False
+            if st["adb"].get("unauthorized") and not st["adb"]["ready"]:
+                with ADB_LOCK:
+                    run_cmd([ADB_BIN, "reconnect"], timeout=4)
         except Exception:
             pass
-        time.sleep(6)
+        time.sleep(8)
 
 
 def save_and_push_endpoint(tunnel_url: str) -> None:

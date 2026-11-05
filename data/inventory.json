@@ -1,5 +1,5 @@
 {
-  "generatedAt": "05/11/2026 10:06:40",
+  "generatedAt": "05/11/2026 12:16:56",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -12,11 +12,17 @@
     "productName": "QCS_KALAMAP-HDK_CID:0437_SN:6320BBAD",
     "serial": "ef1ee24",
     "idVendor": 6353,
-    "idProduct": 20193,
-    "usbMode": "mtp_only_no_adb",
-    "usbModeLabel": "MTP seul (0x4EE1) — Débogage USB inactif ou écran verrouillé",
-    "adbReady": false,
-    "adbDevices": []
+    "idProduct": 20194,
+    "usbMode": "adb_enabled",
+    "usbModeLabel": "MTP + ADB actif (0x4ee2)",
+    "adbReady": true,
+    "adbDevices": [
+      {
+        "id": "ef1ee24",
+        "state": "device",
+        "raw": "ef1ee24                device usb:17825792X product:kalama model:AYN_Thor device:kalama transport_id:5"
+      }
+    ]
   },
   "summary": {
     "saveFoldersCount": 23,
