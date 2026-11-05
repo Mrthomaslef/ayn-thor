@@ -696,6 +696,29 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
 
         if path == "/api/nxbrew-download":
             action = body.get("action", "download")
+            jobs_dir = os.path.join(DATA_DIR, "nxbrew_jobs")
+            os.makedirs(jobs_dir, exist_ok=True)
+            if action == "clear":
+                target_id = body.get("jobId", "").strip()
+                removed = 0
+                for fn in os.listdir(jobs_dir):
+                    if not fn.endswith(".json"):
+                        continue
+                    if target_id and fn != f"{target_id}.json":
+                        continue
+                    fp = os.path.join(jobs_dir, fn)
+                    try:
+                        if not target_id:
+                            with open(fp, "r", encoding="utf-8") as jf:
+                                jd = json.load(jf)
+                            if jd.get("status") in ("starting", "resolving", "downloading", "extracting"):
+                                continue
+                        os.remove(fp)
+                        removed += 1
+                    except Exception:
+                        pass
+                return self._send_json({"ok": True, "removed": removed})
+
             mirror_url = body.get("url", "").strip()
             game_title = body.get("title", "Switch Game").strip()
             sec_type = body.get("type", "Base Game").strip()
@@ -711,9 +734,6 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                     except Exception:
                         pass
                 return self._send_json({"ok": False, "error": err or out or "Impossible de déverrouiller le lien."})
-
-            jobs_dir = os.path.join(DATA_DIR, "nxbrew_jobs")
-            os.makedirs(jobs_dir, exist_ok=True)
             job_id = f"nx-{int(time.time() * 1000)}"
             state_file = os.path.join(jobs_dir, f"{job_id}.json")
             init_state = {

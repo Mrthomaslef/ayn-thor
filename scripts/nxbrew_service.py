@@ -272,8 +272,15 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
         dest_archive = os.path.join(tmp_dir, filename)
 
         s = cffi_requests.Session()
-        with s.get(direct_url, impersonate="chrome", stream=True, timeout=120) as resp:
+        resp = s.get(direct_url, impersonate="chrome", stream=True, timeout=120)
+        try:
             resp.raise_for_status()
+            ctype = (resp.headers.get("Content-Type") or resp.headers.get("content-type") or "").lower()
+            if "text/html" in ctype:
+                raise RuntimeError(
+                    f"Ce miroir ({urlparse(host_url).netloc}) demande un Captcha navigateur. "
+                    f"Touchez 🔓 pour l'ouvrir dans Safari ({host_url}) ou choisissez FileKeeper."
+                )
             total = int(resp.headers.get("Content-Length") or resp.headers.get("content-length") or 0)
             state["totalBytes"] = total
             downloaded = 0
@@ -300,6 +307,11 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
                             f"({pct:.1f}% · {speed:.1f} Mo/s)"
                         )
                         update_job_state(state_file, state)
+        finally:
+            try:
+                resp.close()
+            except Exception:
+                pass
 
         state["downloadedBytes"] = downloaded
         state["percent"] = 100.0
