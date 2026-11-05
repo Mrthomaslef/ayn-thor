@@ -553,12 +553,89 @@
 
     <nav class="tabs-bar">
       <button class="tab-btn active" onclick="switchTab('remote', this)">📡 Écran Live & Télécommande</button>
+      <button class="tab-btn" onclick="switchTab('nxbrew', this)">📥 NXBrew Switch (7 772 Jeux)</button>
       <button class="tab-btn" onclick="switchTab('tvgames', this)">📺 Télé & Jeux Mac mini (82 Jeux)</button>
       <button class="tab-btn" onclick="switchTab('saves', this)">💾 Sauvegardes (23 Dossiers)</button>
       <button class="tab-btn" onclick="switchTab('roms', this)">🎮 ROMs & BIOS (103 Go)</button>
       <button class="tab-btn" onclick="switchTab('presets', this)">⚡ Drivers Turnip & Presets</button>
       <button class="tab-btn" onclick="switchTab('explorer', this)">🗂️ Explorateur /sdcard</button>
     </nav>
+
+    <!-- TAB: NXBREW SWITCH DIRECT DOWNLOADER -->
+    <section id="tab-nxbrew" class="tab-panel">
+      <div class="panel-card" style="border-color:rgba(56,189,248,0.45);background:linear-gradient(145deg,rgba(12,74,110,0.26),rgba(15,23,42,0.96));">
+        <h2>
+          <span>📥 NXBrew Direct Studio — Catalogue Switch (7 772 Jeux NSP / XCI / Updates / DLC)</span>
+          <span id="nxbrew-stats-badge" style="font-size:0.76rem;padding:5px 10px;border-radius:999px;background:rgba(56,189,248,0.18);color:var(--accent);border:1px solid rgba(56,189,248,0.4);">
+            ⚡ Sans compte externe · Déverrouillage ouo.io + Extraction 7zz auto
+          </span>
+        </h2>
+        <p style="margin:0 0 12px;font-size:0.84rem;color:#cbd5e1;line-height:1.5;">
+          Recherchez n'importe quel jeu Nintendo Switch parmi les <strong>7 772 titres indexés sur NXBrew</strong>. Le Mac mini déverrouille automatiquement les liens courts (<code>ouo.io</code>), récupère le flux CDN direct haute vitesse (recommandé : <strong>FileKeeper</strong>), télécharge et extrait automatiquement l'archive <code>.rar</code>/<code>.7z</code> dans <code>/Volumes/GamingSSD/Games/ROMs/Switch</code> pour Ryujinx et votre AYN Thor (Eden).
+        </p>
+
+        <div class="input-row" style="margin-bottom:12px;">
+          <input
+            type="text"
+            id="nxbrew-search-input"
+            class="text-input"
+            placeholder="Rechercher un jeu Switch (ex: Mario, Zelda, Pokemon, Metroid, Xenoblade, Final Fantasy)…"
+            oninput="debounceNxbrewSearch()"
+          />
+          <button class="btn primary" onclick="searchNxbrewCatalog()">🔍 Rechercher</button>
+          <input
+            type="text"
+            id="nxbrew-custom-url"
+            class="text-input"
+            style="max-width:340px;"
+            placeholder="Ou coller une URL nxbrew.net directe…"
+          />
+          <button class="btn" onclick="inspectNxbrewCustomUrl()">🔗 Inspecter URL</button>
+        </div>
+
+        <div class="filter-row" id="nxbrew-format-chips">
+          <button class="chip active" onclick="setNxbrewFormat('all', this)">Tous (7 772)</button>
+          <button class="chip" onclick="setNxbrewFormat('nsp', this)">NSP (eShop)</button>
+          <button class="chip" onclick="setNxbrewFormat('xci', this)">XCI (Cartouche)</button>
+          <button class="chip" onclick="setNxbrewFormat('update', this)">Avec Update</button>
+          <button class="chip" onclick="setNxbrewFormat('dlc', this)">Avec DLC</button>
+        </div>
+
+        <!-- Active Downloads Queue -->
+        <div id="nxbrew-jobs-panel" style="margin-top:12px;display:none;">
+          <h3 style="font-size:0.9rem;margin:0 0 8px;color:var(--accent);">⚡ Téléchargements & Extractions en cours sur le Mac mini</h3>
+          <div id="nxbrew-jobs-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel-card">
+          <h2>
+            <span>🎮 Résultats du Catalogue NXBrew</span>
+            <span id="nxbrew-results-count" style="font-size:0.78rem;color:var(--text-muted);">Chargement…</span>
+          </h2>
+          <div id="nxbrew-catalog-list" style="display:flex;flex-direction:column;gap:8px;max-height:680px;overflow-y:auto;padding-right:4px;">
+            Recherchez un titre ci-dessus…
+          </div>
+        </div>
+
+        <div>
+          <div class="panel-card" id="nxbrew-inspector-card">
+            <h2>📦 Fiche du Jeu & Liens de Téléchargement Direct</h2>
+            <div id="nxbrew-inspector-body" style="font-size:0.84rem;color:var(--text-muted);">
+              Cliquez sur <strong>« 📦 Choisir & Télécharger »</strong> en face d'un jeu dans la liste à gauche pour extraire ses liens (Base Game, Update, DLC) et lancer le téléchargement sur votre Mac mini.
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <h2>💾 Jeux Switch déjà présents sur votre Mac mini (`/Volumes/GamingSSD/Games/ROMs/Switch`)</h2>
+            <div id="nxbrew-installed-list" style="font-size:0.8rem;color:#cbd5e1;display:flex;flex-direction:column;gap:6px;">
+              Chargement…
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- TAB 1: REMOTE SCREEN & ADB CONTROL -->
     <section id="tab-remote" class="tab-panel active">
@@ -622,8 +699,8 @@
               Applications détectées sur votre AYN Thor (lance directement sur la console via ADB) :
             </p>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <button class="btn primary" onclick="launchApp('com.botwrecompandroid')">🏹 BotW Recomp (Natif)</button>
-              <button class="btn primary" onclick="launchApp('dev.legacy.eden_emulator')">🗺️ BotW Duo (2 Écrans)</button>
+              <button class="btn primary" onclick="launchApp('com.botwrecomp.android')">🏹 BotW Recomp (Natif)</button>
+              <button class="btn primary" onclick="launchApp('dev.igawa6.edenduo')">🗺️ BotW Duo (2 Écrans)</button>
               <button class="btn primary" onclick="launchApp('org.wwhdrecomp.wwhd')">⛵ Wind Waker HD Recomp</button>
               <button class="btn primary" onclick="launchApp('rip.moth.cocoonshell')">🦋 Cocoon Dual-Screen</button>
               <button class="btn primary" onclick="launchApp('xyz.blacksheep.mjolnir')">⚡ Mjolnir Dual-Screen</button>
@@ -791,6 +868,10 @@
       window._toastTimer = setTimeout(() => { el.style.display = "none"; }, 4200);
     }
 
+    let NXBREW_FORMAT = "all";
+    let NXBREW_SEARCH_TIMER = null;
+    let NXBREW_JOBS_TIMER = null;
+
     function switchTab(id, btn) {
       document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -799,6 +880,10 @@
       if (id === "explorer" && API_BASE) {
         browseSdcard(document.getElementById("fs-path-input").value);
       }
+      if (id === "nxbrew") {
+        searchNxbrewCatalog();
+        refreshNxbrewJobs();
+      }
       if (id === "tvgames" && location.protocol === "http:") {
         const ifr = document.getElementById("m4-gaming-iframe");
         const target = (location.hostname === "127.0.0.1" || location.hostname === "localhost")
@@ -806,6 +891,243 @@
           : "http://192.168.1.152:8765/";
         if (ifr && ifr.src !== target) ifr.src = target;
       }
+    }
+
+    function debounceNxbrewSearch() {
+      clearTimeout(NXBREW_SEARCH_TIMER);
+      NXBREW_SEARCH_TIMER = setTimeout(() => searchNxbrewCatalog(), 240);
+    }
+
+    function setNxbrewFormat(fmt, btn) {
+      NXBREW_FORMAT = fmt;
+      document.querySelectorAll("#nxbrew-format-chips .chip").forEach(c => c.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      searchNxbrewCatalog();
+    }
+
+    async function searchNxbrewCatalog() {
+      const q = (document.getElementById("nxbrew-search-input") || {}).value || "";
+      const listEl = document.getElementById("nxbrew-catalog-list");
+      const countEl = document.getElementById("nxbrew-results-count");
+      const instEl = document.getElementById("nxbrew-installed-list");
+      if (!API_BASE) {
+        listEl.innerHTML = "Connexion au daemon Mac mini en cours…";
+        return;
+      }
+      try {
+        const r = await fetch(`${API_BASE}/api/nxbrew-catalog?q=${encodeURIComponent(q)}&format=${NXBREW_FORMAT}&limit=100`);
+        const res = await r.json();
+        if (!res.ok) {
+          listEl.innerHTML = "Impossible de charger le catalogue NXBrew.";
+          return;
+        }
+        countEl.textContent = `${res.games.length} affichés / ${res.totalCatalog.toLocaleString("fr-FR")} jeux`;
+        if (res.installedFiles && instEl) {
+          const romFiles = res.installedFiles.filter(f => /\.(nsp|xci|nsz)$/i.test(f));
+          instEl.innerHTML = romFiles.map(fn => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:#090d16;border:1px solid var(--border);border-radius:8px;">
+              <span>✅ <strong>${fn}</strong></span>
+              <button class="btn" style="padding:4px 8px;font-size:0.72rem;" onclick="pushFile('/Volumes/GamingSSD/Games/ROMs/Switch/${fn.replace(/'/g, "\\'")}', '/storage/6531-3035/ROMs/switch/${fn.replace(/'/g, "\\'")}')">⬆️ AYN Thor</button>
+            </div>
+          `).join("") || "Aucun fichier NSP/XCI.";
+        }
+        if (res.games.length === 0) {
+          listEl.innerHTML = `<div style="padding:16px;color:var(--text-muted);">Aucun jeu trouvé pour « ${q} ».</div>`;
+          return;
+        }
+        listEl.innerHTML = res.games.map(g => {
+          const badges = [];
+          if (g.hasNsp) badges.push('<span class="sample-tag" style="background:rgba(56,189,248,0.18);color:#38bdf8;">NSP</span>');
+          if (g.hasXci) badges.push('<span class="sample-tag" style="background:rgba(168,85,247,0.2);color:#c084fc;">XCI</span>');
+          if (g.hasUpdate) badges.push('<span class="sample-tag" style="background:rgba(34,197,94,0.18);color:#4ade80;">+ Update</span>');
+          if (g.hasDlc) badges.push('<span class="sample-tag" style="background:rgba(245,158,11,0.2);color:#fbbf24;">+ DLC</span>');
+          if (g.installed) badges.push('<span class="sample-tag" style="background:rgba(34,197,94,0.3);color:#86efac;font-weight:700;">✅ Déjà sur Mac mini</span>');
+          const safeUrl = g.url.replace(/'/g, "\\'");
+          const safeTitle = g.shortName.replace(/'/g, "\\'");
+          return `
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:#0a0f1c;border:1px solid var(--border);border-radius:11px;">
+              <div style="min-width:0;flex:1;">
+                <div style="font-weight:700;font-size:0.88rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${g.title}">
+                  ${g.shortName}
+                </div>
+                <div style="font-size:0.74rem;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  ${g.title}
+                </div>
+                <div class="sample-tags" style="margin-top:5px;">${badges.join("")}</div>
+              </div>
+              <button class="btn primary" style="flex-shrink:0;padding:7px 11px;font-size:0.78rem;" onclick="inspectNxbrewGame('${safeUrl}', '${safeTitle}')">
+                📦 Choisir & Télécharger
+              </button>
+            </div>
+          `;
+        }).join("");
+      } catch (e) {
+        listEl.innerHTML = "Erreur lors de la recherche dans le catalogue.";
+      }
+    }
+
+    function inspectNxbrewCustomUrl() {
+      const url = (document.getElementById("nxbrew-custom-url") || {}).value.trim();
+      if (!url) return showToast("Collez une URL nxbrew.net à inspecter.");
+      inspectNxbrewGame(url, "Jeu NXBrew");
+    }
+
+    async function inspectNxbrewGame(url, shortTitle = "") {
+      if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
+      const bodyEl = document.getElementById("nxbrew-inspector-body");
+      bodyEl.innerHTML = `
+        <div style="padding:18px;text-align:center;color:var(--accent);">
+          <div style="font-size:1.6rem;margin-bottom:8px;">⏳</div>
+          <strong>Extraction de la fiche NXBrew en cours…</strong>
+          <p style="margin:6px 0 0;font-size:0.78rem;color:var(--text-muted);">
+            Récupération des miroirs (FileKeeper, DataNodes, 1Fichier, MultiUp) pour <em>${shortTitle || url}</em> (15 à 30s selon le serveur NXBrew)…
+          </p>
+        </div>
+      `;
+      try {
+        const r = await fetch(`${API_BASE}/api/nxbrew-info?url=${encodeURIComponent(url)}`);
+        const res = await r.json();
+        if (!res.ok) {
+          bodyEl.innerHTML = `<div style="color:var(--danger);padding:12px;">❌ ${res.error || "Erreur lors de la lecture de la page."}</div>`;
+          return;
+        }
+        const meta = res.meta || {};
+        const metaBadges = Object.entries(meta).map(([k, v]) => `<span class="sample-tag"><strong>${k}:</strong> ${v}</span>`).join("");
+        const safeGameTitle = (res.title || shortTitle || "Switch Game").replace(/'/g, "\\'");
+
+        const sectionsHtml = (res.sections || []).map(sec => {
+          const safeSecType = (sec.type || "Base Game").replace(/'/g, "\\'");
+          const mirrorsHtml = (sec.mirrors || []).map(m => {
+            const isFast = /filekeeper/i.test(m.host);
+            const safeMirrorUrl = m.url.replace(/'/g, "\\'");
+            return `
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <button
+                  class="btn ${isFast ? 'primary' : ''}"
+                  style="padding:7px 11px;font-size:0.78rem;"
+                  onclick="startNxbrewDownload('${safeMirrorUrl}', '${safeGameTitle}', '${safeSecType}')"
+                  title="${isFast ? 'Recommandé : Téléchargement CDN direct + extraction 7zz automatique' : 'Télécharger via ce miroir'}"
+                >
+                  ⬇️ ${m.host} ${isFast ? '⚡ (Direct Auto)' : ''}
+                </button>
+                <button
+                  class="btn"
+                  style="padding:7px 9px;font-size:0.74rem;"
+                  onclick="unlockNxbrewLink('${safeMirrorUrl}')"
+                  title="Déverrouiller uniquement le lien ouo.io pour l'ouvrir dans le navigateur"
+                >
+                  🔓 Lien direct
+                </button>
+              </div>
+            `;
+          }).join("");
+
+          return `
+            <div style="margin-top:12px;padding:12px;background:#090d16;border:1px solid var(--border);border-radius:10px;">
+              <div style="font-weight:700;font-size:0.86rem;color:#e2e8f0;margin-bottom:8px;">
+                📁 ${sec.label} <span style="font-size:0.74rem;color:var(--accent);">(${sec.type})</span>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                ${mirrorsHtml || '<span style="color:var(--text-muted);">Aucun miroir détecté dans cette section.</span>'}
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        bodyEl.innerHTML = `
+          <div>
+            <div style="display:flex;gap:12px;align-items:flex-start;">
+              ${res.thumb ? `<img src="${res.thumb}" alt="" style="width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid var(--border);" />` : ""}
+              <div style="flex:1;min-width:0;">
+                <h3 style="margin:0 0 6px;font-size:0.98rem;color:var(--text);">${res.title}</h3>
+                <div class="sample-tags">${metaBadges}</div>
+                <div style="margin-top:6px;">
+                  <a href="${res.url}" target="_blank" rel="noopener" style="font-size:0.75rem;color:var(--accent);">🔗 Voir la page originale sur NXBrew.net</a>
+                </div>
+              </div>
+            </div>
+            ${sectionsHtml || '<div style="margin-top:12px;color:var(--warning);">Aucun lien de téléchargement trouvé sur cette page.</div>'}
+          </div>
+        `;
+      } catch (e) {
+        bodyEl.innerHTML = `<div style="color:var(--danger);padding:12px;">❌ Erreur réseau lors de l'extraction de la fiche.</div>`;
+      }
+    }
+
+    async function startNxbrewDownload(mirrorUrl, gameTitle, secType) {
+      if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
+      showToast(`Lancement du téléchargement direct : ${gameTitle} (${secType})…`);
+      try {
+        const r = await fetch(`${API_BASE}/api/nxbrew-download`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "download", url: mirrorUrl, title: gameTitle, type: secType }),
+        });
+        const res = await r.json();
+        if (!res.ok) return showToast(res.error || "Erreur au lancement du téléchargement.");
+        showToast(`Téléchargement démarré (${res.jobId}) ! Suivez la barre de progression en haut.`);
+        refreshNxbrewJobs();
+      } catch (e) {
+        showToast("Erreur réseau lors du lancement du téléchargement.");
+      }
+    }
+
+    async function unlockNxbrewLink(mirrorUrl) {
+      if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
+      showToast("Déverrouillage du lien ouo.io en cours (5-10s)…");
+      try {
+        const r = await fetch(`${API_BASE}/api/nxbrew-download`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "resolve", url: mirrorUrl }),
+        });
+        const res = await r.json();
+        if (!res.ok) return showToast(res.error || "Impossible de déverrouiller ce lien.");
+        const target = res.directUrl || res.hostUrl;
+        showToast(`Lien déverrouillé : ${target}`);
+        window.open(target, "_blank", "noopener");
+      } catch (e) {
+        showToast("Erreur lors du déverrouillage du lien.");
+      }
+    }
+
+    async function refreshNxbrewJobs() {
+      if (!API_BASE) return;
+      try {
+        const r = await fetch(`${API_BASE}/api/nxbrew-jobs`);
+        const res = await r.json();
+        const panel = document.getElementById("nxbrew-jobs-panel");
+        const list = document.getElementById("nxbrew-jobs-list");
+        if (!res.ok || !res.jobs || res.jobs.length === 0) {
+          if (panel) panel.style.display = "none";
+          return;
+        }
+        panel.style.display = "block";
+        list.innerHTML = res.jobs.map(j => {
+          const pct = Number(j.percent || 0).toFixed(1);
+          const isDone = j.status === "done";
+          const isErr = j.status === "error";
+          const barColor = isDone ? "#22c55e" : isErr ? "#ef4444" : "#38bdf8";
+          return `
+            <div style="padding:10px 12px;background:#080c14;border:1px solid var(--border);border-radius:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;font-weight:700;">
+                <span>${j.gameTitle} <span style="color:var(--accent);">(${j.sectionType || 'Base Game'})</span></span>
+                <span style="color:${barColor};">${(j.status || '').toUpperCase()} · ${pct}% ${j.speedMBps ? `(${j.speedMBps} Mo/s)` : ''}</span>
+              </div>
+              <div style="width:100%;height:7px;background:#1e293b;border-radius:999px;overflow:hidden;margin:6px 0;">
+                <div style="width:${Math.min(100, Math.max(2, j.percent || 0))}%;height:100%;background:${barColor};transition:width 0.3s ease;"></div>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">${j.message || ''}</div>
+            </div>
+          `;
+        }).join("");
+
+        const anyActive = res.jobs.some(j => ["starting", "resolving", "downloading", "extracting"].includes(j.status));
+        clearTimeout(NXBREW_JOBS_TIMER);
+        if (anyActive) {
+          NXBREW_JOBS_TIMER = setTimeout(refreshNxbrewJobs, 1500);
+        }
+      } catch (_) {}
     }
 
     async function resolveBackend() {

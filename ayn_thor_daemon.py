@@ -303,6 +303,92 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                     )
             return self._send_json({"ok": rc == 0, "path": target, "entries": entries, "error": err})
 
+        if path == "/api/nxbrew-catalog":
+            cat_file = os.path.join(DATA_DIR, "nxbrew_catalog.json")
+            if not os.path.exists(cat_file):
+                return self._send_json({"ok": False, "games": [], "total": 0})
+            q = qs.get("q", [""])[0].strip().lower()
+            fmt = qs.get("format", ["all"])[0].strip().lower()
+            limit = min(300, max(10, int(qs.get("limit", ["80"])[0])))
+            with open(cat_file, "r", encoding="utf-8") as f:
+                cat = json.load(f)
+            all_games = cat.get("games", [])
+            sw_dir = os.path.join(ROMS_ROOT, "Switch")
+            installed_files = []
+            try:
+                if os.path.isdir(sw_dir):
+                    installed_files = sorted(os.listdir(sw_dir))
+            except Exception:
+                # Fallback to inventory.json if LaunchAgent lacks TCC Removable Volumes permission
+                if os.path.exists(INVENTORY_JSON):
+                    try:
+                        with open(INVENTORY_JSON, "r", encoding="utf-8") as inv_f:
+                            inv_data = json.load(inv_f)
+                        for r_sys in inv_data.get("roms", []):
+                            if r_sys.get("id", "").lower() == "switch":
+                                installed_files = [g.get("name", "") for g in r_sys.get("games", []) if g.get("name")]
+                                break
+                    except Exception:
+                        pass
+            installed_names = [fn.lower() for fn in installed_files if fn.lower().endswith((".nsp", ".xci", ".nsz"))]
+
+            results = []
+            for g in all_games:
+                if fmt == "nsp" and not g.get("hasNsp"):
+                    continue
+                if fmt == "xci" and not g.get("hasXci"):
+                    continue
+                if fmt == "update" and not g.get("hasUpdate"):
+                    continue
+                if fmt == "dlc" and not g.get("hasDlc"):
+                    continue
+                if q and q not in g["title"].lower() and q not in g["shortName"].lower():
+                    continue
+                sn_clean = re.sub(r"[^a-z0-9]+", "", g["shortName"].lower())
+                is_inst = any(sn_clean and len(sn_clean) >= 4 and sn_clean in re.sub(r"[^a-z0-9]+", "", fn) for fn in installed_names)
+                item = dict(g)
+                item["installed"] = is_inst
+                results.append(item)
+                if len(results) >= limit:
+                    break
+            return self._send_json(
+                {
+                    "ok": True,
+                    "totalCatalog": cat.get("count", len(all_games)),
+                    "installedCount": len(installed_names),
+                    "installedFiles": installed_files,
+                    "games": results,
+                }
+            )
+
+        if path == "/api/nxbrew-info":
+            game_url = qs.get("url", [""])[0].strip()
+            if not game_url.startswith("https://nxbrew."):
+                return self._send_json({"ok": False, "error": "URL NXBrew invalide."})
+            script = os.path.join(ROOT_DIR, "scripts", "nxbrew_service.py")
+            rc, out, err = run_cmd([script, "info", "--url", game_url], timeout=95)
+            if rc == 0 and out:
+                try:
+                    return self._send_json(json.loads(out))
+                except Exception:
+                    pass
+            return self._send_json({"ok": False, "error": err or out or "Impossible de charger la fiche du jeu."})
+
+        if path == "/api/nxbrew-jobs":
+            jobs_dir = os.path.join(DATA_DIR, "nxbrew_jobs")
+            os.makedirs(jobs_dir, exist_ok=True)
+            jobs = []
+            for fn in sorted(os.listdir(jobs_dir), reverse=True)[:15]:
+                if fn.endswith(".json"):
+                    try:
+                        with open(os.path.join(jobs_dir, fn), "r", encoding="utf-8") as jf:
+                            jd = json.load(jf)
+                            jd["jobId"] = fn[:-5]
+                            jobs.append(jd)
+                    except Exception:
+                        pass
+            return self._send_json({"ok": True, "jobs": jobs})
+
         if path == "/api/screen.png" or path == "/api/screen.jpg":
             st = get_live_status()
             if not st["adb"]["ready"]:
@@ -576,6 +662,59 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 except Exception:
                     pass
             return self._send_json({"ok": False, "error": err or out or "Erreur lors de la synchronisation."})
+
+        if path == "/api/nxbrew-download":
+            action = body.get("action", "download")
+            mirror_url = body.get("url", "").strip()
+            game_title = body.get("title", "Switch Game").strip()
+            sec_type = body.get("type", "Base Game").strip()
+            if not mirror_url:
+                return self._send_json({"ok": False, "error": "URL du miroir manquante."})
+
+            script = os.path.join(ROOT_DIR, "scripts", "nxbrew_service.py")
+            if action == "resolve":
+                rc, out, err = run_cmd([script, "resolve", "--url", mirror_url], timeout=45)
+                if rc == 0 and out:
+                    try:
+                        return self._send_json(json.loads(out))
+                    except Exception:
+                        pass
+                return self._send_json({"ok": False, "error": err or out or "Impossible de déverrouiller le lien."})
+
+            jobs_dir = os.path.join(DATA_DIR, "nxbrew_jobs")
+            os.makedirs(jobs_dir, exist_ok=True)
+            job_id = f"nx-{int(time.time() * 1000)}"
+            state_file = os.path.join(jobs_dir, f"{job_id}.json")
+            init_state = {
+                "jobId": job_id,
+                "status": "starting",
+                "gameTitle": game_title,
+                "sectionType": sec_type,
+                "mirrorUrl": mirror_url,
+                "percent": 0.0,
+                "speedMBps": 0.0,
+                "message": "Initialisation du téléchargement direct…",
+            }
+            with open(state_file, "w", encoding="utf-8") as sf:
+                json.dump(init_state, sf, ensure_ascii=False, indent=2)
+
+            subprocess.Popen(
+                [
+                    script,
+                    "download",
+                    "--url",
+                    mirror_url,
+                    "--title",
+                    game_title,
+                    "--type",
+                    sec_type,
+                    "--state-file",
+                    state_file,
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            return self._send_json({"ok": True, "jobId": job_id, "state": init_state})
 
         if path == "/api/push-file":
             st = get_live_status()
