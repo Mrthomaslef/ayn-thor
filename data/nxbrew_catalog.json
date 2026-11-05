@@ -1,6 +1,6 @@
 {
   "updatedAt": "2026-11-05",
-  "count": 7772,
+  "count": 7767,
   "games": [
     {
       "title": ".cat 2 Switch NSP (eShop)",
@@ -1827,7 +1827,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Absurdika: Rebuild Switch NSP + Update (eShop)",
@@ -2133,7 +2140,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": false,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0.0)",
+        "aynTool": "nx2android v0.1.3 (Natif ARM64 Vulkan 60fps, v1.0.0)",
+        "note": "60 fps (même en combat 3D) sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Advent Calendar: Puzzle Edition Switch NSP (eShop)",
@@ -4734,7 +4748,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal, v1.2.1 / v3.0.1)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal, v1.2.1 / v3.0.1)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Animal Doctor Switch NSP + Update (eShop)",
@@ -4941,7 +4962,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0.10)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v1.0.10)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "ANIMALITY Switch NSP (eShop)",
@@ -10476,7 +10504,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.0.1)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.0.1)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Astral Flux Switch NSP + Update (eShop)",
@@ -11196,7 +11231,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Baby Phone 3 In 1 For Kids,  Puzzle, Animal, Funny, Parent, Coloring Switch NSP (eShop)",
@@ -11601,7 +11643,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Baldo\nThe Guardian Owls Switch NSP + Update (eShop)",
@@ -11673,7 +11722,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Balloon Flight Switch NSP (eShop)",
@@ -12141,7 +12197,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": false,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Basureroes꞉ Invasion Switch NSP + Update (eShop)",
@@ -12204,7 +12267,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Batman: The Enemy Within Switch NSP + Update + DLC (eShop)",
@@ -12465,7 +12535,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Bayonetta™ 3 Switch XCI + Update",
@@ -12474,7 +12551,14 @@
       "hasNsp": false,
       "hasXci": true,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.2.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.2.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Bayonetta™ Switch NSP + Update (eShop)",
@@ -12483,7 +12567,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Bazzle Switch NSP (eShop)",
@@ -14292,7 +14383,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0.8)",
+        "aynTool": "nx2android v0.1.3 (Natif ARM64 Vulkan 60fps, v1.0.8)",
+        "note": "60 fps constants sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Blasphemous Switch NSP + Update + DLC (eShop)",
@@ -14301,7 +14399,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Blast Brigade Vs. The Evil Legion Of Dr. Cread Switch NSP + Update (eShop)",
@@ -15741,7 +15846,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": false,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Brain-Training Brain-Activating Color Sensation Test With Iro-Narabe Panel Switch NSP (eShop)",
@@ -18180,7 +18292,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.4.2)",
+        "aynTool": "nx2android v0.1.3 (Natif ARM64 Vulkan 60fps, v1.4.2)",
+        "note": "60 fps constants sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Captain Tsubasa 2: World Fighters Switch XCI + Update",
@@ -19008,7 +19127,14 @@
       "hasNsp": false,
       "hasXci": true,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.1.0)",
+        "aynTool": "nx2android v0.2.0 (Natif ARM64 Vulkan 60fps, v1.1.0)",
+        "note": "60 fps constants sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Casual Challenge Players' Club Switch NSP (eShop)",
@@ -19701,7 +19827,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.4.1.1)",
+        "aynTool": "nx2android v0.1.3 (Natif ARM64 Vulkan 60fps, v1.4.1.1)",
+        "note": "60 fps constants sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Celestia: Chain Of Fate Switch XCI + Update",
@@ -24651,7 +24784,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Cultist Simulator: Initiate Edition Switch NSP + DLC (eShop)",
@@ -24678,7 +24818,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Curious Cases Switch NSP (eShop)",
@@ -25866,7 +26013,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Dawn Of The Monsters Switch NSP + Update + DLC (eShop)",
@@ -27711,7 +27865,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "d2r-mobile / nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": "d2r-mobile (jhaizhou-ops) (Natif ARM64 Vulkan 60fps)",
+        "note": "Le projet fondateur du recomp Switch : 60 fps constants sur M4 et AYN Thor"
+      }
     },
     {
       "title": "Diabolik Lovers Lunatic Fate Grand Edition Switch XCI + Update",
@@ -28854,7 +29015,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.1.0)",
+        "aynTool": "nx2android v0.1.3 (Natif ARM64 Vulkan 60fps, v1.1.0)",
+        "note": "60 fps constants sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Donkey Kong Country™: Tropical Freeze Switch NSP + Update (eShop)",
@@ -28863,7 +29031,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Donut County Switch NSP + Update (eShop)",
@@ -29637,7 +29812,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Dragon Quest III HD-2D Remake Switch NSP + Update + DLC (eShop)",
@@ -29646,7 +29828,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Dragon Quest Monsters Terry's Wonderland Retro Switch NSP (eShop)",
@@ -31248,7 +31437,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "EA Sports FIFA 23 Nintendo Switch™ Legacy Edition Switch NSP + Update + DLC (eShop)",
@@ -35901,7 +36097,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0.1)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v1.0.1)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Final Fantasy Switch NSP + Update (eShop)",
@@ -35919,7 +36122,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Final Fantasy V Switch NSP + Update (eShop)",
@@ -35982,7 +36192,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Final Frontier Story Switch NSP (eShop)",
@@ -36216,7 +36433,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v2.0.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v2.0.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Fire Emblem™: Shadow Dragon & The Blade Of Light Switch NSP (eShop)",
@@ -36234,7 +36458,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.2.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v1.2.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Fire Race Switch NSP (eShop)",
@@ -40716,7 +40947,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": false,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Ghost: Elisa Cameron Switch NSP (eShop)",
@@ -43209,7 +43447,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0)",
+        "aynTool": "nx2android v0.1.2 (Natif ARM64 Vulkan 60fps, v1.0)",
+        "note": "60 fps constants sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Hades Switch NSP + Update (eShop)",
@@ -43218,7 +43463,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Hades Uprising Switch NSP (eShop)",
@@ -46458,7 +46710,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.5.12620)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v1.5.12620)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Hollow Knight: Silksong Switch NSP + Update (eShop)",
@@ -46467,7 +46726,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0.30000)",
+        "aynTool": "nx2android v0.1.3 (Natif ARM64 Vulkan 60fps, v1.0.30000)",
+        "note": "60 fps constants sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Hollow World: Dark Knight Switch NSP (eShop)",
@@ -47790,7 +48056,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.3.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.3.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Hyrule Warriors: Definitive Edition Switch NSP + Update (eShop)",
@@ -47799,7 +48072,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "I Am Adventure Boy Super Escape Island Switch NSP + Update + DLC (eShop)",
@@ -52785,7 +53065,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": false,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.0.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.0.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Kirby™ Star Allies Switch NSP + Update (eShop)",
@@ -52794,7 +53081,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Kiss Ato -Kiss will change, my relation with you- Switch NSP (eShop)",
@@ -56754,7 +57048,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0.5)",
+        "aynTool": "nx2android v0.3.0 (Natif ARM64 Vulkan 60fps, v1.0.5)",
+        "note": "60 fps sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Lonesome Village Switch NSP + Update (eShop)",
@@ -57915,7 +58216,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.2.0 / v1.4.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.2.0 / v1.4.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "LUMbA REDUXd Switch NSP (eShop)",
@@ -58941,7 +59249,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": false,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Mario + Rabbids Sparks Of Hope Switch NSP + Update + DLC (eShop)",
@@ -58950,7 +59265,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Mario + Rabbids® Kingdom Battle Switch NSP + Update + DLC (eShop)",
@@ -58959,7 +59281,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Mario Golf™: Super Rush Switch NSP + Update (eShop)",
@@ -58986,7 +59315,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Mario Strikers™: Battle League Switch NSP + Update (eShop)",
@@ -59013,7 +59349,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.0.1)",
+        "aynTool": "nx2android v0.1.3 (Natif ARM64 Vulkan 60fps, v1.0.1)",
+        "note": "60 fps sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Marisa Of Liartop Mountain Switch NSP + Update (eShop)",
@@ -60363,7 +60706,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": false,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Metroid™ Dread Switch NSP + Update (eShop)",
@@ -60372,7 +60722,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.0.0 / v2.1.0)",
+        "aynTool": "nx2android v0.3.0 (Natif ARM64 Vulkan 60fps, v2.1.0)",
+        "note": "60 fps fluides sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "MetroLand Switch NSP (eShop)",
@@ -61749,7 +62106,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.1.1)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v1.1.1)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Monster Tribe Switch NSP (eShop)",
@@ -63747,7 +64111,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Need For Spirit Drink & Drive Simulator Switch NSP (eShop)",
@@ -63918,7 +64289,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.03)",
+        "aynTool": "nx2android v0.1.2 (Natif ARM64 Vulkan, v1.03)",
+        "note": "Validé en natif ARM64 sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Neodori Forever Switch NSP (eShop)",
@@ -64494,7 +64872,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.1.1)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v1.1.1)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Of The Red, The Light, And The Ayakashi Tsuzuri Switch NSP + Update (eShop)",
@@ -64620,7 +65005,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.0.1)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.0.1)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Ori And The Will Of The Wisps Switch NSP + Update (eShop)",
@@ -64764,7 +65156,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0.1)",
+        "aynTool": "nx2android v0.2.0 (Natif ARM64 Vulkan 60fps, v1.0.1)",
+        "note": "60 fps (contre 30 fps sur Switch) sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Paper Mario™: The Thousand-Year Door Switch NSP + Update (eShop)",
@@ -64773,7 +65172,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0.1)",
+        "aynTool": "nx2android v0.2.0 (Natif ARM64 Vulkan 60fps, v1.0.1)",
+        "note": "60 fps (contre 30 fps sur Switch) sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Papercraft Tactics Switch NSP (eShop)",
@@ -64908,7 +65314,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Persona 5 Royal Switch NSP + Update (eShop)",
@@ -64917,7 +65330,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Persona 5 Tactics Switch NSP + Update + DLC (eShop)",
@@ -65016,7 +65436,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Pinball FX Switch NSP + Update + DLC (eShop)",
@@ -65169,7 +65596,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.1.1)",
+        "aynTool": "nx2android v0.2.0 (Natif ARM64 Vulkan 60fps, v1.1.1)",
+        "note": "Débridé à 60 fps (contre 30 fps sur Switch) sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Pokémon™ Legends: Z-A Switch NSP + Update + DLC (eShop)",
@@ -65178,7 +65612,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal, v2.0.2)",
+        "aynTool": "nx2android v0.3.0 (Natif ARM64 Vulkan 30fps, v2.0.2)",
+        "note": "Déjà installé sur votre Mac mini · Portage natif ARM64 sur M4 et AYN Thor"
+      }
     },
     {
       "title": "Pokémon™ Scarlet Switch NSP + Update + DLC (eShop)",
@@ -65187,7 +65628,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Pokémon™ Shield Switch NSP + Update + DLC (eShop)",
@@ -65196,7 +65644,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal, v1.3.2)",
+        "aynTool": "Galar-Native-Android (simipoB) (APK Natif ARM64 Vulkan + Turnip)",
+        "note": "Portage natif dédié Galar-Native-Android sur AYN Thor + nxnative sur M4"
+      }
     },
     {
       "title": "Pokémon™ Sword Switch NSP + Update + DLC (eShop)",
@@ -65205,7 +65660,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Pokémon™ Violet Switch NSP + Update + DLC (eShop)",
@@ -65214,7 +65676,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal, v4.0.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal, v4.0.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Pokémon™: Let’s Go, Eevee! Switch NSP + Update (eShop)",
@@ -65250,7 +65719,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Posessing My Older Sister Switch NSP (eShop)",
@@ -65718,7 +66194,14 @@
       "hasNsp": false,
       "hasXci": true,
       "hasUpdate": false,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Rift Of The Necrodancer Switch NSP + Update + DLC (eShop)",
@@ -66051,7 +66534,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Seafrog Switch NSP + Update (eShop)",
@@ -66348,7 +66838,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Simogo Legacy Collection Switch NSP + Update (eShop)",
@@ -66834,7 +67331,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Starry☆Sky～Spring Memories～ Switch XCI",
@@ -66879,7 +67383,14 @@
       "hasNsp": false,
       "hasXci": true,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Stickman: Far East Battle Switch NSP + Update (eShop)",
@@ -66987,7 +67498,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Streets of Rage 4 Switch XCI + Update + DLC",
@@ -66996,7 +67514,14 @@
       "hasNsp": false,
       "hasXci": true,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Stuff It! Switch NSP + Update + DLC (eShop)",
@@ -67023,7 +67548,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Subnautica: Below Zero Switch NSP + Update (eShop)",
@@ -67032,7 +67564,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Subway Simulator - Underground Train Remaster Switch NSP (eShop)",
@@ -67086,7 +67625,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.0.0 / v1.2.1)",
+        "aynTool": "nx2android v0.1.3 (Natif ARM64 Vulkan 40-60fps, v1.2.1)",
+        "note": "Exécution ARM64 directe sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Super Mario Galaxy™ 2 Switch NSP + Update (eShop)",
@@ -67095,7 +67641,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Super Mario Galaxy™ Switch NSP + Update (eShop)",
@@ -67104,7 +67657,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Super Mario Maker™ 2 Switch NSP + Update (eShop)",
@@ -67122,7 +67682,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.3.0 / v1.4.1)",
+        "aynTool": "nx2android v0.2.0 (Natif ARM64 Vulkan 60fps, v1.4.1)",
+        "note": "60 fps constants en exécution ARM64 directe sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Super Mario Party™ Jamboree Switch NSP + Update (eShop)",
@@ -67131,7 +67698,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v2.3.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v2.3.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Super Mario Party™ Switch NSP + Update (eShop)",
@@ -67149,7 +67723,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Super Mario™ 3D All-Stars Switch NSP + Update (eShop)",
@@ -67158,7 +67739,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps — Mario 64 & Sunshine)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps — Mario 64 & Sunshine)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Super Mario™ 3D World + Bowser’s Fury Switch NSP + Update (eShop)",
@@ -67167,7 +67755,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Super Robot Wars Y Switch XCI + Update (eShop)",
@@ -67176,7 +67771,14 @@
       "hasNsp": false,
       "hasXci": true,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.4.1)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v1.4.1)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Super Scram Kitty Switch NSP + Update (eShop)",
@@ -67194,7 +67796,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v13.0.2 / v13.0.5)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v13.0.2 / v13.0.5)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Super Takoyaki Battle Switch NSP + Update (eShop)",
@@ -67338,7 +67947,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v2.0.0)",
+        "aynTool": "nx2android v0.1.2 (Natif ARM64 Vulkan 60fps, v2.0.0)",
+        "note": "60 fps constants sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "Tales Of Formentera Switch NSP (eShop)",
@@ -67923,7 +68539,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "MacNativeGames / BotWRecomp (Natif ARM64 Metal 4K 60-120fps, v1.6.0 / v1.9.0)",
+        "aynTool": "BOTWRecompAndroid v0.3.1 (Natif ARM64 Vulkan v1.9.0) + Eden Duo Dual-Screen",
+        "note": "Déjà installé et synchronisé sur votre Mac mini M4 et votre AYN Thor"
+      }
     },
     {
       "title": "The Legend of Zelda™: Echoes of Wisdom Switch NSP + Update (eShop)",
@@ -67932,7 +68555,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.1.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames / nxnative (Natif ARM64 Metal 60fps, v1.1.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "The Legend of Zelda™: Link’s Awakening Switch NSP + Update (eShop)",
@@ -67941,7 +68571,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "LASRecomp (peiikai) / nxnative (Natif ARM64 Metal + MetalFX 60fps, 21:9, sans flou)",
+        "aynTool": "LASRecompAndroid (mamcjr / Nycolazs) (Natif ARM64 Vulkan 60fps, v1.0.0-1.1.0)",
+        "note": "Recomp statique complet 60fps sur Mac M4 et AYN Thor"
+      }
     },
     {
       "title": "The Legend of Zelda™: Skyward Sword HD Switch NSP + Update (eShop)",
@@ -67950,7 +68587,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.0.1)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v1.0.1)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "The Legend of Zelda™: Tears of the Kingdom Switch NSP + Update (eShop)",
@@ -67959,7 +68603,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal 4K 60-120fps, v1.4.3)",
+        "aynTool": "TOTKDroid v0.2.1 Beta / nx2android v0.3.0 (Natif ARM64 Vulkan Turnip, v1.4.3)",
+        "note": "Tourne en natif ARM64 sur M4 (jusqu'à 4K/100fps) et sur AYN Thor (30-60fps avec Turnip)"
+      }
     },
     {
       "title": "The Long Dark Switch NSP + Update (eShop)",
@@ -68481,7 +69132,14 @@
       "hasNsp": false,
       "hasXci": true,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames (Natif ARM64 Metal, v1.0.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames (Natif ARM64 Metal, v1.0.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Tony Hawk's™ Pro Skater™ 1 + 2 Switch NSP + Update + DLC (eShop)",
@@ -68625,7 +69283,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v1.1.1)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal 60fps, v1.1.1)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Trivia Quiz Ancient Dinosaurs Switch NSP (eShop)",
@@ -68787,7 +69452,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal 60fps, v2.01)",
+        "aynTool": "nx2android v0.1.2 (Natif ARM64 Vulkan 60fps + Tactile, v2.01)",
+        "note": "60 fps + support tactile direct sur AYN Thor"
+      }
     },
     {
       "title": "Unpacking Universe Dreams Switch NSP (eShop)",
@@ -68967,7 +69639,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "nxnative (Natif ARM64 Metal, v1.4.5)",
+        "aynTool": "nx2android v0.1.0 (Natif ARM64 Vulkan, v1.4.5)",
+        "note": "Portage natif ARM64 M4 & AYN Thor"
+      }
     },
     {
       "title": "Virche Evermore -Epic: Lycoris- Switch NSP + Update (eShop)",
@@ -69138,7 +69817,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Whisper Of The House Switch NSP + Update (eShop)",
@@ -69291,7 +69977,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Xenoblade Chronicles™ 3 Switch NSP + Update + DLC (eShop)",
@@ -69300,7 +69993,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": true
+      "hasDlc": true,
+      "recomp": {
+        "m4": true,
+        "ayn": true,
+        "m4Tool": "MacNativeGames / nxnative (Natif ARM64 Metal, v1.0.0 / v2.2.1)",
+        "aynTool": "nx2android v0.1.0 (Natif ARM64 Vulkan 30fps, v2.2.0, WIP)",
+        "note": "Jouable en natif sur Mac M4 et en bêta sur AYN Thor"
+      }
     },
     {
       "title": "Xenoblade Chronicles™ Definitive Edition Switch NSP + Update 2.0.0 (eShop)",
@@ -69309,7 +70009,14 @@
       "hasNsp": true,
       "hasXci": false,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "nxnative (Natif ARM64 Metal)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (nxnative (Natif ARM64 Metal)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "Xenoblade Chronicles™ X: Definitive Edition Switch XCI + Update",
@@ -69318,7 +70025,14 @@
       "hasNsp": false,
       "hasXci": true,
       "hasUpdate": true,
-      "hasDlc": false
+      "hasDlc": false,
+      "recomp": {
+        "m4": true,
+        "ayn": false,
+        "m4Tool": "MacNativeGames (Natif ARM64 Metal, v1.0.0)",
+        "aynTool": null,
+        "note": "Portage natif Mac mini M4 vérifié (MacNativeGames (Natif ARM64 Metal, v1.0.0)) · Sur AYN Thor : tourne via Eden (Turnip T29)"
+      }
     },
     {
       "title": "YinYang Street Ultimate Edition Switch NSP (eShop)",
@@ -69499,51 +70213,6 @@
       "hasXci": false,
       "hasUpdate": false,
       "hasDlc": false
-    },
-    {
-      "title": "Use free download manager, copy the download link from when you...",
-      "shortName": "Use free download manager, copy the download link from when you...",
-      "url": "https://nxbrew.net/the-legend-of-zelda-ocarina-of-time-switch-2-nup-pc-emulation/#comment-7727",
-      "hasNsp": false,
-      "hasXci": false,
-      "hasUpdate": false,
-      "hasDlc": false
-    },
-    {
-      "title": "Have some one working emulator Build?",
-      "shortName": "Have some one working emulator Build?",
-      "url": "https://nxbrew.net/the-legend-of-zelda-ocarina-of-time-switch-2-nup-pc-emulation/#comment-7702",
-      "hasNsp": false,
-      "hasXci": false,
-      "hasUpdate": false,
-      "hasDlc": false
-    },
-    {
-      "title": "https://gofile.io/d/8sjryb5h Try this one",
-      "shortName": "https://gofile.io/d/8sjryb5h Try this one",
-      "url": "https://nxbrew.net/the-legend-of-zelda-ocarina-of-time-switch-2-nup-pc-emulation/#comment-7697",
-      "hasNsp": false,
-      "hasXci": false,
-      "hasUpdate": false,
-      "hasDlc": false
-    },
-    {
-      "title": "I have a black screen in Lichii after menu help me...",
-      "shortName": "I have a black screen in Lichii after menu help me...",
-      "url": "https://nxbrew.net/yoshi-and-the-mysterious-book-switch-2-nup-pc-emulation/#comment-7694",
-      "hasNsp": false,
-      "hasXci": false,
-      "hasUpdate": false,
-      "hasDlc": false
-    },
-    {
-      "title": "thanks, looking forward to when we can unlock the dlcs too!",
-      "shortName": "thanks, looking forward to when we can unlock the dlcs too!",
-      "url": "https://nxbrew.net/pokemon-legends-z-a-switch-2-edition-nup-pc-emulation/#comment-7693",
-      "hasNsp": false,
-      "hasXci": false,
-      "hasUpdate": false,
-      "hasDlc": true
     },
     {
       "title": "Adventure",
@@ -69950,5 +70619,10 @@
       "hasUpdate": false,
       "hasDlc": false
     }
-  ]
+  ],
+  "recompStats": {
+    "totalVerified": 102,
+    "bothM4AndAyn": 27,
+    "m4Only": 75
+  }
 }

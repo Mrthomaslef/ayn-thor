@@ -307,9 +307,13 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
             cat_file = os.path.join(DATA_DIR, "nxbrew_catalog.json")
             if not os.path.exists(cat_file):
                 return self._send_json({"ok": False, "games": [], "total": 0})
-            q = qs.get("q", [""])[0].strip().lower()
+            import unicodedata
+            def _norm_txt(s):
+                return unicodedata.normalize("NFKD", s or "").encode("ascii", "ignore").decode("ascii").lower()
+            q = _norm_txt(qs.get("q", [""])[0].strip())
             fmt = qs.get("format", ["all"])[0].strip().lower()
-            limit = min(300, max(10, int(qs.get("limit", ["80"])[0])))
+            recomp_filter = qs.get("recomp", ["all"])[0].strip().lower()
+            limit = min(300, max(10, int(qs.get("limit", ["120"])[0])))
             with open(cat_file, "r", encoding="utf-8") as f:
                 cat = json.load(f)
             all_games = cat.get("games", [])
@@ -332,8 +336,17 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                         pass
             installed_names = [fn.lower() for fn in installed_files if fn.lower().endswith((".nsp", ".xci", ".nsz"))]
 
-            results = []
+            matched = []
             for g in all_games:
+                rec = g.get("recomp")
+                if recomp_filter == "both" and not (rec and rec.get("m4") and rec.get("ayn")):
+                    continue
+                if recomp_filter == "m4" and not (rec and rec.get("m4")):
+                    continue
+                if recomp_filter == "ayn" and not (rec and rec.get("ayn")):
+                    continue
+                if recomp_filter == "any" and not rec:
+                    continue
                 if fmt == "nsp" and not g.get("hasNsp"):
                     continue
                 if fmt == "xci" and not g.get("hasXci"):
@@ -342,19 +355,27 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                     continue
                 if fmt == "dlc" and not g.get("hasDlc"):
                     continue
-                if q and q not in g["title"].lower() and q not in g["shortName"].lower():
+                if q and q not in _norm_txt(g["title"]) and q not in _norm_txt(g["shortName"]) and q not in _norm_txt(g["url"]):
                     continue
-                sn_clean = re.sub(r"[^a-z0-9]+", "", g["shortName"].lower())
-                is_inst = any(sn_clean and len(sn_clean) >= 4 and sn_clean in re.sub(r"[^a-z0-9]+", "", fn) for fn in installed_names)
+                sn_clean = re.sub(r"[^a-z0-9]+", "", _norm_txt(g["shortName"]))
+                is_inst = any(sn_clean and len(sn_clean) >= 4 and sn_clean in re.sub(r"[^a-z0-9]+", "", _norm_txt(fn)) for fn in installed_names)
                 item = dict(g)
                 item["installed"] = is_inst
-                results.append(item)
-                if len(results) >= limit:
-                    break
+                matched.append(item)
+
+            def _sort_key(x):
+                r = x.get("recomp") or {}
+                rank = 0 if (r.get("m4") and r.get("ayn")) else (1 if r.get("m4") else (2 if x.get("installed") else 3))
+                return (rank, x.get("shortName", "").lower())
+
+            matched.sort(key=_sort_key)
+            results = matched[:limit]
             return self._send_json(
                 {
                     "ok": True,
                     "totalCatalog": cat.get("count", len(all_games)),
+                    "totalMatched": len(matched),
+                    "recompStats": cat.get("recompStats", {}),
                     "installedCount": len(installed_names),
                     "installedFiles": installed_files,
                     "games": results,
@@ -369,7 +390,17 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
             rc, out, err = run_cmd([script, "info", "--url", game_url], timeout=95)
             if rc == 0 and out:
                 try:
-                    return self._send_json(json.loads(out))
+                    info_data = json.loads(out)
+                    cat_file = os.path.join(DATA_DIR, "nxbrew_catalog.json")
+                    if os.path.exists(cat_file):
+                        with open(cat_file, "r", encoding="utf-8") as cf:
+                            cat = json.load(cf)
+                        slug = game_url.rstrip("/").split("/")[-1]
+                        for cg in cat.get("games", []):
+                            if cg.get("url", "").rstrip("/").split("/")[-1] == slug:
+                                info_data["recomp"] = cg.get("recomp")
+                                break
+                    return self._send_json(info_data)
                 except Exception:
                     pass
             return self._send_json({"ok": False, "error": err or out or "Impossible de charger la fiche du jeu."})
