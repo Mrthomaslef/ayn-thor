@@ -37,6 +37,8 @@ TRANSFER_JOBS = {}
 JOBS_LOCK = threading.Lock()
 ADB_LOCK = threading.Lock()
 CURRENT_TUNNEL_URL = ""
+LAST_STATUS_CACHE = None
+LAST_STATUS_TS = 0.0
 
 
 def run_cmd(args, timeout=8):
@@ -47,7 +49,11 @@ def run_cmd(args, timeout=8):
         return -1, "", str(e)
 
 
-def get_live_status():
+def get_live_status(force=False):
+    global LAST_STATUS_CACHE, LAST_STATUS_TS
+    now = time.time()
+    if not force and LAST_STATUS_CACHE is not None and (now - LAST_STATUS_TS) < 8.0:
+        return dict(LAST_STATUS_CACHE)
     status = {
         "timestamp": datetime.datetime.now().strftime("%H:%M:%S"),
         "lanUrl": LAN_URL,
@@ -176,7 +182,9 @@ def get_live_status():
 
                 status["adb"]["resolution"] = "1920x1080 (Haut) + 1240x1080 (Bas)"
 
-    return status
+    LAST_STATUS_CACHE = status
+    LAST_STATUS_TS = time.time()
+    return dict(status)
 
 
 def start_transfer_job(title, cmd_args):
@@ -235,6 +243,9 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         qs = urllib.parse.parse_qs(parsed.query)
+
+        if path == "/api/ping":
+            return self._send_json({"ok": True, "lanUrl": LAN_URL, "tunnelUrl": CURRENT_TUNNEL_URL})
 
         if path == "/api/status":
             with JOBS_LOCK:
@@ -863,6 +874,7 @@ def save_and_push_endpoint(tunnel_url: str) -> None:
 
 
 def run_tunnel_forever() -> None:
+    global CURRENT_TUNNEL_URL
     cf_candidates = glob.glob(os.path.expanduser("~/.t3/tools/cloudflared/*/*/cloudflared"))
     if not cf_candidates:
         print("cloudflared not found", flush=True)
@@ -870,6 +882,20 @@ def run_tunnel_forever() -> None:
     cf_bin = cf_candidates[0]
 
     while True:
+        try:
+            if os.path.exists(ENDPOINT_JSON):
+                with open(ENDPOINT_JSON, "r", encoding="utf-8") as f:
+                    ep = json.load(f)
+                t_url = ep.get("tunnelUrl", "")
+                if t_url:
+                    rc, out, _ = run_cmd(["/usr/bin/curl", "-s", "-m", "4", f"{t_url}/api/nxbrew-jobs"], timeout=5)
+                    if rc == 0 and '"ok": true' in out.lower():
+                        CURRENT_TUNNEL_URL = t_url
+                        time.sleep(20)
+                        continue
+        except Exception:
+            pass
+
         try:
             proc = subprocess.Popen(
                 [cf_bin, "tunnel", "--url", f"http://127.0.0.1:{PORT}", "--no-autoupdate"],
@@ -891,9 +917,9 @@ def run_tunnel_forever() -> None:
 
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
+    server = ThreadedHTTPServer(("0.0.0.0", PORT), AynThorHandler)
     threading.Thread(target=usb_adb_watchdog, daemon=True).start()
     threading.Thread(target=run_tunnel_forever, daemon=True).start()
-    server = ThreadedHTTPServer(("0.0.0.0", PORT), AynThorHandler)
     print(f"AYN Thor Remote Daemon listening on {LAN_URL}", flush=True)
     server.serve_forever()
 

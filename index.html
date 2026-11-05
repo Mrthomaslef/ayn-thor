@@ -865,6 +865,29 @@
       openInspectorSheet();
       const bodyEl = document.getElementById("nxbrew-inspector-body");
 
+      bodyEl.innerHTML = `
+        <div style="padding:10px 4px;text-align:center;color:var(--accent);">
+          <div style="font-size:1.35rem;margin-bottom:4px;">⏳</div>
+          <strong>Récupération des miroirs de téléchargement…</strong>
+          <p style="margin:4px 0 0;font-size:0.75rem;color:var(--text-muted);">
+            Extraction FileKeeper / DataNodes / 1Fichier pour <em>${shortTitle || url}</em>…
+          </p>
+          <div style="text-align:left;margin-top:8px;">
+            ${renderInspectorRecompBox(fallbackRecomp)}
+          </div>
+        </div>
+      `;
+
+      if (!API_BASE) {
+        const st = await resolveBackend();
+        if (st) {
+          const dotDaemon = document.getElementById("dot-daemon");
+          const lblDaemon = document.getElementById("lbl-daemon");
+          if (dotDaemon) dotDaemon.className = "dot ok";
+          if (lblDaemon) lblDaemon.textContent = "Mac mini prêt";
+        }
+      }
+
       if (!API_BASE) {
         bodyEl.innerHTML = `
           <div>
@@ -880,19 +903,6 @@
         `;
         return;
       }
-
-      bodyEl.innerHTML = `
-        <div style="padding:10px 4px;text-align:center;color:var(--accent);">
-          <div style="font-size:1.35rem;margin-bottom:4px;">⏳</div>
-          <strong>Récupération des miroirs de téléchargement…</strong>
-          <p style="margin:4px 0 0;font-size:0.75rem;color:var(--text-muted);">
-            Extraction FileKeeper / DataNodes / 1Fichier pour <em>${shortTitle || url}</em>…
-          </p>
-          <div style="text-align:left;margin-top:8px;">
-            ${renderInspectorRecompBox(fallbackRecomp)}
-          </div>
-        </div>
-      `;
 
       try {
         const r = await fetch(`${API_BASE}/api/nxbrew-info?url=${encodeURIComponent(url)}`);
@@ -1063,52 +1073,67 @@
       } catch (_) {}
     }
 
+    async function probeCandidate(url) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 5000);
+      try {
+        const res = await fetch(url + "/api/nxbrew-jobs", { signal: ctrl.signal });
+        clearTimeout(t);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.ok) return url;
+        }
+      } catch (_) {
+        clearTimeout(t);
+      }
+      throw new Error("unreachable");
+    }
+
     async function resolveBackend() {
-      const candidates = [];
+      const candidates = new Set();
       if (location.port === "8798") {
-        candidates.push(location.origin);
+        candidates.add(location.origin);
       }
       try {
         const r = await fetch("endpoint.json?t=" + Date.now(), { cache: "no-store" });
         if (r.ok) {
           const ep = await r.json();
-          if (ep.tunnelUrl) candidates.push(ep.tunnelUrl);
-          if (ep.lanUrl) candidates.push(ep.lanUrl);
+          if (ep.tunnelUrl) candidates.add(ep.tunnelUrl);
+          if (ep.lanUrl && location.protocol !== "https:") candidates.add(ep.lanUrl);
         }
       } catch (_) {}
-      candidates.push("http://192.168.1.152:8798");
-      candidates.push("http://192.168.1.111:8798");
-      candidates.push("http://127.0.0.1:8798");
-
-      for (const url of candidates) {
-        try {
-          const ctrl = new AbortController();
-          const t = setTimeout(() => ctrl.abort(), 1800);
-          const res = await fetch(url + "/api/status", { signal: ctrl.signal });
-          clearTimeout(t);
-          if (res.ok) {
-            API_BASE = url;
-            return await res.json();
-          }
-        } catch (_) {}
+      candidates.add("https://align-jelsoft-network-chelsea.trycloudflare.com");
+      candidates.add("https://group-medication-robots-mag.trycloudflare.com");
+      if (location.protocol !== "https:") {
+        candidates.add("http://192.168.1.152:8798");
+        candidates.add("http://192.168.1.111:8798");
+        candidates.add("http://127.0.0.1:8798");
       }
-      API_BASE = "";
-      return null;
+
+      try {
+        const winner = await Promise.any(Array.from(candidates).map(u => probeCandidate(u)));
+        API_BASE = winner;
+        return { ok: true, url: winner };
+      } catch (_) {
+        API_BASE = "";
+        return null;
+      }
     }
 
     async function refreshAll(withFeedback = false) {
       const dotDaemon = document.getElementById("dot-daemon");
       const lblDaemon = document.getElementById("lbl-daemon");
+      searchNxbrewCatalog();
       const st = await resolveBackend();
       if (st) {
         dotDaemon.className = "dot ok";
         lblDaemon.textContent = "Mac mini prêt";
         refreshNxbrewJobs();
+        searchNxbrewCatalog();
       } else {
         dotDaemon.className = "dot warn";
         lblDaemon.textContent = "Catalogue";
       }
-      await searchNxbrewCatalog();
       if (withFeedback) showToast("Catalogue Switch actualisé.");
     }
 
