@@ -305,11 +305,16 @@ def push_single_file_to_thor(serial: str, local_file: str, remote_file: str) -> 
     return rc == 0
 
 
+def is_ssd_mounted() -> bool:
+    return os.path.isdir("/Volumes/GamingSSD/Games")
+
+
 def backup_file_before_overwrite(src_file: str, profile_id: str, rel_path: str, origin: str) -> None:
     if not os.path.isfile(src_file):
         return
     stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    dest = os.path.join(BACKUP_ARCHIVE_DIR, stamp, f"{profile_id}_{origin}", rel_path)
+    base_dir = BACKUP_ARCHIVE_DIR if is_ssd_mounted() else "/Users/thomaslefevre/.t3/projects/ayn-thor/data/backups_sync"
+    dest = os.path.join(base_dir, stamp, f"{profile_id}_{origin}", rel_path)
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     try:
         shutil.copy2(src_file, dest)
@@ -390,8 +395,8 @@ def merge_trees(
                     shutil.copy2(m_abs, t_abs)
                 updated_on_thor.append(rel)
 
-    # Propager vers le Hub GamingSSD
-    if mode != "status" and ssd_root:
+    # Propager vers le Hub GamingSSD (uniquement si le SSD externe est branché)
+    if mode != "status" and ssd_root and is_ssd_mounted():
         for rel in all_rels:
             src_candidate = os.path.join(mac_root, rel)
             if not os.path.isfile(src_candidate):
@@ -530,14 +535,19 @@ def sync_profile(profile: Dict, serial: Optional[str], mode: str = "smart") -> D
                         )
 
         elif ptype == "standalone_bundle":
-            # Synchronise les portages natifs Android <-> GamingSSD Standalone_Saves (uniquement les vraies sauvegardes)
+            # Synchronise les portages natifs Android <-> GamingSSD Standalone_Saves (ou miroir local si SSD débranché)
+            standalone_base = (
+                profile["ssdPath"]
+                if is_ssd_mounted()
+                else "/Users/thomaslefevre/.t3/projects/ayn-thor/data/standalone_saves_mirror"
+            )
             pairs = [
                 ("PokeEmerald_DualScreen/files", "/sdcard/Android/data/com.pokeemerald.dualscreen/files", (".sav", ".cfg")),
                 ("Zelda3/files/saves", "/sdcard/Android/data/com.dishii.zelda3/files/saves", None),
                 ("red recomp", "/storage/6531-3035/red recomp", (".sav",)),
             ]
             for rel_ssd, remote_p, exts in pairs:
-                local_p = os.path.join(profile["ssdPath"], rel_ssd)
+                local_p = os.path.join(standalone_base, rel_ssd)
                 sub_tmp = os.path.join(tmp_dir, rel_ssd.replace("/", "_"))
                 pull_thor_dir_to_temp(serial, remote_p, sub_tmp)
                 os.makedirs(local_p, exist_ok=True)
@@ -554,7 +564,7 @@ def sync_profile(profile: Dict, serial: Optional[str], mode: str = "smart") -> D
 
             # Minish Cap Decomp : tirer uniquement les fichiers de sauvegarde (.sav, state_*.bin) à la racine de files/
             tmc_remote = "/sdcard/Android/data/dev.picori.tmc/files"
-            tmc_local = os.path.join(profile["ssdPath"], "MinishCap_Decomp/files")
+            tmc_local = os.path.join(standalone_base, "MinishCap_Decomp/files")
             tmc_tmp = os.path.join(tmp_dir, "tmc_saves")
             os.makedirs(tmc_tmp, exist_ok=True)
             rc_tmc, out_tmc, _ = run_adb(["-s", serial, "shell", f"ls -1 {tmc_remote}/*.sav {tmc_remote}/state_*.bin 2>/dev/null"], timeout=6)

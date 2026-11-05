@@ -570,10 +570,29 @@ def get_emulator_presets():
 
 def build():
     os.makedirs(DATA_DIR, exist_ok=True)
+    inv_path = os.path.join(DATA_DIR, "inventory.json")
+    prev = {}
+    if os.path.exists(inv_path):
+        try:
+            with open(inv_path, "r", encoding="utf-8") as f:
+                prev = json.load(f)
+        except Exception:
+            prev = {}
+
     usb = detect_usb_and_adb()
-    saves = scan_saves()
-    roms = scan_roms()
-    bonus = scan_bonus_tools()
+    saves = scan_saves() or prev.get("saves", [])
+    # Patch androidPath/label/emulator from SAVE_TARGET_MAP even when loaded from cache
+    for s in saves:
+        meta = SAVE_TARGET_MAP.get(s.get("id", ""))
+        if meta:
+            s["label"] = meta["label"]
+            s["emulator"] = meta["emulator"]
+            s["androidPath"] = meta["androidPath"]
+            s["category"] = meta["category"]
+            s["icon"] = meta["icon"]
+
+    roms = scan_roms() or prev.get("roms", [])
+    bonus = scan_bonus_tools() or prev.get("bonusTools", [])
     presets = get_emulator_presets()
 
     total_save_files = sum(s["fileCount"] for s in saves)
@@ -605,7 +624,6 @@ def build():
         "presets": presets,
     }
 
-    inv_path = os.path.join(DATA_DIR, "inventory.json")
     with open(inv_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)
 
