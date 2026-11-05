@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#0b0f19" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="AYN Thor Studio" />
-  <title>AYN Thor Studio — Contrôle & Configuration à Distance (Mac mini)</title>
+  <meta name="apple-mobile-web-app-title" content="Rom et Emulation" />
+  <title>Rom et Emulation — Switch NXBrew, Mac mini M4 & AYN Thor</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
   <style>
@@ -80,7 +80,7 @@
     .app-shell {
       max-width: 1240px;
       margin: 0 auto;
-      padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 90px);
+      padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(env(safe-area-inset-bottom, 0px) + 104px);
     }
 
     /* Top Header */
@@ -88,13 +88,13 @@
       background: linear-gradient(135deg, rgba(19, 27, 46, 0.95), rgba(15, 23, 42, 0.92));
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 16px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
     }
 
@@ -105,14 +105,14 @@
     }
 
     .brand-icon {
-      width: 52px;
-      height: 52px;
+      width: 50px;
+      height: 50px;
       border-radius: 14px;
       background: linear-gradient(135deg, #0284c7, #6366f1);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.65rem;
+      font-size: 1.6rem;
       box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3);
       flex-shrink: 0;
     }
@@ -125,9 +125,9 @@
     }
 
     .brand-title p {
-      margin: 4px 0 0;
+      margin: 3px 0 0;
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.83rem;
     }
 
     .status-pills {
@@ -141,9 +141,9 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 7px 12px;
+      padding: 6px 11px;
       border-radius: 999px;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 600;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
@@ -154,6 +154,7 @@
       height: 8px;
       border-radius: 50%;
       background: var(--text-muted);
+      flex-shrink: 0;
     }
     .dot.ok { background: var(--success); box-shadow: 0 0 8px var(--success); }
     .dot.warn { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
@@ -162,37 +163,40 @@
     /* KPI Strip */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .kpi-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 14px 16px;
+      padding: 12px 14px;
     }
 
     .kpi-label {
       color: var(--text-muted);
-      font-size: 0.76rem;
+      font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       font-weight: 600;
     }
 
     .kpi-val {
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: 800;
-      margin-top: 4px;
+      margin-top: 3px;
       color: var(--text);
     }
 
     .kpi-sub {
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       color: var(--accent);
-      margin-top: 3px;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* Tabs */
@@ -201,8 +205,9 @@
       gap: 8px;
       overflow-x: auto;
       padding-bottom: 6px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
     .tabs-bar::-webkit-scrollbar { display: none; }
 
@@ -210,9 +215,9 @@
       background: var(--bg-card);
       color: var(--text-muted);
       border: 1px solid var(--border);
-      padding: 10px 16px;
+      padding: 10px 15px;
       border-radius: 12px;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
@@ -229,21 +234,64 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
+    /* Mobile Bottom Tab Bar */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(11, 15, 25, 0.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+      padding: 6px 8px calc(env(safe-area-inset-bottom, 0px) + 6px);
+      z-index: 9500;
+      justify-content: space-around;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mnav-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 6px 4px;
+      border-radius: 10px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .mnav-btn .mnav-ico {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+    .mnav-btn.active {
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.12);
+    }
+
     /* Alert / Diagnostic Box */
     .diag-banner {
       background: rgba(245, 158, 11, 0.1);
       border: 1px solid rgba(245, 158, 11, 0.35);
       border-radius: var(--radius);
-      padding: 16px 18px;
-      margin-bottom: 16px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
     }
     .diag-banner.ready {
       background: rgba(34, 197, 94, 0.1);
       border-color: rgba(34, 197, 94, 0.35);
     }
     .diag-banner h3 {
-      margin: 0 0 8px;
-      font-size: 0.98rem;
+      margin: 0 0 6px;
+      font-size: 0.94rem;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -252,8 +300,78 @@
       margin: 8px 0 0;
       padding-left: 20px;
       color: #cbd5e1;
-      font-size: 0.85rem;
-      line-height: 1.55;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 768px) {
+      .app-shell {
+        padding: calc(env(safe-area-inset-top, 0px) + 10px) 10px calc(env(safe-area-inset-bottom, 0px) + 88px);
+      }
+      .hero-header {
+        padding: 14px;
+        border-radius: 16px;
+        gap: 10px;
+      }
+      .brand-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1.35rem;
+      }
+      .brand-title h1 {
+        font-size: 1.12rem;
+      }
+      .brand-title p {
+        font-size: 0.75rem;
+      }
+      .status-pills {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .pill {
+        padding: 5px 9px;
+        font-size: 0.71rem;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .kpi-card {
+        padding: 10px 12px;
+      }
+      .kpi-val {
+        font-size: 1.08rem;
+      }
+      .panel-card {
+        padding: 14px 12px;
+        border-radius: 14px;
+      }
+      .panel-card h2 {
+        font-size: 0.95rem;
+        flex-wrap: wrap;
+      }
+      .text-input {
+        font-size: 16px !important; /* Prevents iOS auto-zoom on focus */
+        min-height: 44px;
+      }
+      .btn {
+        min-height: 42px;
+        padding: 9px 12px;
+      }
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .mobile-bottom-nav {
+        display: flex;
+      }
+      .nxbrew-mobile-order {
+        display: flex;
+        flex-direction: column;
+      }
+      .nxbrew-inspector-col {
+        order: -1;
+      }
     }
 
     /* Cards & Layout */
@@ -493,10 +611,10 @@
   <div class="app-shell">
     <header class="hero-header">
       <div class="brand-row">
-        <div class="brand-icon">⚡</div>
+        <div class="brand-icon">🎮</div>
         <div class="brand-title">
-          <h1>AYN Thor — Remote Studio</h1>
-          <p>Contrôle à distance, Écran ADB Live & Synchronisation GamingSSD via Mac mini</p>
+          <h1>Rom et Emulation</h1>
+          <p>Catalogue Switch NXBrew (7 772 Jeux), 82 Jeux Mac mini M4, Sauvegardes Cross-Play & AYN Thor</p>
         </div>
       </div>
       <div class="status-pills">
@@ -518,117 +636,136 @@
 
     <section class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-label">Console branchée (USB)</div>
-        <div class="kpi-val" id="kpi-model">AYN Thor</div>
-        <div class="kpi-sub" id="kpi-serial">QCS_KALAMAP · SN: ef1ee24</div>
+        <div class="kpi-label">Catalogue NXBrew</div>
+        <div class="kpi-val">7 772 Jeux</div>
+        <div class="kpi-sub">Switch NSP / XCI / DLC</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Sauvegardes Mac mini</div>
-        <div class="kpi-val" id="kpi-saves">23 Dossiers</div>
-        <div class="kpi-sub" id="kpi-saves-sub">52 171 fichiers · 10,1 Go prêts</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Bibliothèque ROMs & BIOS</div>
+        <div class="kpi-label">Bibliothèque ROMs</div>
         <div class="kpi-val" id="kpi-roms">18 Consoles</div>
-        <div class="kpi-sub" id="kpi-roms-sub">122 jeux · 103,1 Go sur GamingSSD</div>
+        <div class="kpi-sub" id="kpi-roms-sub">122 jeux · 103,1 Go SSD</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Drivers GPU & Outils</div>
-        <div class="kpi-val" id="kpi-bonus">Turnip T29 / T23</div>
-        <div class="kpi-sub" id="kpi-battery">Adreno 740 (Snapdragon 8 Gen 2)</div>
+        <div class="kpi-label">Sauvegardes Sync</div>
+        <div class="kpi-val" id="kpi-saves">23 Dossiers</div>
+        <div class="kpi-sub" id="kpi-saves-sub">Mac mini M4 ⇄ AYN Thor</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Console Portable</div>
+        <div class="kpi-val" id="kpi-model">AYN Thor</div>
+        <div class="kpi-sub" id="kpi-serial">Snapdragon 8 Gen 2</div>
       </div>
     </section>
 
-    <div id="usb-diag-box" class="diag-banner">
+    <div id="usb-diag-box" class="diag-banner" style="display:none;">
       <h3 id="diag-title">🔌 AYN Thor détectée physiquement sur le Mac mini (Mode USB `0x4EE1` MTP seul)</h3>
-      <div id="diag-desc" style="font-size:0.85rem;color:#e2e8f0;">
+      <div id="diag-desc" style="font-size:0.83rem;color:#e2e8f0;">
         Votre AYN Thor (<code>QCS_KALAMAP-HDK_CID:0437_SN:6320BBAD</code>, série <code>ef1ee24</code>) est bien branchée en USB au Mac mini, mais Android bloque actuellement l'accès ADB/MTP car <strong>l'écran est verrouillé ou le Débogage USB est désactivé</strong>.
       </div>
       <ol id="diag-steps">
         <li><strong>Une seule fois sur l'AYN Thor</strong> : ouvrez <em>Paramètres &gt; À propos de la console</em> et touchez 7 fois <strong>Numéro de build</strong>.</li>
-        <li>Allez dans <em>Paramètres &gt; Système &gt; Options pour les développeurs</em> et activez <strong>Débogage USB</strong> (ainsi que <strong>Débogage sans fil</strong> si souhaité) puis cochez <em>« Toujours autoriser depuis cet ordinateur »</em> (la clé RSA du Mac mini <code>~/.android/adbkey</code> est déjà prête).</li>
-        <li>Dès que le Débogage USB est actif, le daemon du Mac mini bascule automatiquement l'AYN Thor en <strong>ADB USB + ADB Wi-Fi permanent (port 5555)</strong> : vous pourrez alors voir l'écran, réveiller la console et tout configurer à distance d'ici !</li>
+        <li>Allez dans <em>Paramètres &gt; Système &gt; Options pour les développeurs</em> et activez <strong>Débogage USB</strong> (ainsi que <strong>Débogage sans fil</strong> si souhaité) puis cochez <em>« Toujours autoriser depuis cet ordinateur »</em>.</li>
       </ol>
     </div>
 
     <nav class="tabs-bar">
-      <button class="tab-btn active" onclick="switchTab('remote', this)">📡 Écran Live & Télécommande</button>
-      <button class="tab-btn" onclick="switchTab('nxbrew', this)">📥 NXBrew Switch (7 772 Jeux)</button>
-      <button class="tab-btn" onclick="switchTab('tvgames', this)">📺 Télé & Jeux Mac mini (82 Jeux)</button>
-      <button class="tab-btn" onclick="switchTab('saves', this)">💾 Sauvegardes (23 Dossiers)</button>
-      <button class="tab-btn" onclick="switchTab('roms', this)">🎮 ROMs & BIOS (103 Go)</button>
-      <button class="tab-btn" onclick="switchTab('presets', this)">⚡ Drivers Turnip & Presets</button>
-      <button class="tab-btn" onclick="switchTab('explorer', this)">🗂️ Explorateur /sdcard</button>
+      <button class="tab-btn active" data-tab="nxbrew" onclick="switchTab('nxbrew', this)">📥 Switch NXBrew (7 772)</button>
+      <button class="tab-btn" data-tab="roms" onclick="switchTab('roms', this)">🎮 ROMs & BIOS (103 Go)</button>
+      <button class="tab-btn" data-tab="saves" onclick="switchTab('saves', this)">💾 Sauvegardes (Cross-Play)</button>
+      <button class="tab-btn" data-tab="tvgames" onclick="switchTab('tvgames', this)">📺 Télé & Mac mini (82 Jeux)</button>
+      <button class="tab-btn" data-tab="remote" onclick="switchTab('remote', this)">📡 Écran AYN Thor</button>
+      <button class="tab-btn" data-tab="presets" onclick="switchTab('presets', this)">⚡ Drivers Turnip & Presets</button>
+      <button class="tab-btn" data-tab="explorer" onclick="switchTab('explorer', this)">🗂️ Stockage /sdcard</button>
     </nav>
 
     <!-- TAB: NXBREW SWITCH DIRECT DOWNLOADER -->
-    <section id="tab-nxbrew" class="tab-panel">
-      <div class="panel-card" style="border-color:rgba(56,189,248,0.45);background:linear-gradient(145deg,rgba(12,74,110,0.26),rgba(15,23,42,0.96));">
+    <section id="tab-nxbrew" class="tab-panel active">
+      <div class="panel-card" style="border-color:rgba(56,189,248,0.45);background:linear-gradient(145deg,rgba(12,74,110,0.28),rgba(15,23,42,0.96));">
         <h2>
-          <span>📥 NXBrew Direct Studio — Catalogue Switch (7 772 Jeux NSP / XCI / Updates / DLC)</span>
-          <span id="nxbrew-stats-badge" style="font-size:0.76rem;padding:5px 10px;border-radius:999px;background:rgba(56,189,248,0.18);color:var(--accent);border:1px solid rgba(56,189,248,0.4);">
-            ⚡ Sans compte externe · Déverrouillage ouo.io + Extraction 7zz auto
+          <span>📥 Téléchargement Switch Direct (NXBrew → Mac mini)</span>
+          <span id="nxbrew-stats-badge" style="font-size:0.73rem;padding:4px 9px;border-radius:999px;background:rgba(56,189,248,0.18);color:var(--accent);border:1px solid rgba(56,189,248,0.4);">
+            ⚡ Auto-Unlock + Extraction 7zz
           </span>
         </h2>
-        <p style="margin:0 0 12px;font-size:0.84rem;color:#cbd5e1;line-height:1.5;">
-          Recherchez n'importe quel jeu Nintendo Switch parmi les <strong>7 772 titres indexés sur NXBrew</strong>. Le Mac mini déverrouille automatiquement les liens courts (<code>ouo.io</code>), récupère le flux CDN direct haute vitesse (recommandé : <strong>FileKeeper</strong>), télécharge et extrait automatiquement l'archive <code>.rar</code>/<code>.7z</code> dans <code>/Volumes/GamingSSD/Games/ROMs/Switch</code> pour Ryujinx et votre AYN Thor (Eden).
+        <p style="margin:0 0 10px;font-size:0.81rem;color:#cbd5e1;line-height:1.45;">
+          Choisissez n'importe quel jeu parmi les <strong>7 772 titres Switch</strong>. Votre Mac mini déverrouille <code>ouo.io</code>, télécharge en direct à haute vitesse (via <strong>FileKeeper</strong>) et décompresse automatiquement l'archive dans <code>/Volumes/GamingSSD/Games/ROMs/Switch</code>.
         </p>
 
-        <div class="input-row" style="margin-bottom:12px;">
+        <div class="input-row" style="margin-bottom:10px;">
           <input
-            type="text"
+            type="search"
             id="nxbrew-search-input"
             class="text-input"
-            placeholder="Rechercher un jeu Switch (ex: Mario, Zelda, Pokemon, Metroid, Xenoblade, Final Fantasy)…"
+            placeholder="🔍 Chercher un jeu Switch (Mario, Zelda, Pokémon, Metroid…)"
             oninput="debounceNxbrewSearch()"
           />
-          <button class="btn primary" onclick="searchNxbrewCatalog()">🔍 Rechercher</button>
-          <input
-            type="text"
-            id="nxbrew-custom-url"
-            class="text-input"
-            style="max-width:340px;"
-            placeholder="Ou coller une URL nxbrew.net directe…"
-          />
-          <button class="btn" onclick="inspectNxbrewCustomUrl()">🔗 Inspecter URL</button>
+          <button class="btn primary" onclick="searchNxbrewCatalog()">Rechercher</button>
         </div>
 
-        <div class="filter-row" id="nxbrew-format-chips">
+        <!-- Quick Franchise Chips for 1-Tap Mobile Search -->
+        <div class="filter-row" style="margin-bottom:8px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
+          <button class="chip" onclick="quickNxbrewSearch('')">🔥 Récents / A-Z</button>
+          <button class="chip" onclick="quickNxbrewSearch('Zelda')">🗡️ Zelda</button>
+          <button class="chip" onclick="quickNxbrewSearch('Mario')">🍄 Mario</button>
+          <button class="chip" onclick="quickNxbrewSearch('Pokemon')">⚡ Pokémon</button>
+          <button class="chip" onclick="quickNxbrewSearch('Metroid')">🚀 Metroid</button>
+          <button class="chip" onclick="quickNxbrewSearch('Kirby')">⭐ Kirby</button>
+          <button class="chip" onclick="quickNxbrewSearch('Fire Emblem')">🛡️ Fire Emblem</button>
+          <button class="chip" onclick="quickNxbrewSearch('Xenoblade')">⚔️ Xenoblade</button>
+          <button class="chip" onclick="quickNxbrewSearch('Donkey Kong')">🦍 Donkey Kong</button>
+          <button class="chip" onclick="quickNxbrewSearch('Final Fantasy')">💎 Final Fantasy</button>
+          <button class="chip" onclick="quickNxbrewSearch('Dragon Quest')">🐉 Dragon Quest</button>
+          <button class="chip" onclick="quickNxbrewSearch('Sonic')">🦔 Sonic</button>
+        </div>
+
+        <div class="filter-row" id="nxbrew-format-chips" style="margin-bottom:4px;">
           <button class="chip active" onclick="setNxbrewFormat('all', this)">Tous (7 772)</button>
           <button class="chip" onclick="setNxbrewFormat('nsp', this)">NSP (eShop)</button>
           <button class="chip" onclick="setNxbrewFormat('xci', this)">XCI (Cartouche)</button>
-          <button class="chip" onclick="setNxbrewFormat('update', this)">Avec Update</button>
-          <button class="chip" onclick="setNxbrewFormat('dlc', this)">Avec DLC</button>
+          <button class="chip" onclick="setNxbrewFormat('update', this)">+ Update</button>
+          <button class="chip" onclick="setNxbrewFormat('dlc', this)">+ DLC</button>
         </div>
 
         <!-- Active Downloads Queue -->
         <div id="nxbrew-jobs-panel" style="margin-top:12px;display:none;">
-          <h3 style="font-size:0.9rem;margin:0 0 8px;color:var(--accent);">⚡ Téléchargements & Extractions en cours sur le Mac mini</h3>
+          <h3 style="font-size:0.86rem;margin:0 0 8px;color:var(--accent);">⚡ Téléchargements & Extractions en cours sur le Mac mini</h3>
           <div id="nxbrew-jobs-list" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
       </div>
 
-      <div class="two-col">
+      <div class="two-col nxbrew-mobile-order">
         <div class="panel-card">
           <h2>
-            <span>🎮 Résultats du Catalogue NXBrew</span>
-            <span id="nxbrew-results-count" style="font-size:0.78rem;color:var(--text-muted);">Chargement…</span>
+            <span>🎮 Catalogue Switch NXBrew</span>
+            <span id="nxbrew-results-count" style="font-size:0.76rem;color:var(--text-muted);">Chargement…</span>
           </h2>
-          <div id="nxbrew-catalog-list" style="display:flex;flex-direction:column;gap:8px;max-height:680px;overflow-y:auto;padding-right:4px;">
+          <div id="nxbrew-catalog-list" style="display:flex;flex-direction:column;gap:8px;max-height:660px;overflow-y:auto;">
             Recherchez un titre ci-dessus…
           </div>
         </div>
 
-        <div>
-          <div class="panel-card" id="nxbrew-inspector-card">
-            <h2>📦 Fiche du Jeu & Liens de Téléchargement Direct</h2>
-            <div id="nxbrew-inspector-body" style="font-size:0.84rem;color:var(--text-muted);">
-              Cliquez sur <strong>« 📦 Choisir & Télécharger »</strong> en face d'un jeu dans la liste à gauche pour extraire ses liens (Base Game, Update, DLC) et lancer le téléchargement sur votre Mac mini.
+        <div class="nxbrew-inspector-col">
+          <div class="panel-card" id="nxbrew-inspector-card" style="border-color:rgba(56,189,248,0.35);">
+            <h2>📦 Fiche du Jeu & Téléchargement 1-Clic</h2>
+            <div id="nxbrew-inspector-body" style="font-size:0.83rem;color:var(--text-muted);">
+              Touchez <strong>« 📦 Choisir »</strong> sur un jeu pour afficher sa jaquette, ses Updates/DLC et lancer le téléchargement direct sur votre Mac mini.
             </div>
+            <details style="margin-top:10px;font-size:0.78rem;color:var(--text-muted);">
+              <summary style="cursor:pointer;color:var(--accent);">🔗 Coller une URL nxbrew.net manuellement</summary>
+              <div class="input-row" style="margin-top:8px;">
+                <input
+                  type="url"
+                  id="nxbrew-custom-url"
+                  class="text-input"
+                  placeholder="https://nxbrew.net/..."
+                />
+                <button class="btn" onclick="inspectNxbrewCustomUrl()">Inspecter</button>
+              </div>
+            </details>
           </div>
 
           <div class="panel-card">
-            <h2>💾 Jeux Switch déjà présents sur votre Mac mini (`/Volumes/GamingSSD/Games/ROMs/Switch`)</h2>
+            <h2>💾 Déjà installés sur le Mac mini (`ROMs/Switch`)</h2>
             <div id="nxbrew-installed-list" style="font-size:0.8rem;color:#cbd5e1;display:flex;flex-direction:column;gap:6px;">
               Chargement…
             </div>
@@ -638,7 +775,7 @@
     </section>
 
     <!-- TAB 1: REMOTE SCREEN & ADB CONTROL -->
-    <section id="tab-remote" class="tab-panel active">
+    <section id="tab-remote" class="tab-panel">
       <div class="two-col">
         <div class="panel-card">
           <h2>

@@ -184,9 +184,10 @@ SYNC_PROFILES = [
         "macPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/BotW_Recomp_Mac/profile",
         "ssdPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Switch_Eden/save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/01007EF00011E000",
         "thorPaths": [
-            "/sdcard/Android/data/com.botwrecompandroid/files/v190/save",
-            "/sdcard/Android/data/com.botwrecompandroid/files/save",
-            "/sdcard/Android/data/dev.legacy.eden_emulator/files/nand/user/save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/01007EF00011E000",
+            "/sdcard/Android/data/com.botwrecomp.android/files/v190/save/save_0",
+            "/sdcard/Android/data/com.botwrecomp.android/files/save/save_0",
+            "/sdcard/Android/data/dev.igawa6.edenduo/files/nand/user/save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/01007EF00011E000",
+            "/sdcard/Android/data/dev.eden.eden_emulator/files/nand/user/save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/01007EF00011E000",
         ],
     },
     {
@@ -321,6 +322,7 @@ def push_local_dir_to_thor(serial: str, local_dir: str, remote_dir: str) -> bool
         return False
     run_adb(["-s", serial, "shell", f"mkdir -p \"{remote_dir}\""], timeout=6)
     rc, _, _ = run_adb(["-s", serial, "push", f"{local_dir}/.", remote_dir], timeout=180)
+    run_adb(["-s", serial, "shell", f"chmod -R 777 \"{remote_dir}\""], timeout=6)
     return rc == 0
 
 
@@ -328,6 +330,7 @@ def push_single_file_to_thor(serial: str, local_file: str, remote_file: str) -> 
     parent = os.path.dirname(remote_file)
     run_adb(["-s", serial, "shell", f"mkdir -p \"{parent}\""], timeout=6)
     rc, _, _ = run_adb(["-s", serial, "push", local_file, remote_file], timeout=60)
+    run_adb(["-s", serial, "shell", f"chmod -R 777 \"{parent}\""], timeout=6)
     return rc == 0
 
 

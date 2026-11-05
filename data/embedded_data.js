@@ -1231,6 +1231,36 @@ window.AYN_THOR_DATA = {
   ],
   "presets": [
     {
+      "id": "botw_recomp",
+      "name": "Zelda: Breath of the Wild Recomp (Portage Natif v0.3.1-beta)",
+      "package": "com.botwrecomp.android",
+      "icon": "🏹",
+      "socProfile": "Mode Performance / Ventilateur Intelligent",
+      "gpuDriver": "Turnip MrPurple T29-Toasted / Vulkan 1.3",
+      "resolution": "900p / 1080p Natif — Mode ARM64 Direct (`native_code = 1`)",
+      "settings": [
+        "Exécution ARM64 native directe de BotW v1.9.0 (`native_code = 1` dans `botwrecompandroid.ini`)",
+        "Image `romfs.bin` (14,1 Go) sur MicroSD `/storage/6531-3035/BotW_Recomp/romfs.bin` via `romfs.link`",
+        "Menu en jeu via `Minus + Plus` | Serveur carte temps réel `WatchMapServer` actif",
+        "Sauvegardes synchronisées Mac mini M4 Recomp ↔ AYN Thor Recomp ↔ Eden Duo"
+      ]
+    },
+    {
+      "id": "eden_duo",
+      "name": "Zelda: Breath of the Wild Duo (2 Écrans — Écran Bas Tablette Sheikah)",
+      "package": "dev.igawa6.edenduo",
+      "icon": "🗺️",
+      "socProfile": "Mode Performance / Ventilateur Intelligent",
+      "gpuDriver": "turnip_mrpurple_T29-toasted.adpkg.zip",
+      "resolution": "1080p (Haut) + Tablette Sheikah Interactive 1240×1080 (Bas)",
+      "settings": [
+        "Compagnon officiel `01007EF00011E000-BreathOfTheWild-1.0.0.dsmod.zip` installé dans `load/01007EF00011E000/`",
+        "Écran bas tactile : Carte interactive d'Hyrule en direct, marqueurs, inventaire, armes, runes et quêtes",
+        "NCE (Native Code Execution) ARM64 activé + Turnip T29",
+        "Sauvegardes partagées avec BotW Recomp Mac mini M4 et AYN Thor"
+      ]
+    },
+    {
       "id": "wwhd_recomp",
       "name": "Zelda: The Wind Waker HD Recomp (Portage Natif v0.5.0)",
       "package": "org.wwhdrecomp.wwhd",
