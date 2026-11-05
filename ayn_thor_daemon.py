@@ -241,7 +241,24 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 jobs = list(TRANSFER_JOBS.values())[-10:]
             st = get_live_status()
             st["jobs"] = jobs
+            sync_state_file = os.path.join(DATA_DIR, "sync_state.json")
+            if os.path.exists(sync_state_file):
+                try:
+                    with open(sync_state_file, "r", encoding="utf-8") as sf:
+                        st["syncBridge"] = json.load(sf)
+                except Exception:
+                    pass
             return self._send_json(st)
+
+        if path == "/api/sync-bridge":
+            sync_state_file = os.path.join(DATA_DIR, "sync_state.json")
+            if os.path.exists(sync_state_file):
+                try:
+                    with open(sync_state_file, "r", encoding="utf-8") as sf:
+                        return self._send_json({"ok": True, "sync": json.load(sf)})
+                except Exception:
+                    pass
+            return self._send_json({"ok": True, "sync": None})
 
         if path == "/api/inventory":
             if os.path.exists(INVENTORY_JSON):
@@ -545,6 +562,21 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 )
             return self._send_json({"ok": True, "job": job})
 
+        if path == "/api/sync-bridge":
+            mode = body.get("mode", "smart")
+            profile_id = body.get("profile", None)
+            cmd = ["/usr/bin/python3", os.path.join(ROOT_DIR, "scripts", "sync_saves_bridge.py"), "--mode", mode]
+            if profile_id:
+                cmd.extend(["--profile", profile_id])
+            rc, out, err = run_cmd(cmd, timeout=180)
+            if rc == 0 and out:
+                try:
+                    data = json.loads(out)
+                    return self._send_json({"ok": True, "sync": data})
+                except Exception:
+                    pass
+            return self._send_json({"ok": False, "error": err or out or "Erreur lors de la synchronisation."})
+
         if path == "/api/push-file":
             st = get_live_status()
             if not st["adb"]["ready"]:
@@ -572,16 +604,29 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
 
 
 def usb_adb_watchdog():
-    """Maintient la session ADB USB active (auto-reconnect si l'état reste unauthorized après réveil)."""
+    """Maintient la session ADB USB active et synchronise automatiquement les sauvegardes (Mac <-> GamingSSD <-> AYN Thor)."""
+    was_ready = False
+    last_auto_sync = 0.0
     while True:
         try:
             st = get_live_status()
             if st["adb"].get("unauthorized") and not st["adb"]["ready"]:
                 with ADB_LOCK:
                     run_cmd([ADB_BIN, "reconnect"], timeout=4)
+
+            is_ready = bool(st["adb"].get("ready"))
+            now = time.time()
+            # Synchronisation automatique dès le branchement ou toutes les 120 secondes
+            if is_ready and (not was_ready or (now - last_auto_sync) >= 120.0):
+                last_auto_sync = now
+                run_cmd(
+                    ["/usr/bin/python3", os.path.join(ROOT_DIR, "scripts", "sync_saves_bridge.py"), "--mode", "smart"],
+                    timeout=180,
+                )
+            was_ready = is_ready
         except Exception:
             pass
-        time.sleep(8)
+        time.sleep(10)
 
 
 def save_and_push_endpoint(tunnel_url: str) -> None:

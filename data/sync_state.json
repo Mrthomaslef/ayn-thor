@@ -1,0 +1,202 @@
+{
+  "timestamp": "05/11/2026 12:30:47",
+  "mode": "smart",
+  "thorConnected": true,
+  "serial": "ef1ee24",
+  "totalFilesChecked": 275,
+  "updatedOnMacCount": 0,
+  "updatedOnThorCount": 30,
+  "profiles": [
+    {
+      "id": "switch_ryujinx_eden",
+      "name": "Nintendo Switch (Ryujinx Mac ↔ Eden AYN Thor)",
+      "icon": "🔴",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 98,
+      "identical": 78,
+      "updatedOnMac": [],
+      "updatedOnThor": [
+        "Zelda: Breath of the Wild: 0/caption.jpg",
+        "Zelda: Breath of the Wild: 0/caption.sav",
+        "Zelda: Breath of the Wild: 0/game_data.sav",
+        "Zelda: Breath of the Wild: 1/caption.jpg",
+        "Zelda: Breath of the Wild: 1/caption.sav",
+        "Zelda: Breath of the Wild: 1/game_data.sav",
+        "Zelda: Breath of the Wild: 2/caption.jpg",
+        "Zelda: Breath of the Wild: 2/caption.sav",
+        "Zelda: Breath of the Wild: 2/game_data.sav",
+        "Zelda: Breath of the Wild: 3/caption.jpg",
+        "Zelda: Breath of the Wild: 3/caption.sav",
+        "Zelda: Breath of the Wild: 3/game_data.sav",
+        "Zelda: Breath of the Wild: 4/caption.jpg",
+        "Zelda: Breath of the Wild: 4/caption.sav",
+        "Zelda: Breath of the Wild: 4/game_data.sav",
+        "Zelda: Breath of the Wild: 5/caption.jpg",
+        "Zelda: Breath of the Wild: 5/caption.sav",
+        "Zelda: Breath of the Wild: 5/game_data.sav",
+        "Zelda: Breath of the Wild: option.sav",
+        "Zelda: Breath of the Wild: tracker/trackblock00.sav"
+      ],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "3ds_azahar",
+      "name": "Nintendo 3DS (Azahar Mac ↔ Azahar / Citra Dusk AYN Thor)",
+      "icon": "🕹️",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 20,
+      "identical": 17,
+      "updatedOnMac": [],
+      "updatedOnThor": [
+        "00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/000011C5/metadata",
+        "00000000000000000000000000000000/00000000000000000000000000000000/title/00040000/0011c500/data/00000001.metadata",
+        "00000000000000000000000000000000/00000000000000000000000000000000/title/00040000/0011c500/data/00000001/main"
+      ],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "gc_dolphin",
+      "name": "Nintendo GameCube (Dolphin Mac ↔ Dolphin AYN Thor)",
+      "icon": "🐬",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 12,
+      "identical": 12,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "wii_dolphin",
+      "name": "Nintendo Wii (Dolphin Mac ↔ Dolphin AYN Thor)",
+      "icon": "🎾",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 29,
+      "identical": 29,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "wiiu_cemu",
+      "name": "Nintendo Wii U (Cemu Mac ↔ Cemu AYN Thor)",
+      "icon": "🟦",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 55,
+      "identical": 55,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "ps2_pcsx2_aethersx2",
+      "name": "PlayStation 2 (PCSX2 Mac ↔ NetherSX2 / AetherSX2 AYN Thor)",
+      "icon": "💿",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 2,
+      "identical": 1,
+      "updatedOnMac": [],
+      "updatedOnThor": [
+        "Mcd001.ps2"
+      ],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "ps1_duckstation",
+      "name": "PlayStation 1 (DuckStation Mac ↔ DuckStation AYN Thor)",
+      "icon": "🦆",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 1,
+      "identical": 0,
+      "updatedOnMac": [],
+      "updatedOnThor": [
+        "SCUS-94900_resume.sav"
+      ],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "retroarch_saves",
+      "name": "RetroArch SRAM — GBA, GBC, GB, SNES, N64 (Mac ↔ AYN Thor)",
+      "icon": "👾",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 20,
+      "identical": 15,
+      "updatedOnMac": [],
+      "updatedOnThor": [
+        "DOSBox-pure/FORESTIA.pure.zip",
+        "FORESTIA.pure.zip",
+        "melonDS DS/Mario Kart DS (Europe) (En,Fr,De,Es,It).sav",
+        "melonDS DS/New Super Mario Bros. (Europe) (En,Fr,De,Es,It).sav",
+        "melonDS DS/Pokemon - SoulSilver Version (Europe).sav"
+      ],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "retroarch_states",
+      "name": "RetroArch Save States (Mac ↔ AYN Thor)",
+      "icon": "⚡",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 4,
+      "identical": 4,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "nds_melonds",
+      "name": "Nintendo DS (RetroArch melonDS Mac ↔ melonDS Dual-Screen + ROMs/nds AYN Thor)",
+      "icon": "📱",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 3,
+      "identical": 3,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "psp_ppsspp",
+      "name": "Sony PSP (PPSSPP Mac ↔ PPSSPP AYN Thor)",
+      "icon": "🛸",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 0,
+      "identical": 0,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "standalone_ports",
+      "name": "Portages & Decomps (PokéEmerald DualScreen, PokéRogue, Minish Cap, Zelda 3, Red Recomp)",
+      "icon": "💎",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 31,
+      "identical": 31,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "ok"
+    }
+  ]
+}

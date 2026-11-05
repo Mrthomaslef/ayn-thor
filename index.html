@@ -671,9 +671,27 @@
 
     <!-- TAB 2: SAVES SYNC -->
     <section id="tab-saves" class="tab-panel">
+      <div class="panel-card" style="border-color:rgba(34,197,94,0.45);background:linear-gradient(145deg,rgba(20,83,45,0.22),rgba(15,23,42,0.95));">
+        <h2>
+          <span>🔄 Pont Cross-Play Automatique : Émulateurs Mac mini M4 ↔ GamingSSD ↔ AYN Thor</span>
+          <span id="sync-bridge-badge" style="font-size:0.76rem;padding:5px 10px;border-radius:999px;background:rgba(34,197,94,0.2);color:#4ade80;border:1px solid rgba(34,197,94,0.4);">
+            ⚡ Auto-Sync Actif (toutes les 2 min)
+          </span>
+        </h2>
+        <p style="margin:0 0 12px;font-size:0.84rem;color:#cbd5e1;line-height:1.5;">
+          Passez librement du <strong>Mac mini M4</strong> (<em>Ryujinx, Azahar, Dolphin, Cemu, PCSX2, DuckStation, RetroArch, PPSSPP</em>) à votre <strong>AYN Thor</strong> (<em>Eden, Azahar/Dusk, Dolphin, Cemu, NetherSX2, DuckStation, melonDS Dual-Screen, RetroArch</em>). Le moteur compare chaque sauvegarde par empreinte MD5 et date exacte, conserve un backup horodaté dans <code>_Backups_Sync</code> avant tout écrasement, et propage automatiquement la partie la plus récente des deux côtés.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+          <button class="btn primary" onclick="runBridgeSync('smart')">🔄 Synchronisation Intelligente (Garder la + récente partout)</button>
+          <button class="btn success" onclick="runBridgeSync('thor_to_mac')">📲➡️💻 J'ai joué sur l'AYN Thor (Importer vers Mac)</button>
+          <button class="btn" onclick="runBridgeSync('mac_to_thor')">💻➡️📲 J'ai joué sur le Mac (Envoyer vers AYN Thor)</button>
+        </div>
+        <div id="sync-bridge-profiles" class="cards-grid"></div>
+      </div>
+
       <div class="panel-card">
         <h2>
-          <span>💾 Synchronisation des Sauvegardes (`GamingSSD/Games/Sauvegardes_AYN_Thor` ↔ `AYN Thor`)</span>
+          <span>💾 Catalogue Détaillé des 23 Dossiers (`GamingSSD/Games/Sauvegardes_AYN_Thor` ↔ `AYN Thor`)</span>
         </h2>
         <div class="filter-row" id="saves-filter-row"></div>
         <div class="cards-grid" id="saves-grid"></div>
@@ -870,6 +888,61 @@
             ${j.output ? `<div class="mono-path" style="margin-top:4px;">${j.output.slice(0, 240)}</div>` : ""}
           </div>
         `).join("");
+      }
+
+      if (liveStatus.syncBridge) {
+        renderSyncBridge(liveStatus.syncBridge);
+      }
+    }
+
+    function renderSyncBridge(sync) {
+      const box = document.getElementById("sync-bridge-profiles");
+      const badge = document.getElementById("sync-bridge-badge");
+      if (!box || !sync) return;
+      badge.textContent = `✅ Synchronisé à ${sync.timestamp} · ${sync.totalFilesChecked} sauvegardes alignées`;
+      const profiles = sync.profiles || [];
+      box.innerHTML = profiles.map(p => {
+        const upMac = (p.updatedOnMac || []).length;
+        const upThor = (p.updatedOnThor || []).length;
+        const statusText = (upMac === 0 && upThor === 0)
+          ? `100% aligné (${p.identical}/${p.totalFiles} fichiers identiques)`
+          : `${upMac} MàJ Mac · ${upThor} MàJ AYN Thor (${p.identical} déjà identiques)`;
+        return `
+          <div class="item-card" style="padding:13px;">
+            <div class="item-head">
+              <div class="item-icon">${p.icon || '🔄'}</div>
+              <div>
+                <h4 class="item-title">${p.name}</h4>
+                <div class="item-sub" style="color:#4ade80;">${statusText}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">
+              <button class="btn primary" style="padding:6px 10px;font-size:0.75rem;" onclick="runBridgeSync('smart', '${p.id}')">🔄 Auto</button>
+              <button class="btn" style="padding:6px 10px;font-size:0.75rem;" onclick="runBridgeSync('thor_to_mac', '${p.id}')">📲➡️💻 Thor → Mac</button>
+              <button class="btn" style="padding:6px 10px;font-size:0.75rem;" onclick="runBridgeSync('mac_to_thor', '${p.id}')">💻➡️📲 Mac → Thor</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function runBridgeSync(mode = "smart", profile = null) {
+      if (!API_BASE) return showToast("Connectez-vous au daemon Mac mini.");
+      showToast("Synchronisation Cross-Play en cours (Mac ↔ GamingSSD ↔ AYN Thor)…");
+      try {
+        const r = await fetch(`${API_BASE}/api/sync-bridge`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mode, profile }),
+        });
+        const res = await r.json();
+        if (!res.ok) return showToast(res.error || "Erreur de synchronisation");
+        if (res.sync) {
+          renderSyncBridge(res.sync);
+          showToast(`Synchronisation terminée : ${res.sync.updatedOnMacCount} MàJ Mac · ${res.sync.updatedOnThorCount} MàJ AYN Thor (${res.sync.totalFilesChecked} fichiers vérifiés)`);
+        }
+      } catch (e) {
+        showToast("Erreur réseau pendant la synchronisation");
       }
     }
 
