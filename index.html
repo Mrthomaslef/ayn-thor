@@ -815,6 +815,14 @@
         if (adb.battery !== null) {
           document.getElementById("kpi-battery").textContent = `Batterie AYN Thor : ${adb.battery}%`;
         }
+      } else if (adb.unauthorized) {
+        dotAdb.className = "dot warn";
+        lblAdb.textContent = `ADB : Autorisation requise (${adb.serial})`;
+        diagBox.className = "diag-banner";
+        document.getElementById("diag-title").innerHTML = "🔓 AYN Thor connectée en ADB USB (`ef1ee24`) — En attente du clic « Autoriser » sur l'écran de la console !";
+        document.getElementById("diag-desc").innerHTML =
+          `Le Mac mini vient d'envoyer sa clé RSA à votre AYN Thor (<code>usb:17825792X · 0x4E11</code>). <strong>Allumez l'écran de l'AYN Thor, cochez « Toujours autoriser depuis cet ordinateur » et appuyez sur « Autoriser »</strong> sur la fenêtre qui vient d'apparaître.`;
+        document.getElementById("diag-steps").style.display = "none";
       } else {
         dotAdb.className = "dot warn";
         lblAdb.textContent = "ADB : En attente d'autorisation";

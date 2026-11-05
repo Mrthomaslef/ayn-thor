@@ -35,6 +35,7 @@ LAN_URL = f"http://192.168.1.111:{PORT}"
 
 TRANSFER_JOBS = {}
 JOBS_LOCK = threading.Lock()
+ADB_LOCK = threading.Lock()
 CURRENT_TUNNEL_URL = ""
 
 
@@ -64,6 +65,7 @@ def get_live_status():
         },
         "adb": {
             "ready": False,
+            "unauthorized": False,
             "devices": [],
             "serial": "",
             "transport": "none",
@@ -101,26 +103,30 @@ def get_live_status():
             if pid == 20193:  # 0x4ee1
                 status["usb"]["usbMode"] = "mtp_only_no_adb"
                 status["usb"]["usbModeLabel"] = "Branchée en USB (MTP 0x4EE1) — Débogage USB inactif ou écran verrouillé"
-            elif pid in (20194, 20199):
+            elif pid in (19985, 20194, 20199):  # 0x4e11, 0x4ee2, 0x4ee7
                 status["usb"]["usbMode"] = "adb_enabled"
-                status["usb"]["usbModeLabel"] = f"Branchée en USB — MTP + ADB Actif ({hex(pid)})"
+                status["usb"]["usbModeLabel"] = f"Branchée en USB — Interface ADB Active ({hex(pid)})"
             else:
                 status["usb"]["usbMode"] = f"usb_{hex(pid)}"
                 status["usb"]["usbModeLabel"] = f"Branchée en USB ({hex(pid)})"
 
     # 2. Inspect ADB
     if os.path.exists(ADB_BIN):
-        rc, adb_out, _ = run_cmd([ADB_BIN, "devices", "-l"], timeout=3)
+        with ADB_LOCK:
+            rc, adb_out, _ = run_cmd([ADB_BIN, "devices", "-l"], timeout=6)
         if rc == 0:
             devs = []
             for line in adb_out.splitlines()[1:]:
                 line = line.strip()
-                if not line:
+                if not line or line.startswith("*"):
                     continue
                 parts = line.split()
                 if len(parts) >= 2:
                     devs.append({"id": parts[0], "state": parts[1], "raw": line})
             status["adb"]["devices"] = devs
+            if any(d["state"] == "unauthorized" for d in devs):
+                status["adb"]["unauthorized"] = True
+                status["adb"]["serial"] = devs[0]["id"]
             ready_devs = [d for d in devs if d["state"] == "device"]
             if ready_devs:
                 active = ready_devs[0]["id"]
