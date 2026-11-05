@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b0f19" />
+  <meta name="theme-color" content="#070b14" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Switch DL" />
   <title>Rom et Emulation — Téléchargement Switch & Recomp M4 / AYN Thor</title>
-  <link rel="manifest" href="manifest.json?v=3" />
-  <link rel="icon" type="image/svg+xml" href="assets/icon.svg?v=3" />
-  <link rel="apple-touch-icon" href="assets/icon.svg?v=3" />
+  <link rel="manifest" href="manifest.json?v=4" />
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg?v=4" />
+  <link rel="apple-touch-icon" href="assets/icon.svg?v=4" />
   <style>
     :root {
       --bg: #070b14;
@@ -25,7 +25,6 @@
       --success: #22c55e;
       --warning: #f59e0b;
       --danger: #ef4444;
-      --radius: 16px;
     }
 
     * {
@@ -36,265 +35,276 @@
     html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
       background: var(--bg);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
     .app-shell {
-      max-width: 1280px;
+      max-width: 860px;
       margin: 0 auto;
-      padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(env(safe-area-inset-bottom, 0px) + 40px);
+      padding: calc(env(safe-area-inset-top, 0px) + 8px) 10px calc(env(safe-area-inset-bottom, 0px) + 36px);
     }
 
-    /* Compact Header */
+    /* Compact Mobile-First Header */
     .top-header {
-      background: linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(15, 23, 42, 0.92));
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px 20px;
-      margin-bottom: 14px;
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+      gap: 8px;
+      padding: 8px 10px;
+      background: rgba(17, 24, 39, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 8px;
     }
 
     .brand-row {
       display: flex;
       align-items: center;
-      gap: 13px;
+      gap: 9px;
+      min-width: 0;
+      flex: 1;
     }
 
-    .brand-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 13px;
-      background: linear-gradient(135deg, #0284c7, #4f46e5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      box-shadow: 0 6px 18px rgba(56, 189, 248, 0.28);
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+    }
+
+    .brand-title {
+      min-width: 0;
+      flex: 1;
     }
 
     .brand-title h1 {
       margin: 0;
-      font-size: 1.25rem;
+      font-size: 0.98rem;
       font-weight: 800;
       letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .brand-title p {
-      margin: 3px 0 0;
+      margin: 1px 0 0;
       color: var(--text-muted);
-      font-size: 0.8rem;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .header-actions {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
       align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .pill {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 6px 12px;
+      gap: 5px;
+      padding: 5px 9px;
       border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 600;
+      font-size: 0.7rem;
+      font-weight: 700;
       background: var(--bg-elevated);
       border: 1px solid var(--border);
+      white-space: nowrap;
     }
 
     .dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: var(--text-muted);
       flex-shrink: 0;
     }
-    .dot.ok { background: var(--success); box-shadow: 0 0 8px var(--success); }
-    .dot.warn { background: var(--warning); box-shadow: 0 0 8px var(--warning); }
+    .dot.ok { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .dot.warn { background: var(--warning); box-shadow: 0 0 6px var(--warning); }
 
-    /* Buttons & Inputs */
-    .btn {
-      background: var(--bg-elevated);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 9px 14px;
+    .icon-btn {
+      width: 34px;
+      height: 34px;
       border-radius: 10px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.9rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: all 0.14s ease;
-      text-decoration: none;
-    }
-    .btn:hover { background: var(--bg-card-hover); border-color: rgba(56, 189, 248, 0.45); }
-    .btn.primary {
-      background: linear-gradient(135deg, #0284c7, #4f46e5);
-      border-color: transparent;
-      color: #fff;
-    }
-    .btn.primary:hover {
-      filter: brightness(1.08);
+      cursor: pointer;
+      flex-shrink: 0;
     }
 
-    .search-box {
-      background: var(--bg-card);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    /* Sticky Search & Filter Bar */
+    .sticky-controls {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(7, 11, 20, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 6px 0 8px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      margin-bottom: 10px;
     }
 
-    .search-row {
+    .search-wrap {
+      position: relative;
       display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
+      align-items: center;
+      margin-bottom: 8px;
     }
 
-    .text-input {
-      flex: 1;
-      min-width: 180px;
-      background: #080c15;
-      border: 1px solid rgba(148, 163, 184, 0.28);
+    .search-input {
+      width: 100%;
+      background: #0d1322;
+      border: 1px solid rgba(56, 189, 248, 0.35);
       color: var(--text);
-      padding: 11px 14px;
+      padding: 10px 38px 10px 13px;
       border-radius: 12px;
-      font-size: 0.92rem;
+      font-size: 16px; /* Prevents iOS Safari zoom on focus */
+      font-weight: 500;
       outline: none;
     }
-    .text-input:focus {
+    .search-input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.18);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
     }
 
-    .filter-group-label {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      font-weight: 700;
-      margin: 8px 0 6px;
+    .clear-btn {
+      position: absolute;
+      right: 8px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(148, 163, 184, 0.2);
+      color: var(--text);
+      font-size: 0.78rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
 
-    .filter-row {
+    .scroll-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-bottom: 6px;
-    }
-
-    .filter-row.scroll-x {
-      flex-wrap: nowrap;
+      gap: 6px;
       overflow-x: auto;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
       padding-bottom: 2px;
+      margin-bottom: 6px;
     }
-    .filter-row.scroll-x::-webkit-scrollbar { display: none; }
+    .scroll-row:last-child {
+      margin-bottom: 0;
+    }
+    .scroll-row::-webkit-scrollbar {
+      display: none;
+    }
 
     .chip {
-      padding: 6px 12px;
+      padding: 6px 11px;
       border-radius: 999px;
-      font-size: 0.77rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      background: #0b1120;
+      background: #111827;
       color: var(--text-muted);
       border: 1px solid var(--border);
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.14s ease;
-    }
-    .chip:hover {
-      border-color: rgba(56, 189, 248, 0.4);
-      color: var(--text);
+      flex-shrink: 0;
+      transition: all 0.12s ease;
     }
     .chip.active {
-      background: rgba(56, 189, 248, 0.18);
+      background: rgba(56, 189, 248, 0.2);
       color: var(--accent);
       border-color: var(--accent);
     }
     .chip.recomp-both.active {
-      background: rgba(34, 197, 94, 0.2);
+      background: rgba(34, 197, 94, 0.22);
       color: #4ade80;
       border-color: #22c55e;
     }
 
-    /* Main 2-column layout */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1.35fr 1fr;
-      gap: 16px;
-      align-items: start;
+    /* Results bar */
+    .results-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 0 4px 8px;
     }
 
-    @media (max-width: 960px) {
-      .main-grid {
-        grid-template-columns: 1fr;
-      }
-      .inspector-col {
-        order: -1;
-      }
+    /* Game Cards List */
+    .games-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .panel-card {
-      background: var(--bg-card);
+    .game-card {
+      background: #0c1220;
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 14px;
-    }
-
-    .panel-card h2 {
-      margin: 0 0 12px;
-      font-size: 1rem;
+      border-radius: 13px;
+      padding: 11px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-    }
-
-    /* Game Row Card */
-    .game-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      background: #090e1a;
-      border: 1px solid var(--border);
-      border-radius: 12px;
       cursor: pointer;
-      transition: border-color 0.14s ease, background 0.14s ease;
+      transition: background 0.12s ease, border-color 0.12s ease;
+      max-width: 100%;
+      overflow: hidden;
     }
-    .game-row:hover {
-      background: #0f172a;
-      border-color: rgba(56, 189, 248, 0.45);
+    .game-card:active {
+      transform: scale(0.992);
+      background: #131c31;
     }
-    .game-row.has-recomp-both {
-      border-color: rgba(34, 197, 94, 0.4);
-      background: linear-gradient(90deg, rgba(20, 83, 45, 0.16), #090e1a 60%);
+    .game-card.has-recomp-both {
+      border-color: rgba(34, 197, 94, 0.42);
+      background: linear-gradient(90deg, rgba(20, 83, 45, 0.2), #0c1220 70%);
     }
-    .game-row.has-recomp-m4 {
-      border-color: rgba(56, 189, 248, 0.32);
+    .game-card.has-recomp-m4 {
+      border-color: rgba(56, 189, 248, 0.35);
     }
 
-    /* Badges */
-    .badges-wrap {
+    .game-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .game-title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .game-name {
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .recomp-row {
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
@@ -302,25 +312,26 @@
     }
 
     .badge {
-      font-size: 0.71rem;
+      font-size: 0.69rem;
       font-weight: 700;
-      padding: 3px 8px;
+      padding: 3px 7px;
       border-radius: 6px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      line-height: 1.2;
+      gap: 3px;
+      line-height: 1.15;
+      max-width: 100%;
     }
 
-    .badge.recomp-yes-m4 {
+    .badge.m4-yes {
       background: rgba(34, 197, 94, 0.18);
       color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.38);
+      border: 1px solid rgba(34, 197, 94, 0.4);
     }
-    .badge.recomp-yes-ayn {
+    .badge.ayn-yes {
       background: rgba(16, 185, 129, 0.2);
       color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.42);
+      border: 1px solid rgba(16, 185, 129, 0.45);
     }
     .badge.recomp-no {
       background: rgba(148, 163, 184, 0.08);
@@ -334,174 +345,240 @@
     .badge.fmt-upd { background: rgba(245, 158, 11, 0.16); color: #fbbf24; }
     .badge.fmt-inst { background: rgba(34, 197, 94, 0.28); color: #86efac; }
 
-    .recomp-note-line {
-      font-size: 0.73rem;
+    .recomp-detail {
+      font-size: 0.71rem;
       color: #a7f3d0;
-      margin-top: 5px;
-      line-height: 1.35;
+      margin-top: 4px;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .dl-btn {
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.28);
+    }
+
+    .btn {
+      background: var(--bg-elevated);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    /* Active Jobs Banner */
+    .jobs-card {
+      background: linear-gradient(145deg, rgba(12, 74, 110, 0.32), rgba(15, 23, 42, 0.96));
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      border-radius: 13px;
+      padding: 11px 12px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    /* Bottom Sheet Modal for 1-Click Download Inspector */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.76);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .sheet-backdrop.open {
+      display: flex;
+    }
+
+    .sheet-panel {
+      width: 100%;
+      max-width: 680px;
+      max-height: 88vh;
+      background: #0f172a;
+      border-top: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 20px 20px 0 0;
+      padding: 14px 14px calc(env(safe-area-inset-bottom, 0px) + 18px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.6);
+      animation: slideUp 0.18s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(40px); opacity: 0.5; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .sheet-handle {
+      width: 40px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.35);
+      margin: 0 auto 10px;
+    }
+
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .sheet-close {
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 11px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     /* Toast */
     #toast {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+      left: 12px;
+      right: 12px;
+      max-width: 420px;
+      margin: 0 auto;
       background: #0f172a;
       border: 1px solid var(--accent);
       color: var(--text);
-      padding: 12px 16px;
+      padding: 11px 14px;
       border-radius: 12px;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       font-weight: 600;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
       display: none;
       z-index: 9999;
-      max-width: 360px;
-    }
-
-    @media (max-width: 640px) {
-      .app-shell {
-        padding: calc(env(safe-area-inset-top, 0px) + 10px) 10px 32px;
-      }
-      .top-header {
-        padding: 13px 14px;
-      }
-      .brand-title h1 {
-        font-size: 1.08rem;
-      }
-      .text-input {
-        font-size: 16px !important;
-      }
-      .game-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .game-row .btn {
-        width: 100%;
-      }
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="app-shell">
-    <!-- Minimal Download-Dedicated Header -->
+    <!-- Compact Mobile Header -->
     <header class="top-header">
       <div class="brand-row">
-        <img src="assets/icon.svg?v=3" alt="Rom et Emulation" style="width:48px;height:48px;border-radius:13px;flex-shrink:0;box-shadow:0 6px 18px rgba(56,189,248,0.28);" />
+        <img src="assets/icon.svg?v=4" alt="Switch DL" class="brand-logo" />
         <div class="brand-title">
-          <h1>Index de Téléchargement Switch</h1>
-          <p>7 767 Jeux Switch (NSP/XCI) · Statut Recomp Mac mini M4 & AYN Thor vérifié sur chaque jeu</p>
+          <h1>Switch DL · Recomp M4 & AYN</h1>
+          <p>7 767 Jeux NSP/XCI · Compatibilité Recomp vérifiée</p>
         </div>
       </div>
       <div class="header-actions">
-        <div class="pill" title="État du serveur de téléchargement Mac mini M4">
+        <div class="pill" title="État du serveur Mac mini M4">
           <span class="dot" id="dot-daemon"></span>
-          <span id="lbl-daemon">Connexion au Mac mini…</span>
+          <span id="lbl-daemon">Mac mini…</span>
         </div>
-        <button class="btn" onclick="refreshAll(true)">🔄 Actualiser</button>
+        <button class="icon-btn" onclick="refreshAll(true)" title="Actualiser">🔄</button>
       </div>
     </header>
 
     <!-- Active Downloads Queue (only shown when downloads exist) -->
-    <div id="nxbrew-jobs-panel" class="panel-card" style="display:none;border-color:rgba(56,189,248,0.5);background:linear-gradient(145deg,rgba(12,74,110,0.28),rgba(15,23,42,0.96));">
-      <h2 style="margin:0 0 10px;color:var(--accent);font-size:0.92rem;">
-        <span>⚡ Téléchargements & Extractions en cours sur le Mac mini</span>
-        <button class="btn" style="padding:4px 9px;font-size:0.74rem;" onclick="refreshNxbrewJobs()">Actualiser</button>
-      </h2>
-      <div id="nxbrew-jobs-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div id="nxbrew-jobs-panel" class="jobs-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <strong style="font-size:0.8rem;color:var(--accent);">⚡ Téléchargements en cours sur Mac mini</strong>
+        <button class="btn" style="padding:3px 8px;font-size:0.7rem;" onclick="refreshNxbrewJobs()">Actualiser</button>
+      </div>
+      <div id="nxbrew-jobs-list" style="display:flex;flex-direction:column;gap:6px;"></div>
     </div>
 
-    <!-- Search & Verified Recomp Filters -->
-    <section class="search-box">
-      <div class="search-row">
+    <!-- Sticky Search & Swipeable Filters -->
+    <section class="sticky-controls">
+      <div class="search-wrap">
         <input
           type="search"
           id="nxbrew-search-input"
-          class="text-input"
-          placeholder="🔍 Chercher un jeu Switch (Zelda, Mario, Pokémon, Metroid, Xenoblade, Diablo…)"
+          class="search-input"
+          placeholder="🔍 Chercher un jeu Switch (Zelda, Mario, Pokémon, Metroid…)"
           oninput="debounceNxbrewSearch()"
         />
-        <button class="btn primary" onclick="searchNxbrewCatalog()">Rechercher</button>
+        <button id="search-clear-btn" class="clear-btn" onclick="quickNxbrewSearch('')">✕</button>
       </div>
 
-      <div class="filter-group-label">Compatibilité Recomp Native (Vérifiée M4 & AYN Thor)</div>
-      <div class="filter-row" id="nxbrew-recomp-chips">
-        <button class="chip active" onclick="setNxbrewRecomp('all', this)">Tous les jeux (7 767)</button>
-        <button class="chip recomp-both" onclick="setNxbrewRecomp('both', this)">🔥 Recomp M4 + AYN Thor (27 vérifiés)</button>
-        <button class="chip" onclick="setNxbrewRecomp('m4', this)">🍎 Recomp Mac M4 (102 vérifiés)</button>
-        <button class="chip" onclick="setNxbrewRecomp('ayn', this)">📱 Recomp AYN Thor (27 vérifiés)</button>
+      <!-- Row 1: Verified Recomp Filters -->
+      <div class="scroll-row" id="nxbrew-recomp-chips">
+        <button class="chip active" onclick="setNxbrewRecomp('all', this)">Tous (7 767)</button>
+        <button class="chip recomp-both" onclick="setNxbrewRecomp('both', this)">🔥 M4 + AYN Thor (27)</button>
+        <button class="chip" onclick="setNxbrewRecomp('m4', this)">🍎 Recomp M4 (102)</button>
+        <button class="chip" onclick="setNxbrewRecomp('ayn', this)">📱 Recomp AYN (27)</button>
+        <button class="chip" onclick="setNxbrewRecomp('installed', this)">✅ Déjà sur Mac</button>
       </div>
 
-      <div class="filter-group-label">Accès Rapide par Licence</div>
-      <div class="filter-row scroll-x">
-        <button class="chip" onclick="quickNxbrewSearch('')">Tout A-Z</button>
+      <!-- Row 2: Quick Franchises + Formats -->
+      <div class="scroll-row" id="nxbrew-franchise-chips">
         <button class="chip" onclick="quickNxbrewSearch('Zelda')">🗡️ Zelda</button>
         <button class="chip" onclick="quickNxbrewSearch('Mario')">🍄 Mario</button>
         <button class="chip" onclick="quickNxbrewSearch('Pokemon')">⚡ Pokémon</button>
         <button class="chip" onclick="quickNxbrewSearch('Metroid')">🚀 Metroid</button>
         <button class="chip" onclick="quickNxbrewSearch('Xenoblade')">⚔️ Xenoblade</button>
         <button class="chip" onclick="quickNxbrewSearch('Fire Emblem')">🛡️ Fire Emblem</button>
-        <button class="chip" onclick="quickNxbrewSearch('Donkey Kong')">🦍 Donkey Kong</button>
+        <button class="chip" onclick="quickNxbrewSearch('Donkey Kong')">🦍 DK</button>
         <button class="chip" onclick="quickNxbrewSearch('Kirby')">⭐ Kirby</button>
-        <button class="chip" onclick="quickNxbrewSearch('Final Fantasy')">💎 Final Fantasy</button>
-        <button class="chip" onclick="quickNxbrewSearch('Dragon Quest')">🐉 Dragon Quest</button>
+        <button class="chip" onclick="quickNxbrewSearch('Final Fantasy')">💎 FF</button>
+        <button class="chip" onclick="quickNxbrewSearch('Dragon Quest')">🐉 DQ</button>
         <button class="chip" onclick="quickNxbrewSearch('Diablo')">😈 Diablo</button>
         <button class="chip" onclick="quickNxbrewSearch('Persona')">🎭 Persona</button>
-        <button class="chip" onclick="quickNxbrewSearch('Sonic')">🦔 Sonic</button>
-      </div>
-
-      <div class="filter-group-label">Format Switch</div>
-      <div class="filter-row" id="nxbrew-format-chips" style="margin-bottom:0;">
-        <button class="chip active" onclick="setNxbrewFormat('all', this)">Tous formats</button>
-        <button class="chip" onclick="setNxbrewFormat('nsp', this)">NSP (eShop)</button>
-        <button class="chip" onclick="setNxbrewFormat('xci', this)">XCI (Cartouche)</button>
-        <button class="chip" onclick="setNxbrewFormat('update', this)">+ Update</button>
-        <button class="chip" onclick="setNxbrewFormat('dlc', this)">+ DLC</button>
       </div>
     </section>
 
-    <!-- Main Download Index & 1-Click Inspector -->
-    <div class="main-grid">
-      <!-- Left Column: Game List -->
-      <div class="panel-card">
-        <h2>
-          <span>🎮 Catalogue Switch</span>
-          <span id="nxbrew-results-count" style="font-size:0.76rem;color:var(--text-muted);font-weight:600;">Chargement…</span>
-        </h2>
-        <div id="nxbrew-catalog-list" style="display:flex;flex-direction:column;gap:9px;max-height:740px;overflow-y:auto;padding-right:2px;">
-          Chargement du catalogue Switch…
-        </div>
-      </div>
+    <!-- Results Count + Format Toggle -->
+    <div class="results-bar">
+      <span id="nxbrew-results-count">Chargement du catalogue…</span>
+      <select id="nxbrew-format-select" onchange="setNxbrewFormat(this.value)" style="background:#111827;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:0.74rem;font-weight:700;">
+        <option value="all">Tous formats</option>
+        <option value="nsp">NSP uniquement</option>
+        <option value="xci">XCI uniquement</option>
+        <option value="update">Avec Update</option>
+        <option value="dlc">Avec DLC</option>
+      </select>
+    </div>
 
-      <!-- Right Column: 1-Click Download Inspector + Installed Games -->
-      <div class="inspector-col">
-        <div class="panel-card" id="nxbrew-inspector-card" style="border-color:rgba(56,189,248,0.4);">
-          <h2>📦 Téléchargement Direct 1-Clic</h2>
-          <div id="nxbrew-inspector-body" style="font-size:0.84rem;color:var(--text-muted);line-height:1.5;">
-            Cliquez sur un jeu dans la liste pour afficher ses liens <strong>FileKeeper (Direct Auto + Extraction 7zz)</strong>, ses Updates/DLC et le détail de son portage Recomp sur Mac mini M4 et AYN Thor.
-          </div>
-          <details style="margin-top:12px;font-size:0.78rem;color:var(--text-muted);">
-            <summary style="cursor:pointer;color:var(--accent);font-weight:600;">🔗 Coller une URL nxbrew.net manuellement</summary>
-            <div class="search-row" style="margin-top:8px;margin-bottom:0;">
-              <input
-                type="url"
-                id="nxbrew-custom-url"
-                class="text-input"
-                style="padding:8px 11px;font-size:0.82rem;"
-                placeholder="https://nxbrew.net/..."
-              />
-              <button class="btn" onclick="inspectNxbrewCustomUrl()">Inspecter</button>
-            </div>
-          </details>
-        </div>
+    <!-- Main Full-Width Game List -->
+    <div id="nxbrew-catalog-list" class="games-list">
+      Chargement…
+    </div>
+  </div>
 
-        <div class="panel-card">
-          <h2>💾 Déjà téléchargés sur le Mac mini (`ROMs/Switch`)</h2>
-          <div id="nxbrew-installed-list" style="font-size:0.8rem;color:#cbd5e1;display:flex;flex-direction:column;gap:6px;">
-            Chargement…
-          </div>
-        </div>
+  <!-- Bottom Sheet Modal for 1-Click Download -->
+  <div id="inspector-backdrop" class="sheet-backdrop" onclick="if(event.target===this) closeInspectorSheet()">
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <strong style="font-size:0.9rem;color:var(--accent);">📦 Téléchargement Direct 1-Clic</strong>
+        <button class="sheet-close" onclick="closeInspectorSheet()">✕ Fermer</button>
       </div>
+      <div id="nxbrew-inspector-body" style="font-size:0.83rem;color:var(--text-muted);line-height:1.45;"></div>
     </div>
   </div>
 
@@ -525,14 +602,23 @@
     let NXBREW_SEARCH_TIMER = null;
     let NXBREW_JOBS_TIMER = null;
     let LOCAL_CATALOG_CACHE = null;
-    let CURRENT_SELECTED_RECOMP = null;
 
     function showToast(msg) {
       const el = document.getElementById("toast");
       el.textContent = msg;
       el.style.display = "block";
       clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => { el.style.display = "none"; }, 4200);
+      window._toastTimer = setTimeout(() => { el.style.display = "none"; }, 3800);
+    }
+
+    function openInspectorSheet() {
+      document.getElementById("inspector-backdrop").classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeInspectorSheet() {
+      document.getElementById("inspector-backdrop").classList.remove("open");
+      document.body.style.overflow = "";
     }
 
     function normTxt(s) {
@@ -544,21 +630,29 @@
         .trim();
     }
 
+    function updateClearBtn() {
+      const inp = document.getElementById("nxbrew-search-input");
+      const btn = document.getElementById("search-clear-btn");
+      if (btn && inp) {
+        btn.style.display = inp.value.trim() ? "inline-flex" : "none";
+      }
+    }
+
     function debounceNxbrewSearch() {
+      updateClearBtn();
       clearTimeout(NXBREW_SEARCH_TIMER);
-      NXBREW_SEARCH_TIMER = setTimeout(() => searchNxbrewCatalog(), 200);
+      NXBREW_SEARCH_TIMER = setTimeout(() => searchNxbrewCatalog(), 180);
     }
 
     function quickNxbrewSearch(q) {
       const inp = document.getElementById("nxbrew-search-input");
       if (inp) inp.value = q;
+      updateClearBtn();
       searchNxbrewCatalog();
     }
 
-    function setNxbrewFormat(fmt, btn) {
+    function setNxbrewFormat(fmt) {
       NXBREW_FORMAT = fmt;
-      document.querySelectorAll("#nxbrew-format-chips .chip").forEach(c => c.classList.remove("active"));
-      if (btn) btn.classList.add("active");
       searchNxbrewCatalog();
     }
 
@@ -569,50 +663,40 @@
       searchNxbrewCatalog();
     }
 
-    function renderRecompBadges(recomp) {
-      if (recomp && recomp.m4 && recomp.ayn) {
+    function shortToolLabel(toolStr, fallback) {
+      if (!toolStr) return fallback;
+      return toolStr.split("(")[0].trim();
+    }
+
+    function renderMobileRecompBadges(rc) {
+      if (rc && rc.m4 && rc.ayn) {
+        const m4Short = shortToolLabel(rc.m4Tool, "Natif ARM64");
+        const aynShort = shortToolLabel(rc.aynTool, "Natif Android");
         return `
-          <span class="badge recomp-yes-m4" title="Portage natif ARM64 + Metal vérifié sur Mac mini M4">
-            🍎 Recomp M4 : OUI (${recomp.m4Tool || "Natif ARM64"})
-          </span>
-          <span class="badge recomp-yes-ayn" title="Portage natif ARM64 + Vulkan/Turnip vérifié sur AYN Thor">
-            📱 Recomp AYN Thor : OUI (${recomp.aynTool || "Natif Android"})
-          </span>
+          <span class="badge m4-yes">🍎 M4 : OUI (${m4Short})</span>
+          <span class="badge ayn-yes">📱 AYN : OUI (${aynShort})</span>
         `;
       }
-      if (recomp && recomp.m4 && !recomp.ayn) {
+      if (rc && rc.m4 && !rc.ayn) {
+        const m4Short = shortToolLabel(rc.m4Tool, "Natif ARM64");
         return `
-          <span class="badge recomp-yes-m4" title="Portage natif ARM64 + Metal vérifié sur Mac mini M4">
-            🍎 Recomp M4 : OUI (${recomp.m4Tool || "Natif ARM64"})
-          </span>
-          <span class="badge recomp-no" title="Pas de recomp Android stable vérifié — tourne via l'émulateur Eden sur AYN Thor">
-            📱 Recomp AYN Thor : Non (Émulation Eden)
-          </span>
-        `;
-      }
-      if (recomp && !recomp.m4 && recomp.ayn) {
-        return `
-          <span class="badge recomp-no">🍎 Recomp M4 : Non (Ryujinx)</span>
-          <span class="badge recomp-yes-ayn">📱 Recomp AYN Thor : OUI (${recomp.aynTool || "Natif Android"})</span>
+          <span class="badge m4-yes">🍎 M4 : OUI (${m4Short})</span>
+          <span class="badge recomp-no">📱 AYN : Non (Eden)</span>
         `;
       }
       return `
-        <span class="badge recomp-no" title="Aucun recomp statique vérifié — tourne via Ryujinx sur Mac M4">
-          🍎 Recomp M4 : Non (Émulation Ryujinx)
-        </span>
-        <span class="badge recomp-no" title="Aucun recomp statique vérifié — tourne via Eden sur AYN Thor">
-          📱 Recomp AYN Thor : Non (Émulation Eden)
-        </span>
+        <span class="badge recomp-no">🍎 M4 : Non (Ryujinx)</span>
+        <span class="badge recomp-no">📱 AYN : Non (Eden)</span>
       `;
     }
 
     function renderGameList(games, totalCatalog) {
       const listEl = document.getElementById("nxbrew-catalog-list");
       const countEl = document.getElementById("nxbrew-results-count");
-      countEl.textContent = `${games.length} affichés / ${(totalCatalog || games.length).toLocaleString("fr-FR")} jeux`;
+      countEl.textContent = `${games.length} affichés sur ${(totalCatalog || games.length).toLocaleString("fr-FR")} jeux`;
 
       if (games.length === 0) {
-        listEl.innerHTML = `<div style="padding:18px;color:var(--text-muted);text-align:center;">Aucun jeu ne correspond à votre recherche ou filtre Recomp.</div>`;
+        listEl.innerHTML = `<div style="padding:24px 12px;color:var(--text-muted);text-align:center;font-size:0.85rem;">Aucun jeu trouvé pour ce filtre.</div>`;
         return;
       }
 
@@ -620,39 +704,34 @@
         const fmtBadges = [];
         if (g.hasNsp) fmtBadges.push('<span class="badge fmt-nsp">NSP</span>');
         if (g.hasXci) fmtBadges.push('<span class="badge fmt-xci">XCI</span>');
-        if (g.hasUpdate) fmtBadges.push('<span class="badge fmt-upd">+ Update</span>');
-        if (g.hasDlc) fmtBadges.push('<span class="badge fmt-upd">+ DLC</span>');
-        if (g.installed) fmtBadges.push('<span class="badge fmt-inst">✅ Déjà sur Mac</span>');
+        if (g.hasUpdate) fmtBadges.push('<span class="badge fmt-upd">+Upd</span>');
+        if (g.hasDlc) fmtBadges.push('<span class="badge fmt-upd">+DLC</span>');
+        if (g.installed) fmtBadges.push('<span class="badge fmt-inst">✅ Sur Mac</span>');
 
         const rc = g.recomp || null;
-        const rowClass = (rc && rc.m4 && rc.ayn)
-          ? "game-row has-recomp-both"
+        const cardClass = (rc && rc.m4 && rc.ayn)
+          ? "game-card has-recomp-both"
           : (rc && rc.m4)
-            ? "game-row has-recomp-m4"
-            : "game-row";
+            ? "game-card has-recomp-m4"
+            : "game-card";
 
         const safeUrl = (g.url || "").replace(/'/g, "\\'");
         const safeTitle = (g.shortName || "").replace(/'/g, "\\'");
 
         return `
-          <div class="${rowClass}" onclick="selectAndInspectGame(${idx}, '${safeUrl}', '${safeTitle}')">
-            <div style="min-width:0;flex:1;">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <span style="font-weight:800;font-size:0.93rem;color:var(--text);">
-                  ${g.shortName}
-                </span>
+          <div class="${cardClass}" onclick="selectAndInspectGame(${idx}, '${safeUrl}', '${safeTitle}')">
+            <div class="game-main">
+              <div class="game-title-row">
+                <span class="game-name">${g.shortName}</span>
                 ${fmtBadges.join("")}
               </div>
-              <div style="font-size:0.74rem;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                ${g.title}
+              <div class="recomp-row">
+                ${renderMobileRecompBadges(rc)}
               </div>
-              <div class="badges-wrap">
-                ${renderRecompBadges(rc)}
-              </div>
-              ${rc && rc.note ? `<div class="recomp-note-line">✓ ${rc.note}</div>` : ""}
+              ${rc && rc.note ? `<div class="recomp-detail">✓ ${rc.note}</div>` : ""}
             </div>
-            <button class="btn primary" style="flex-shrink:0;padding:9px 13px;font-size:0.8rem;" onclick="event.stopPropagation();selectAndInspectGame(${idx}, '${safeUrl}', '${safeTitle}')">
-              📥 Télécharger
+            <button class="dl-btn" onclick="event.stopPropagation();selectAndInspectGame(${idx}, '${safeUrl}', '${safeTitle}')">
+              📥 DL
             </button>
           </div>
         `;
@@ -663,8 +742,8 @@
 
     function selectAndInspectGame(idx, url, shortTitle) {
       const g = (window._lastRenderedGames || [])[idx];
-      CURRENT_SELECTED_RECOMP = g ? (g.recomp || null) : null;
-      inspectNxbrewGame(url, shortTitle, CURRENT_SELECTED_RECOMP);
+      const rc = g ? (g.recomp || null) : null;
+      inspectNxbrewGame(url, shortTitle, rc);
     }
 
     async function loadFallbackCatalog() {
@@ -678,31 +757,31 @@
     async function searchNxbrewCatalog() {
       const q = (document.getElementById("nxbrew-search-input") || {}).value || "";
       const listEl = document.getElementById("nxbrew-catalog-list");
-      const instEl = document.getElementById("nxbrew-installed-list");
 
-      if (API_BASE) {
+      if (API_BASE && NXBREW_RECOMP !== "installed") {
         try {
           const r = await fetch(
             `${API_BASE}/api/nxbrew-catalog?q=${encodeURIComponent(q)}&format=${NXBREW_FORMAT}&recomp=${NXBREW_RECOMP}&limit=120`
           );
           const res = await r.json();
           if (res.ok) {
-            if (res.installedFiles && instEl) {
-              const romFiles = res.installedFiles.filter(f => /\.(nsp|xci|nsz)$/i.test(f));
-              instEl.innerHTML = romFiles.map(fn => `
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;background:#090d16;border:1px solid var(--border);border-radius:8px;">
-                  <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">✅ <strong>${fn}</strong></span>
-                  <button class="btn" style="flex-shrink:0;padding:5px 9px;font-size:0.74rem;" onclick="pushFile('/Volumes/GamingSSD/Games/ROMs/Switch/${fn.replace(/'/g, "\\'")}', '/storage/6531-3035/ROMs/switch/${fn.replace(/'/g, "\\'")}')">⬆️ AYN Thor</button>
-                </div>
-              `).join("") || "Aucun fichier NSP/XCI.";
-            }
             renderGameList(res.games, res.totalCatalog);
+            return;
+          }
+        } catch (_) {}
+      } else if (API_BASE && NXBREW_RECOMP === "installed") {
+        try {
+          const r = await fetch(`${API_BASE}/api/nxbrew-catalog?q=${encodeURIComponent(q)}&format=${NXBREW_FORMAT}&limit=250`);
+          const res = await r.json();
+          if (res.ok) {
+            const instGames = (res.games || []).filter(g => g.installed);
+            renderGameList(instGames, res.totalCatalog);
             return;
           }
         } catch (_) {}
       }
 
-      // Fallback: search directly inside data/nxbrew_catalog.json
+      // Offline / GitHub Pages direct fallback
       try {
         const data = await loadFallbackCatalog();
         const allGames = data.games || [];
@@ -716,7 +795,6 @@
           if (NXBREW_FORMAT === "dlc" && !g.hasDlc) return false;
 
           const rc = g.recomp || {};
-          if (NXBREW_RECOMP === "any" && !rc.m4 && !rc.ayn) return false;
           if (NXBREW_RECOMP === "both" && !(rc.m4 && rc.ayn)) return false;
           if (NXBREW_RECOMP === "m4" && !rc.m4) return false;
           if (NXBREW_RECOMP === "ayn" && !rc.ayn) return false;
@@ -746,63 +824,54 @@
     function renderInspectorRecompBox(rc) {
       if (rc && rc.m4 && rc.ayn) {
         return `
-          <div style="margin-top:10px;padding:11px 13px;background:rgba(20,83,45,0.28);border:1px solid rgba(34,197,94,0.45);border-radius:10px;">
-            <div style="font-weight:800;font-size:0.82rem;color:#4ade80;margin-bottom:4px;">
-              🔥 Recomp Natif Vérifié sur Mac mini M4 ET AYN Thor
+          <div style="margin-top:10px;padding:10px 12px;background:rgba(20,83,45,0.3);border:1px solid rgba(34,197,94,0.45);border-radius:11px;">
+            <div style="font-weight:800;font-size:0.8rem;color:#4ade80;margin-bottom:4px;">
+              🔥 Recomp Natif Vérifié (Mac M4 + AYN Thor)
             </div>
-            <div style="font-size:0.78rem;color:#e2e8f0;line-height:1.45;">
+            <div style="font-size:0.76rem;color:#e2e8f0;line-height:1.45;">
               • <strong>Mac mini M4 :</strong> OUI — <code>${rc.m4Tool}</code><br/>
               • <strong>AYN Thor :</strong> OUI — <code>${rc.aynTool}</code><br/>
-              <span style="color:#a7f3d0;">${rc.note || ""}</span>
+              <span style="color:#a7f3d0;">✓ ${rc.note || ""}</span>
             </div>
           </div>
         `;
       }
       if (rc && rc.m4 && !rc.ayn) {
         return `
-          <div style="margin-top:10px;padding:11px 13px;background:rgba(12,74,110,0.25);border:1px solid rgba(56,189,248,0.4);border-radius:10px;">
-            <div style="font-weight:800;font-size:0.82rem;color:#38bdf8;margin-bottom:4px;">
+          <div style="margin-top:10px;padding:10px 12px;background:rgba(12,74,110,0.28);border:1px solid rgba(56,189,248,0.4);border-radius:11px;">
+            <div style="font-weight:800;font-size:0.8rem;color:#38bdf8;margin-bottom:4px;">
               🍎 Recomp Natif Vérifié sur Mac mini M4 uniquement
             </div>
-            <div style="font-size:0.78rem;color:#e2e8f0;line-height:1.45;">
+            <div style="font-size:0.76rem;color:#e2e8f0;line-height:1.45;">
               • <strong>Mac mini M4 :</strong> OUI — <code>${rc.m4Tool}</code><br/>
-              • <strong>AYN Thor :</strong> Non (pas de recomp Android stable vérifié — utilisez l'émulateur <strong>Eden</strong>)<br/>
-              <span style="color:#bae6fd;">${rc.note || ""}</span>
+              • <strong>AYN Thor :</strong> Non (utilisez l'émulateur <strong>Eden</strong>)<br/>
+              <span style="color:#bae6fd;">✓ ${rc.note || ""}</span>
             </div>
           </div>
         `;
       }
       return `
-        <div style="margin-top:10px;padding:10px 12px;background:rgba(148,163,184,0.08);border:1px solid var(--border);border-radius:10px;font-size:0.78rem;color:var(--text-muted);">
-          • <strong>Recomp Mac mini M4 :</strong> Non (utilisez l'émulateur <strong>Ryujinx</strong>)<br/>
-          • <strong>Recomp AYN Thor :</strong> Non (utilisez l'émulateur <strong>Eden</strong>)
+        <div style="margin-top:10px;padding:9px 11px;background:rgba(148,163,184,0.08);border:1px solid var(--border);border-radius:10px;font-size:0.75rem;color:var(--text-muted);">
+          • <strong>Recomp Mac mini M4 :</strong> Non (Émulation <strong>Ryujinx</strong>)<br/>
+          • <strong>Recomp AYN Thor :</strong> Non (Émulation <strong>Eden</strong>)
         </div>
       `;
     }
 
-    function inspectNxbrewCustomUrl() {
-      const url = ((document.getElementById("nxbrew-custom-url") || {}).value || "").trim();
-      if (!url) return showToast("Collez une URL nxbrew.net à inspecter.");
-      inspectNxbrewGame(url, "Jeu NXBrew", null);
-    }
-
     async function inspectNxbrewGame(url, shortTitle = "", fallbackRecomp = null) {
-      const cardEl = document.getElementById("nxbrew-inspector-card");
-      if (cardEl && window.innerWidth <= 960) {
-        cardEl.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      openInspectorSheet();
       const bodyEl = document.getElementById("nxbrew-inspector-body");
 
       if (!API_BASE) {
         bodyEl.innerHTML = `
           <div>
-            <h3 style="margin:0 0 6px;font-size:0.98rem;color:var(--text);">${shortTitle || url}</h3>
+            <h3 style="margin:0 0 6px;font-size:0.95rem;color:var(--text);">${shortTitle || url}</h3>
             ${renderInspectorRecompBox(fallbackRecomp)}
             <div style="margin-top:12px;padding:12px;background:#090d16;border:1px solid var(--border);border-radius:10px;">
-              <p style="margin:0 0 8px;color:var(--warning);font-size:0.8rem;">
-                ⚠️ Le daemon Mac mini n'est pas joignable pour l'auto-extraction directe. Vous pouvez ouvrir la fiche NXBrew ci-dessous :
+              <p style="margin:0 0 10px;color:var(--warning);font-size:0.78rem;">
+                ⚠️ Mac mini hors-ligne : ouvrez la fiche NXBrew directement dans votre navigateur :
               </p>
-              <a class="btn primary" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur NXBrew.net</a>
+              <a class="btn primary" style="width:100%;" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur NXBrew.net</a>
             </div>
           </div>
         `;
@@ -810,13 +879,13 @@
       }
 
       bodyEl.innerHTML = `
-        <div style="padding:16px;text-align:center;color:var(--accent);">
-          <div style="font-size:1.5rem;margin-bottom:6px;">⏳</div>
-          <strong>Récupération des liens de téléchargement…</strong>
-          <p style="margin:6px 0 0;font-size:0.78rem;color:var(--text-muted);">
-            Extraction des miroirs (FileKeeper, DataNodes, 1Fichier, MultiUp) pour <em>${shortTitle || url}</em>…
+        <div style="padding:10px 4px;text-align:center;color:var(--accent);">
+          <div style="font-size:1.35rem;margin-bottom:4px;">⏳</div>
+          <strong>Récupération des miroirs de téléchargement…</strong>
+          <p style="margin:4px 0 0;font-size:0.75rem;color:var(--text-muted);">
+            Extraction FileKeeper / DataNodes / 1Fichier pour <em>${shortTitle || url}</em>…
           </p>
-          <div style="text-align:left;margin-top:10px;">
+          <div style="text-align:left;margin-top:8px;">
             ${renderInspectorRecompBox(fallbackRecomp)}
           </div>
         </div>
@@ -829,16 +898,14 @@
           bodyEl.innerHTML = `
             <div>
               ${renderInspectorRecompBox(fallbackRecomp)}
-              <div style="color:var(--danger);padding:12px 0;">❌ ${res.error || "Erreur lors de la lecture de la page."}</div>
-              <a class="btn" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur NXBrew.net</a>
+              <div style="color:var(--danger);padding:10px 0;">❌ ${res.error || "Erreur lors de la lecture de la page."}</div>
+              <a class="btn primary" style="width:100%;" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur NXBrew.net</a>
             </div>
           `;
           return;
         }
 
         const rc = res.recomp || fallbackRecomp || null;
-        const meta = res.meta || {};
-        const metaBadges = Object.entries(meta).map(([k, v]) => `<span class="badge recomp-no"><strong>${k}:</strong> ${v}</span>`).join("");
         const safeGameTitle = (res.title || shortTitle || "Switch Game").replace(/'/g, "\\'");
 
         const sectionsHtml = (res.sections || []).map(sec => {
@@ -847,34 +914,33 @@
             const isFast = /filekeeper/i.test(m.host);
             const safeMirrorUrl = m.url.replace(/'/g, "\\'");
             return `
-              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <div style="display:flex;gap:6px;width:100%;">
                 <button
                   class="btn ${isFast ? 'primary' : ''}"
-                  style="padding:8px 12px;font-size:0.79rem;"
+                  style="flex:1;padding:10px 12px;font-size:0.8rem;"
                   onclick="startNxbrewDownload('${safeMirrorUrl}', '${safeGameTitle}', '${safeSecType}')"
-                  title="${isFast ? 'Recommandé : Téléchargement CDN direct + extraction 7zz automatique' : 'Télécharger via ce miroir'}"
                 >
-                  ⬇️ ${m.host} ${isFast ? '⚡ (Direct Auto)' : ''}
+                  ⬇️ ${m.host} ${isFast ? '⚡ (Auto Mac)' : ''}
                 </button>
                 <button
                   class="btn"
-                  style="padding:8px 10px;font-size:0.74rem;"
+                  style="padding:10px;font-size:0.75rem;"
                   onclick="unlockNxbrewLink('${safeMirrorUrl}')"
-                  title="Déverrouiller uniquement le lien ouo.io pour l'ouvrir dans le navigateur"
+                  title="Déverrouiller le lien dans le navigateur"
                 >
-                  🔓 Lien direct
+                  🔓
                 </button>
               </div>
             `;
           }).join("");
 
           return `
-            <div style="margin-top:10px;padding:12px;background:#080c15;border:1px solid var(--border);border-radius:10px;">
-              <div style="font-weight:700;font-size:0.85rem;color:#e2e8f0;margin-bottom:8px;">
-                📁 ${sec.label} <span style="font-size:0.74rem;color:var(--accent);">(${sec.type})</span>
+            <div style="margin-top:10px;padding:10px;background:#080c15;border:1px solid var(--border);border-radius:11px;">
+              <div style="font-weight:700;font-size:0.8rem;color:#e2e8f0;margin-bottom:8px;">
+                📁 ${sec.label} <span style="font-size:0.72rem;color:var(--accent);">(${sec.type})</span>
               </div>
-              <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                ${mirrorsHtml || '<span style="color:var(--text-muted);">Aucun miroir détecté dans cette section.</span>'}
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                ${mirrorsHtml || '<span style="color:var(--text-muted);">Aucun miroir détecté.</span>'}
               </div>
             </div>
           `;
@@ -882,18 +948,15 @@
 
         bodyEl.innerHTML = `
           <div>
-            <div style="display:flex;gap:12px;align-items:flex-start;">
-              ${res.thumb ? `<img src="${res.thumb}" alt="" style="width:74px;height:74px;object-fit:cover;border-radius:10px;border:1px solid var(--border);" />` : ""}
+            <div style="display:flex;gap:10px;align-items:center;">
+              ${res.thumb ? `<img src="${res.thumb}" alt="" style="width:58px;height:58px;object-fit:cover;border-radius:10px;border:1px solid var(--border);flex-shrink:0;" />` : ""}
               <div style="flex:1;min-width:0;">
-                <h3 style="margin:0 0 6px;font-size:0.96rem;color:var(--text);">${res.title}</h3>
-                <div class="badges-wrap">${metaBadges}</div>
-                <div style="margin-top:6px;">
-                  <a href="${res.url}" target="_blank" rel="noopener" style="font-size:0.75rem;color:var(--accent);">🔗 Voir sur NXBrew.net</a>
-                </div>
+                <h3 style="margin:0 0 4px;font-size:0.9rem;color:var(--text);line-height:1.25;">${res.title}</h3>
+                <a href="${res.url}" target="_blank" rel="noopener" style="font-size:0.73rem;color:var(--accent);">🔗 Voir sur NXBrew.net</a>
               </div>
             </div>
             ${renderInspectorRecompBox(rc)}
-            ${sectionsHtml || '<div style="margin-top:12px;color:var(--warning);">Aucun lien de téléchargement trouvé sur cette page.</div>'}
+            ${sectionsHtml || '<div style="margin-top:12px;color:var(--warning);">Aucun lien trouvé sur cette page.</div>'}
           </div>
         `;
       } catch (e) {
@@ -903,7 +966,8 @@
 
     async function startNxbrewDownload(mirrorUrl, gameTitle, secType) {
       if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
-      showToast(`Lancement du téléchargement direct : ${gameTitle} (${secType})…`);
+      showToast(`Téléchargement lancé : ${gameTitle} (${secType})`);
+      closeInspectorSheet();
       try {
         const r = await fetch(`${API_BASE}/api/nxbrew-download`, {
           method: "POST",
@@ -912,16 +976,16 @@
         });
         const res = await r.json();
         if (!res.ok) return showToast(res.error || "Erreur au lancement du téléchargement.");
-        showToast(`Téléchargement démarré (${res.jobId}) !`);
+        showToast(`Téléchargement démarré sur le Mac mini !`);
         refreshNxbrewJobs();
       } catch (e) {
-        showToast("Erreur réseau lors du lancement du téléchargement.");
+        showToast("Erreur réseau lors du lancement.");
       }
     }
 
     async function unlockNxbrewLink(mirrorUrl) {
       if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
-      showToast("Déverrouillage du lien ouo.io en cours (5-10s)…");
+      showToast("Déverrouillage ouo.io (5-10s)…");
       try {
         const r = await fetch(`${API_BASE}/api/nxbrew-download`, {
           method: "POST",
@@ -931,10 +995,9 @@
         const res = await r.json();
         if (!res.ok) return showToast(res.error || "Impossible de déverrouiller ce lien.");
         const target = res.directUrl || res.hostUrl;
-        showToast(`Lien déverrouillé : ${target}`);
         window.open(target, "_blank", "noopener");
       } catch (e) {
-        showToast("Erreur lors du déverrouillage du lien.");
+        showToast("Erreur lors du déverrouillage.");
       }
     }
 
@@ -956,15 +1019,15 @@
           const isErr = j.status === "error";
           const barColor = isDone ? "#22c55e" : isErr ? "#ef4444" : "#38bdf8";
           return `
-            <div style="padding:10px 12px;background:#080c14;border:1px solid var(--border);border-radius:10px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;font-weight:700;">
-                <span>${j.gameTitle} <span style="color:var(--accent);">(${j.sectionType || 'Base Game'})</span></span>
-                <span style="color:${barColor};">${(j.status || '').toUpperCase()} · ${pct}% ${j.speedMBps ? `(${j.speedMBps} Mo/s)` : ''}</span>
+            <div style="padding:8px 10px;background:#080c14;border:1px solid var(--border);border-radius:9px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.76rem;font-weight:700;gap:6px;">
+                <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${j.gameTitle}</span>
+                <span style="color:${barColor};flex-shrink:0;">${pct}% ${j.speedMBps ? `(${j.speedMBps} Mo/s)` : ''}</span>
               </div>
-              <div style="width:100%;height:7px;background:#1e293b;border-radius:999px;overflow:hidden;margin:6px 0;">
-                <div style="width:${Math.min(100, Math.max(2, j.percent || 0))}%;height:100%;background:${barColor};transition:width 0.3s ease;"></div>
+              <div style="width:100%;height:5px;background:#1e293b;border-radius:999px;overflow:hidden;margin:5px 0;">
+                <div style="width:${Math.min(100, Math.max(2, j.percent || 0))}%;height:100%;background:${barColor};"></div>
               </div>
-              <div style="font-size:0.75rem;color:var(--text-muted);">${j.message || ''}</div>
+              <div style="font-size:0.7rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${j.message || ''}</div>
             </div>
           `;
         }).join("");
@@ -975,18 +1038,6 @@
           NXBREW_JOBS_TIMER = setTimeout(refreshNxbrewJobs, 1500);
         }
       } catch (_) {}
-    }
-
-    async function pushFile(localPath, androidPath) {
-      if (!API_BASE) return showToast("Connectez-vous au Mac mini pour envoyer un fichier.");
-      const r = await fetch(`${API_BASE}/api/push-file`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ localPath, androidPath }),
-      });
-      const res = await r.json();
-      if (!res.ok) return showToast(res.error || "Erreur d'envoi");
-      showToast(`Envoi lancé vers AYN Thor : ${res.job.title}`);
     }
 
     async function resolveBackend() {
@@ -1028,15 +1079,14 @@
       const st = await resolveBackend();
       if (st) {
         dotDaemon.className = "dot ok";
-        const isTunnel = API_BASE.includes("trycloudflare.com");
-        lblDaemon.textContent = isTunnel ? "Mac mini prêt (Tunnel HTTPS)" : "Mac mini prêt (Téléchargement Direct)";
+        lblDaemon.textContent = "Mac mini prêt";
         refreshNxbrewJobs();
       } else {
         dotDaemon.className = "dot warn";
-        lblDaemon.textContent = "Catalogue en ligne (Mac mini hors-ligne)";
+        lblDaemon.textContent = "Catalogue";
       }
       await searchNxbrewCatalog();
-      if (withFeedback) showToast("Index de téléchargement Switch actualisé.");
+      if (withFeedback) showToast("Catalogue Switch actualisé.");
     }
 
     refreshAll(false);
