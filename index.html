@@ -1062,7 +1062,8 @@
     async function adbPairManual() {
       const addr = document.getElementById("adb-pair-addr").value.trim();
       const code = document.getElementById("adb-pair-code").value.trim();
-      if (!addr || !code || !API_BASE) return;
+      if (!code || !API_BASE) return showToast("Saisissez le code à 6 chiffres affiché sur l'AYN Thor.");
+      showToast("Jumelage mDNS auto en cours…");
       const r = await fetch(`${API_BASE}/api/adb-connect`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

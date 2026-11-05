@@ -332,10 +332,73 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
             elif action == "pair":
                 addr = body.get("address", "").strip()
                 code = body.get("code", "").strip()
-                if not addr or not code:
-                    return self._send_json({"ok": False, "message": "Adresse IP:Port et code requis."})
+                if not code:
+                    return self._send_json({"ok": False, "message": "Code d'association à 6 chiffres requis."})
+                # Auto-discover pairing address via mDNS if not provided
+                if not addr:
+                    try:
+                        p = subprocess.Popen(
+                            ["/usr/bin/dns-sd", "-B", "_adb-tls-pairing._tcp", "local."],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            text=True,
+                        )
+                        time.sleep(1.2)
+                        p.terminate()
+                        b_out = p.stdout.read()
+                        m_inst = re.search(r"_adb-tls-pairing\._tcp\.\s+(\S+)", b_out)
+                        if m_inst:
+                            inst = m_inst.group(1)
+                            p2 = subprocess.Popen(
+                                ["/usr/bin/dns-sd", "-L", inst, "_adb-tls-pairing._tcp", "local."],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                                text=True,
+                            )
+                            time.sleep(1.2)
+                            p2.terminate()
+                            l_out = p2.stdout.read()
+                            m_hp = re.search(r"can be reached at\s+([^\s:]+):(\d+)", l_out)
+                            if m_hp:
+                                ip = socket.gethostbyname(m_hp.group(1))
+                                addr = f"{ip}:{m_hp.group(2)}"
+                    except Exception:
+                        pass
+                if not addr:
+                    return self._send_json(
+                        {
+                            "ok": False,
+                            "message": "Aucune fenêtre 'Associer avec un code' détectée sur le Wi-Fi. Gardez la popup du code à 6 chiffres ouverte sur l'AYN Thor ou indiquez IP:Port.",
+                        }
+                    )
                 rc, out, err = run_cmd([ADB_BIN, "pair", addr, code], timeout=8)
-                return self._send_json({"ok": rc == 0, "message": out or err})
+                # After pairing, auto-connect to _adb-tls-connect._tcp
+                try:
+                    p3 = subprocess.Popen(
+                        ["/usr/bin/dns-sd", "-B", "_adb-tls-connect._tcp", "local."],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.STDOUT,
+                        text=True,
+                    )
+                    time.sleep(1.0)
+                    p3.terminate()
+                    c_out = p3.stdout.read()
+                    for inst in set(re.findall(r"_adb-tls-connect\._tcp\.\s+(\S+)", c_out)):
+                        p4 = subprocess.Popen(
+                            ["/usr/bin/dns-sd", "-L", inst, "_adb-tls-connect._tcp", "local."],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            text=True,
+                        )
+                        time.sleep(1.0)
+                        p4.terminate()
+                        m_hp = re.search(r"can be reached at\s+([^\s:]+):(\d+)", p4.stdout.read())
+                        if m_hp:
+                            ip = socket.gethostbyname(m_hp.group(1))
+                            run_cmd([ADB_BIN, "connect", f"{ip}:{m_hp.group(2)}"], timeout=4)
+                except Exception:
+                    pass
+                return self._send_json({"ok": rc == 0, "message": f"{out or err} ({addr})"})
             elif action == "connect":
                 addr = body.get("address", "").strip()
                 if not addr:
@@ -345,8 +408,36 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 rc, out, err = run_cmd([ADB_BIN, "connect", addr], timeout=6)
                 return self._send_json({"ok": rc == 0 and "connected" in out.lower(), "message": out or err})
             else:
-                # Scan LAN for port 5555
+                # 1. Check mDNS _adb-tls-connect._tcp first
                 found = []
+                try:
+                    p = subprocess.Popen(
+                        ["/usr/bin/dns-sd", "-B", "_adb-tls-connect._tcp", "local."],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.STDOUT,
+                        text=True,
+                    )
+                    time.sleep(1.2)
+                    p.terminate()
+                    c_out = p.stdout.read()
+                    for inst in set(re.findall(r"_adb-tls-connect\._tcp\.\s+(\S+)", c_out)):
+                        p2 = subprocess.Popen(
+                            ["/usr/bin/dns-sd", "-L", inst, "_adb-tls-connect._tcp", "local."],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            text=True,
+                        )
+                        time.sleep(1.0)
+                        p2.terminate()
+                        m_hp = re.search(r"can be reached at\s+([^\s:]+):(\d+)", p2.stdout.read())
+                        if m_hp:
+                            ip = socket.gethostbyname(m_hp.group(1))
+                            ep = f"{ip}:{m_hp.group(2)}"
+                            found.append(ep)
+                            run_cmd([ADB_BIN, "connect", ep], timeout=4)
+                except Exception:
+                    pass
+                # 2. Scan LAN for port 5555
                 _, arp_out, _ = run_cmd(["/usr/sbin/arp", "-an"], timeout=3)
                 ips = re.findall(r"\((\d+\.\d+\.\d+\.\d+)\)", arp_out)
                 for ip in ips:
@@ -362,7 +453,7 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                     {
                         "ok": True,
                         "found": found,
-                        "message": f"Scan LAN terminé ({len(ips)} hôtes testés, {len(found)} port ADB 5555 trouvé).",
+                        "message": f"Scan terminé : {len(found)} service(s) ADB détecté(s) ({', '.join(found) or 'aucun'}).",
                     }
                 )
 
