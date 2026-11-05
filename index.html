@@ -553,6 +553,7 @@
 
     <nav class="tabs-bar">
       <button class="tab-btn active" onclick="switchTab('remote', this)">📡 Écran Live & Télécommande</button>
+      <button class="tab-btn" onclick="switchTab('tvgames', this)">📺 Télé & Jeux Mac mini (82 Jeux)</button>
       <button class="tab-btn" onclick="switchTab('saves', this)">💾 Sauvegardes (23 Dossiers)</button>
       <button class="tab-btn" onclick="switchTab('roms', this)">🎮 ROMs & BIOS (103 Go)</button>
       <button class="tab-btn" onclick="switchTab('presets', this)">⚡ Drivers Turnip & Presets</button>
@@ -621,6 +622,7 @@
               Applications détectées sur votre AYN Thor (lance directement sur la console via ADB) :
             </p>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <button class="btn primary" onclick="launchApp('org.wwhdrecomp.wwhd')">⛵ Wind Waker HD Recomp</button>
               <button class="btn primary" onclick="launchApp('rip.moth.cocoonshell')">🦋 Cocoon Dual-Screen</button>
               <button class="btn primary" onclick="launchApp('xyz.blacksheep.mjolnir')">⚡ Mjolnir Dual-Screen</button>
               <button class="btn" onclick="launchApp('org.azahar_emu.azahar')">🕹️ Azahar (3DS)</button>
@@ -746,6 +748,28 @@
         </div>
       </div>
     </section>
+
+    <!-- TAB: M4 GAMING TV & 82 GAMES LAUNCHER -->
+    <section id="tab-tvgames" class="tab-panel">
+      <div class="panel-card" style="padding:16px;">
+        <h2 style="margin-bottom:10px;">
+          <span>📺 M4 Gaming — Allume la Télé Samsung & Lance tes 82 Jeux sur Mac mini M4</span>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a class="btn primary" href="http://192.168.1.152:8765" target="_blank" rel="noopener" style="text-decoration:none;">🚀 Ouvrir en Plein Écran (LAN)</a>
+            <a class="btn" href="https://mrthomaslef.github.io/m4-gaming/" target="_blank" rel="noopener" style="text-decoration:none;">🌐 Version Web (GitHub Pages)</a>
+          </div>
+        </h2>
+        <p style="margin:0 0 12px;font-size:0.84rem;color:var(--text-muted);">
+          Cliquez sur l'icône d'un jeu ci-dessous pour <strong>allumer automatiquement la Télé Samsung</strong> (HDMI-CEC + contournement bouclier macOS 26 + 1080p 16:9), synchroniser vos sauvegardes AYN Thor ⇄ Mac mini, et <strong>lancer le jeu en plein écran</strong> sur le Mac mini M4 :
+        </p>
+        <iframe
+          id="m4-gaming-iframe"
+          src="https://mrthomaslef.github.io/m4-gaming/"
+          style="width:100%;height:78vh;min-height:640px;border:1px solid var(--border);border-radius:14px;background:#060913;"
+          allow="fullscreen"
+        ></iframe>
+      </div>
+    </section>
   </div>
 
   <div id="toast"></div>
@@ -772,6 +796,13 @@
       if (btn) btn.classList.add("active");
       if (id === "explorer" && API_BASE) {
         browseSdcard(document.getElementById("fs-path-input").value);
+      }
+      if (id === "tvgames" && location.protocol === "http:") {
+        const ifr = document.getElementById("m4-gaming-iframe");
+        const target = (location.hostname === "127.0.0.1" || location.hostname === "localhost")
+          ? "http://127.0.0.1:8768/"
+          : "http://192.168.1.152:8765/";
+        if (ifr && ifr.src !== target) ifr.src = target;
       }
     }
 
