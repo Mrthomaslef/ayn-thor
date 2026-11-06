@@ -1,5 +1,5 @@
 window.AYN_THOR_DATA = {
-  "generatedAt": "05/11/2026 22:11:51",
+  "generatedAt": "06/11/2026 07:33:39",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -7,16 +7,21 @@ window.AYN_THOR_DATA = {
     "gamingSsdMounted": true
   },
   "device": {
-    "connected": false,
+    "connected": true,
     "vendor": "AYN",
-    "productName": "",
-    "serial": "",
-    "idVendor": 0,
-    "idProduct": 0,
-    "usbMode": "disconnected",
-    "usbModeLabel": "Non branchée",
+    "productName": "QCS_KALAMAP-HDK_CID:0437_SN:6320BBAD",
+    "serial": "ef1ee24",
+    "idVendor": 6353,
+    "idProduct": 20194,
+    "usbMode": "adb_enabled",
+    "usbModeLabel": "MTP + ADB actif (0x4ee2)",
     "adbReady": true,
     "adbDevices": [
+      {
+        "id": "ef1ee24",
+        "state": "device",
+        "raw": "ef1ee24                device usb:17825792X product:kalama model:AYN_Thor device:kalama transport_id:9"
+      },
       {
         "id": "192.168.1.192:5555",
         "state": "device",
@@ -25,12 +30,12 @@ window.AYN_THOR_DATA = {
     ]
   },
   "summary": {
-    "saveFoldersCount": 24,
-    "saveFilesCount": 52525,
-    "saveTotalMB": 10104.2,
+    "saveFoldersCount": 25,
+    "saveFilesCount": 52584,
+    "saveTotalMB": 10190.6,
     "romSystemsCount": 20,
-    "romGamesCount": 142,
-    "romTotalGB": 103.1,
+    "romGamesCount": 149,
+    "romTotalGB": 106.53,
     "bonusToolsCount": 10
   },
   "saves": [
@@ -84,18 +89,18 @@ window.AYN_THOR_DATA = {
       "icon": "🎮",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/3DS_n3ds2",
       "androidPath": "/storage/6531-3035/ROMs/n3ds2",
-      "fileCount": 27,
-      "sizeBytes": 17704732,
-      "sizeMB": 16.88,
+      "fileCount": 32,
+      "sizeBytes": 81873052,
+      "sizeMB": 78.08,
       "sampleFiles": [
-        "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/000011C5/icon",
-        "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/000011C5/metadata",
-        "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/0000055D/icon",
-        "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/0000055D/metadata",
-        "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/00001B50/icon",
-        "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/00001B50/metadata"
+        "sdmc/3ds/dspfirm.cdc",
+        "sdmc/3ds/emerald3ds/Emerald3DS.3dsx",
+        "sdmc/3ds/emerald3ds/Emerald3DS.smdh",
+        "sdmc/3ds/emerald3ds/emerald3ds.pak",
+        "sdmc/3ds/emerald3ds/emerald3ds.sav",
+        "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/000011C5/icon"
       ],
-      "updatedAt": "31/10/2026 18:06"
+      "updatedAt": "05/11/2026 22:18"
     },
     {
       "id": "BotW_Recomp_Mac",
@@ -105,9 +110,9 @@ window.AYN_THOR_DATA = {
       "icon": "💾",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/BotW_Recomp_Mac",
       "androidPath": "/sdcard/Saves/BotW_Recomp_Mac",
-      "fileCount": 297,
-      "sizeBytes": 11478465,
-      "sizeMB": 10.95,
+      "fileCount": 312,
+      "sizeBytes": 16673885,
+      "sizeMB": 15.9,
       "sampleFiles": [
         "controller-background.txt",
         "controller-type.txt",
@@ -116,7 +121,7 @@ window.AYN_THOR_DATA = {
         "game-slot/history.log",
         "game-slot/holder"
       ],
-      "updatedAt": "05/11/2026 22:10"
+      "updatedAt": "05/11/2026 22:23"
     },
     {
       "id": "Dolphin_GC",
@@ -334,9 +339,9 @@ window.AYN_THOR_DATA = {
       "icon": "👾",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/RetroArch_Saves",
       "androidPath": "/sdcard/RetroArch",
-      "fileCount": 20,
-      "sizeBytes": 2388768,
-      "sizeMB": 2.28,
+      "fileCount": 21,
+      "sizeBytes": 2519840,
+      "sizeMB": 2.4,
       "sampleFiles": [
         "saves/FORESTIA.pure.zip",
         "saves/melonDS DS/Mario Kart DS (Europe) (En,Fr,De,Es,It).sav",
@@ -345,7 +350,7 @@ window.AYN_THOR_DATA = {
         "saves/Gambatte/Legend of Zelda, The - Link's Awakening (France).srm",
         "saves/Gambatte/Pokemon - Crystal Version (USA, Europe) (Rev 1).rtc"
       ],
-      "updatedAt": "03/11/2026 23:51"
+      "updatedAt": "05/11/2026 21:28"
     },
     {
       "id": "RetroArch_States",
@@ -365,6 +370,27 @@ window.AYN_THOR_DATA = {
         "states/mGBA/poketransform_v1.4.state"
       ],
       "updatedAt": "17/08/2026 14:21"
+    },
+    {
+      "id": "Skate3_XenDroid",
+      "label": "Skate3 XenDroid",
+      "emulator": "Android Emulator",
+      "category": "Autres",
+      "icon": "💾",
+      "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Skate3_XenDroid",
+      "androidPath": "/sdcard/Saves/Skate3_XenDroid",
+      "fileCount": 23,
+      "sizeBytes": 15915763,
+      "sizeMB": 15.18,
+      "sampleFiles": [
+        "E03000003EFA493D/45410850/00000001/Mirror's Edge Game Progress/Mirror's Edge Game Progress",
+        "E03000003EFA493D/45410850/Headers/00000001/Mirror's Edge Game Progress.header",
+        "E03000003EFA493D/415607E6/00000001/savegame.svg/savegame.svg",
+        "E03000003EFA493D/415607E6/Headers/00000001/savegame.svg.header",
+        "E03000003EFA493D/545407F2/00000001/SGTA412/SGTA412",
+        "E03000003EFA493D/545407F2/00000001/SGTA412/__thumbnail.png"
+      ],
+      "updatedAt": "05/11/2026 23:17"
     },
     {
       "id": "Standalone_Saves",
@@ -395,9 +421,9 @@ window.AYN_THOR_DATA = {
       "icon": "🔴",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Switch_Eden",
       "androidPath": "/sdcard/Android/data/dev.eden.eden_emulator/files/nand/user",
-      "fileCount": 107,
-      "sizeBytes": 41657592,
-      "sizeMB": 39.73,
+      "fileCount": 122,
+      "sizeBytes": 46852672,
+      "sizeMB": 44.68,
       "sampleFiles": [
         "save/0000000000000000/00000000000000000000000000000000/0100152000022000/rp001b00500301e7a2b1100000.dat",
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100000000010000/Common.bin",
@@ -406,7 +432,7 @@ window.AYN_THOR_DATA = {
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100152000022000/rp001011530330000abec00000.dat",
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100152000022000/rp012d11510300001d21000000.dat"
       ],
-      "updatedAt": "05/11/2026 21:45"
+      "updatedAt": "05/11/2026 22:23"
     },
     {
       "id": "Switch_Eden_System",
@@ -814,6 +840,71 @@ window.AYN_THOR_DATA = {
       ]
     },
     {
+      "id": "Switch",
+      "label": "Nintendo Switch",
+      "emulator": "Eden / Citron (Turnip T29)",
+      "icon": "🔴",
+      "localPath": "/Volumes/GamingSSD/Games/ROMs/Switch",
+      "androidPath": "/sdcard/ROMs/switch",
+      "gameCount": 13,
+      "totalSizeGB": 72.02,
+      "totalSizeMB": 73747.2,
+      "games": [
+        {
+          "name": "Celeste [01002B30028F6000][v0][Base].nsp",
+          "sizeMB": 1123.6
+        },
+        {
+          "name": "Donkey Kong Country Tropical Freeze [0100C1F0051B6000][v0].nsp",
+          "sizeMB": 6802.4
+        },
+        {
+          "name": "Hollow Knight Silksong [010013C00E930000][v0].nsp",
+          "sizeMB": 2377.0
+        },
+        {
+          "name": "Mario Kart 8 Deluxe [0100152000022000][v0].nsp",
+          "sizeMB": 6931.8
+        },
+        {
+          "name": "Pokemon Lets Go Eevee.xci",
+          "sizeMB": 7616.0
+        },
+        {
+          "name": "Pokemon Shining Pearl v0 - xcinspdotcom.nsp",
+          "sizeMB": 4398.1
+        },
+        {
+          "name": "Pokemon Sword.xci",
+          "sizeMB": 15232.0
+        },
+        {
+          "name": "Pokémon Legends Z-A [0100F43008C44000][v1.0.0][US][Base][eShop].nsp",
+          "sizeMB": 4125.6
+        },
+        {
+          "name": "Super Mario Odyssey [0100000000010000][v0].nsp",
+          "sizeMB": 5351.1
+        },
+        {
+          "name": "The Legend of Zelda Breath of the Wild [01007EF00011E000][v0](eShop).nsp",
+          "sizeMB": 13805.6
+        },
+        {
+          "name": "The Legend of Zelda Link’s Awakening switch [01006BB00C6F0000][v0].nsp",
+          "sizeMB": 5984.1
+        },
+        {
+          "name": "Updates",
+          "sizeMB": 0.0
+        },
+        {
+          "name": "metadata.pegasus.txt",
+          "sizeMB": 0.0
+        }
+      ]
+    },
+    {
       "id": "emulators",
       "label": "EMULATORS",
       "emulator": "ES-DE / RetroArch",
@@ -871,51 +962,39 @@ window.AYN_THOR_DATA = {
       ]
     },
     {
-      "id": "Switch",
-      "label": "Nintendo Switch",
-      "emulator": "Eden / Citron (Turnip T29)",
-      "icon": "🔴",
-      "localPath": "/Volumes/GamingSSD/Games/ROMs/Switch",
-      "androidPath": "/sdcard/ROMs/switch",
-      "gameCount": 10,
-      "totalSizeGB": 68.6,
-      "totalSizeMB": 70246.7,
+      "id": "desktop",
+      "label": "DESKTOP",
+      "emulator": "ES-DE / RetroArch",
+      "icon": "🎮",
+      "localPath": "/Volumes/GamingSSD/Games/ROMs/desktop",
+      "androidPath": "/sdcard/ROMs/desktop",
+      "gameCount": 7,
+      "totalSizeGB": 0.0,
+      "totalSizeMB": 0.0,
       "games": [
         {
-          "name": "Donkey Kong Country Tropical Freeze [0100C1F0051B6000][v0].nsp",
-          "sizeMB": 6802.4
+          "name": "Breath of the Wild (Recomp Natif ARM64).app",
+          "sizeMB": 0.0
         },
         {
-          "name": "Mario Kart 8 Deluxe [0100152000022000][v0].nsp",
-          "sizeMB": 6931.8
+          "name": "Skate 3 (Recomp Natif ARM64).app",
+          "sizeMB": 0.0
         },
         {
-          "name": "Pokemon Lets Go Eevee.xci",
-          "sizeMB": 7616.0
+          "name": "Steam.app",
+          "sizeMB": 0.0
         },
         {
-          "name": "Pokemon Shining Pearl v0 - xcinspdotcom.nsp",
-          "sizeMB": 4398.1
+          "name": "Twilight Princess - Dusklight (Recomp Natif ARM64).app",
+          "sizeMB": 0.0
         },
         {
-          "name": "Pokemon Sword.xci",
-          "sizeMB": 15232.0
+          "name": "Whisky (Jeux Windows & Steam PC).app",
+          "sizeMB": 0.0
         },
         {
-          "name": "Pokémon Legends Z-A [0100F43008C44000][v1.0.0][US][Base][eShop].nsp",
-          "sizeMB": 4125.6
-        },
-        {
-          "name": "Super Mario Odyssey [0100000000010000][v0].nsp",
-          "sizeMB": 5351.1
-        },
-        {
-          "name": "The Legend of Zelda Breath of the Wild [01007EF00011E000][v0](eShop).nsp",
-          "sizeMB": 13805.6
-        },
-        {
-          "name": "The Legend of Zelda Link’s Awakening switch [01006BB00C6F0000][v0].nsp",
-          "sizeMB": 5984.1
+          "name": "Wind Waker HD (Recomp Natif ARM64).app",
+          "sizeMB": 0.0
         },
         {
           "name": "metadata.pegasus.txt",
@@ -1030,39 +1109,6 @@ window.AYN_THOR_DATA = {
         },
         {
           "name": "_Synchroniser mes jeux Steam.sh",
-          "sizeMB": 0.0
-        },
-        {
-          "name": "metadata.pegasus.txt",
-          "sizeMB": 0.0
-        }
-      ]
-    },
-    {
-      "id": "desktop",
-      "label": "DESKTOP",
-      "emulator": "ES-DE / RetroArch",
-      "icon": "🎮",
-      "localPath": "/Volumes/GamingSSD/Games/ROMs/desktop",
-      "androidPath": "/sdcard/ROMs/desktop",
-      "gameCount": 5,
-      "totalSizeGB": 0.0,
-      "totalSizeMB": 0.0,
-      "games": [
-        {
-          "name": "Breath of the Wild (Recomp Natif ARM64).app",
-          "sizeMB": 0.0
-        },
-        {
-          "name": "Steam.app",
-          "sizeMB": 0.0
-        },
-        {
-          "name": "Whisky (Jeux Windows & Steam PC).app",
-          "sizeMB": 0.0
-        },
-        {
-          "name": "Wind Waker HD (Recomp Natif ARM64).app",
           "sizeMB": 0.0
         },
         {
@@ -1217,6 +1263,31 @@ window.AYN_THOR_DATA = {
       ]
     },
     {
+      "id": "3DS",
+      "label": "Nintendo 3DS",
+      "emulator": "Azahar / Lime3DS",
+      "icon": "🕹️",
+      "localPath": "/Volumes/GamingSSD/Games/ROMs/3DS",
+      "androidPath": "/sdcard/ROMs/n3ds",
+      "gameCount": 3,
+      "totalSizeGB": 0.01,
+      "totalSizeMB": 6.0,
+      "games": [
+        {
+          "name": "Emerald3DS.3dsx",
+          "sizeMB": 6.0
+        },
+        {
+          "name": "Emerald3DS.smdh",
+          "sizeMB": 0.0
+        },
+        {
+          "name": "metadata.pegasus.txt",
+          "sizeMB": 0.0
+        }
+      ]
+    },
+    {
       "id": "PSP",
       "label": "Sony PSP",
       "emulator": "PPSSPP",
@@ -1279,23 +1350,6 @@ window.AYN_THOR_DATA = {
         },
         {
           "name": "states",
-          "sizeMB": 0.0
-        }
-      ]
-    },
-    {
-      "id": "3DS",
-      "label": "Nintendo 3DS",
-      "emulator": "Azahar / Lime3DS",
-      "icon": "🕹️",
-      "localPath": "/Volumes/GamingSSD/Games/ROMs/3DS",
-      "androidPath": "/sdcard/ROMs/n3ds",
-      "gameCount": 1,
-      "totalSizeGB": 0.0,
-      "totalSizeMB": 0.0,
-      "games": [
-        {
-          "name": "metadata.pegasus.txt",
           "sizeMB": 0.0
         }
       ]

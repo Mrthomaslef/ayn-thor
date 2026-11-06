@@ -6,11 +6,12 @@
   <meta name="theme-color" content="#070b14" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Switch DL" />
-  <title>Rom et Emulation — Téléchargement Switch & Recomp M4 / AYN Thor</title>
-  <link rel="manifest" href="manifest.json?v=4" />
-  <link rel="icon" type="image/svg+xml" href="assets/icon.svg?v=4" />
-  <link rel="apple-touch-icon" href="assets/icon.svg?v=4" />
+  <meta name="apple-mobile-web-app-title" content="ROM & Emu" />
+  <title>Rom et Émulation — 55 791 ROMs Switch & Consoles (M4 / AYN Thor)</title>
+  <link rel="manifest" href="manifest.json?v=6" />
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg?v=6" />
+  <link rel="apple-touch-icon" href="assets/icon.svg?v=6" />
+  <script src="data/embedded_data.js?v=6"></script>
   <style>
     :root {
       --bg: #070b14;
@@ -30,6 +31,7 @@
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
     html, body {
@@ -38,6 +40,7 @@
       width: 100%;
       max-width: 100vw;
       overflow-x: hidden;
+      overscroll-behavior-y: contain;
       background: var(--bg);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
@@ -45,8 +48,27 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* Pull-to-Refresh Indicator */
+    #ptr-indicator {
+      position: fixed;
+      top: env(safe-area-inset-top, 8px);
+      left: 50%;
+      transform: translate(-50%, -60px);
+      z-index: 9500;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      transition: transform 0.18s ease;
+      pointer-events: none;
+    }
+
     .app-shell {
-      max-width: 860px;
+      max-width: 880px;
       margin: 0 auto;
       padding: calc(env(safe-area-inset-top, 0px) + 8px) 10px calc(env(safe-area-inset-bottom, 0px) + 36px);
     }
@@ -87,7 +109,7 @@
 
     .brand-title h1 {
       margin: 0;
-      font-size: 0.98rem;
+      font-size: 0.96rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       white-space: nowrap;
@@ -154,19 +176,19 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(7, 11, 20, 0.94);
+      background: rgba(7, 11, 20, 0.95);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       padding: 6px 0 8px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      margin-bottom: 8px;
     }
 
     .search-wrap {
       position: relative;
       display: flex;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
     }
 
     .search-input {
@@ -220,7 +242,7 @@
     .chip {
       padding: 6px 11px;
       border-radius: 999px;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-weight: 700;
       background: #111827;
       color: var(--text-muted);
@@ -235,10 +257,32 @@
       color: var(--accent);
       border-color: var(--accent);
     }
+    .chip.sys-chip.active {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.35), rgba(79, 70, 229, 0.35));
+      color: #f8fafc;
+      border-color: var(--accent);
+      box-shadow: 0 2px 10px rgba(56, 189, 248, 0.25);
+    }
     .chip.recomp-both.active {
       background: rgba(34, 197, 94, 0.22);
       color: #4ade80;
       border-color: #22c55e;
+    }
+
+    /* Console Setup Banner */
+    .setup-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 8px 11px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.24);
+      border-radius: 11px;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      color: #cbd5e1;
     }
 
     /* Results bar */
@@ -249,6 +293,7 @@
       font-size: 0.75rem;
       color: var(--text-muted);
       padding: 0 4px 8px;
+      gap: 8px;
     }
 
     /* Game Cards List */
@@ -340,6 +385,7 @@
       font-weight: 600;
     }
 
+    .badge.fmt-sys { background: rgba(99, 102, 241, 0.22); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
     .badge.fmt-nsp { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
     .badge.fmt-xci { background: rgba(168, 85, 247, 0.18); color: #c084fc; }
     .badge.fmt-upd { background: rgba(245, 158, 11, 0.16); color: #fbbf24; }
@@ -485,14 +531,16 @@
   </style>
 </head>
 <body>
+  <div id="ptr-indicator">🔄 Relâcher pour actualiser…</div>
+
   <div class="app-shell">
     <!-- Compact Mobile Header -->
     <header class="top-header">
       <div class="brand-row">
-        <img src="assets/icon.svg?v=4" alt="Switch DL" class="brand-logo" />
+        <img src="assets/icon.svg?v=6" alt="ROM & Emu" class="brand-logo" />
         <div class="brand-title">
-          <h1>Switch DL · Recomp M4 & AYN</h1>
-          <p>7 767 Jeux NSP/XCI · Compatibilité Recomp vérifiée</p>
+          <h1 id="header-title">ROM & Émulation · Multi-Consoles</h1>
+          <p id="header-subtitle">55 791 ROMs (Switch + 20 Consoles) · Auto-Install Mac M4 & AYN Thor</p>
         </div>
       </div>
       <div class="header-actions">
@@ -507,7 +555,7 @@
     <!-- Active Downloads Queue (only shown when downloads exist) -->
     <div id="nxbrew-jobs-panel" class="jobs-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:6px;">
-        <strong style="font-size:0.8rem;color:var(--accent);">⚡ Téléchargements Mac mini</strong>
+        <strong style="font-size:0.8rem;color:var(--accent);">⚡ Téléchargements & Installation Auto (Mac M4 + AYN Thor)</strong>
         <div style="display:flex;gap:5px;">
           <button class="btn" style="padding:4px 8px;font-size:0.7rem;" onclick="clearNxbrewJobs('')">🗑️ Effacer</button>
           <button class="btn" style="padding:4px 8px;font-size:0.7rem;" onclick="refreshNxbrewJobs()">Actualiser</button>
@@ -523,37 +571,72 @@
           type="search"
           id="nxbrew-search-input"
           class="search-input"
-          placeholder="🔍 Chercher un jeu Switch (Zelda, Mario, Pokémon, Metroid…)"
-          oninput="debounceNxbrewSearch()"
+          placeholder="🔍 Chercher un jeu (Zelda, Mario, Pokémon, God of War, Sonic, Metroid…)"
+          oninput="debounceCatalogSearch()"
         />
-        <button id="search-clear-btn" class="clear-btn" onclick="quickNxbrewSearch('')">✕</button>
+        <button id="search-clear-btn" class="clear-btn" onclick="quickCatalogSearch('')">✕</button>
       </div>
 
-      <!-- Row 1: Verified Recomp Filters -->
+      <!-- Row 0: Console Selector (Switch + 20 Consoles RomsFun/Archive.org) -->
+      <div class="scroll-row" id="console-selector-chips">
+        <button class="chip sys-chip active" data-sys="switch" onclick="selectConsoleSystem('switch', this)">🔴 Switch (7 767)</button>
+        <button class="chip sys-chip" data-sys="all_consoles" onclick="selectConsoleSystem('all_consoles', this)">🌐 Toutes Consoles (48 024)</button>
+        <button class="chip sys-chip" data-sys="n3ds" onclick="selectConsoleSystem('n3ds', this)">🕹️ 3DS (1 679)</button>
+        <button class="chip sys-chip" data-sys="nds" onclick="selectConsoleSystem('nds', this)">📱 NDS (5 050)</button>
+        <button class="chip sys-chip" data-sys="gc" onclick="selectConsoleSystem('gc', this)">🟣 GameCube (876)</button>
+        <button class="chip sys-chip" data-sys="wii" onclick="selectConsoleSystem('wii', this)">🐬 Wii (2 497)</button>
+        <button class="chip sys-chip" data-sys="wiiu" onclick="selectConsoleSystem('wiiu', this)">🟦 Wii U (842)</button>
+        <button class="chip sys-chip" data-sys="ps2" onclick="selectConsoleSystem('ps2', this)">💿 PS2 (5 450)</button>
+        <button class="chip sys-chip" data-sys="psx" onclick="selectConsoleSystem('psx', this)">🦆 PS1 (5 246)</button>
+        <button class="chip sys-chip" data-sys="psp" onclick="selectConsoleSystem('psp', this)">🛸 PSP (2 872)</button>
+        <button class="chip sys-chip" data-sys="gba" onclick="selectConsoleSystem('gba', this)">👾 GBA (2 700)</button>
+        <button class="chip sys-chip" data-sys="n64" onclick="selectConsoleSystem('n64', this)">🦖 N64 (862)</button>
+        <button class="chip sys-chip" data-sys="snes" onclick="selectConsoleSystem('snes', this)">🎛️ SNES (2 506)</button>
+        <button class="chip sys-chip" data-sys="gbc" onclick="selectConsoleSystem('gbc', this)">🟢 GBC (1 138)</button>
+        <button class="chip sys-chip" data-sys="gb" onclick="selectConsoleSystem('gb', this)">⚪ GB (1 157)</button>
+        <button class="chip sys-chip" data-sys="nes" onclick="selectConsoleSystem('nes', this)">🧱 NES (3 159)</button>
+        <button class="chip sys-chip" data-sys="xbox360" onclick="selectConsoleSystem('xbox360', this)">🟢 Xbox 360 (4 734)</button>
+        <button class="chip sys-chip" data-sys="ps3" onclick="selectConsoleSystem('ps3', this)">🖤 PS3 (2 807)</button>
+        <button class="chip sys-chip" data-sys="psvita" onclick="selectConsoleSystem('psvita', this)">💎 PS Vita (1 202)</button>
+        <button class="chip sys-chip" data-sys="dreamcast" onclick="selectConsoleSystem('dreamcast', this)">🌀 Dreamcast (712)</button>
+        <button class="chip sys-chip" data-sys="saturn" onclick="selectConsoleSystem('saturn', this)">🪐 Saturn (1 183)</button>
+        <button class="chip sys-chip" data-sys="genesis" onclick="selectConsoleSystem('genesis', this)">🦔 Mega Drive (1 352)</button>
+      </div>
+
+      <!-- Row 1: Verified Recomp & Installed Filters -->
       <div class="scroll-row" id="nxbrew-recomp-chips">
-        <button class="chip active" onclick="setNxbrewRecomp('all', this)">Tous (7 767)</button>
-        <button class="chip recomp-both" onclick="setNxbrewRecomp('both', this)">🔥 M4 + AYN Thor (27)</button>
-        <button class="chip" onclick="setNxbrewRecomp('m4', this)">🍎 Recomp M4 (102)</button>
-        <button class="chip" onclick="setNxbrewRecomp('ayn', this)">📱 Recomp AYN (27)</button>
-        <button class="chip" onclick="setNxbrewRecomp('installed', this)">✅ Déjà sur Mac</button>
+        <button class="chip active" onclick="setCatalogRecomp('all', this)" id="chip-recomp-all">Tous</button>
+        <button class="chip recomp-both" onclick="setCatalogRecomp('both', this)" id="chip-recomp-both">🔥 Recomp M4 + AYN</button>
+        <button class="chip" onclick="setCatalogRecomp('m4', this)" id="chip-recomp-m4">🍎 Recomp / Port M4</button>
+        <button class="chip" onclick="setCatalogRecomp('ayn', this)" id="chip-recomp-ayn">📱 Recomp / Port AYN</button>
+        <button class="chip" onclick="setCatalogRecomp('installed', this)" id="chip-recomp-inst">✅ Déjà sur Mac</button>
       </div>
 
-      <!-- Row 2: Quick Franchises + Formats -->
+      <!-- Row 2: Quick Franchises -->
       <div class="scroll-row" id="nxbrew-franchise-chips">
-        <button class="chip" onclick="quickNxbrewSearch('Zelda')">🗡️ Zelda</button>
-        <button class="chip" onclick="quickNxbrewSearch('Mario')">🍄 Mario</button>
-        <button class="chip" onclick="quickNxbrewSearch('Pokemon')">⚡ Pokémon</button>
-        <button class="chip" onclick="quickNxbrewSearch('Metroid')">🚀 Metroid</button>
-        <button class="chip" onclick="quickNxbrewSearch('Xenoblade')">⚔️ Xenoblade</button>
-        <button class="chip" onclick="quickNxbrewSearch('Fire Emblem')">🛡️ Fire Emblem</button>
-        <button class="chip" onclick="quickNxbrewSearch('Donkey Kong')">🦍 DK</button>
-        <button class="chip" onclick="quickNxbrewSearch('Kirby')">⭐ Kirby</button>
-        <button class="chip" onclick="quickNxbrewSearch('Final Fantasy')">💎 FF</button>
-        <button class="chip" onclick="quickNxbrewSearch('Dragon Quest')">🐉 DQ</button>
-        <button class="chip" onclick="quickNxbrewSearch('Diablo')">😈 Diablo</button>
-        <button class="chip" onclick="quickNxbrewSearch('Persona')">🎭 Persona</button>
+        <button class="chip" onclick="quickCatalogSearch('Zelda')">🗡️ Zelda</button>
+        <button class="chip" onclick="quickCatalogSearch('Mario')">🍄 Mario</button>
+        <button class="chip" onclick="quickCatalogSearch('Pokemon')">⚡ Pokémon</button>
+        <button class="chip" onclick="quickCatalogSearch('Metroid')">🚀 Metroid</button>
+        <button class="chip" onclick="quickCatalogSearch('God of War')">⚔️ God of War</button>
+        <button class="chip" onclick="quickCatalogSearch('Sonic')">🦔 Sonic</button>
+        <button class="chip" onclick="quickCatalogSearch('Final Fantasy')">💎 FF</button>
+        <button class="chip" onclick="quickCatalogSearch('Dragon Quest')">🐉 DQ</button>
+        <button class="chip" onclick="quickCatalogSearch('Resident Evil')">🧟 Resident Evil</button>
+        <button class="chip" onclick="quickCatalogSearch('Castlevania')">🦇 Castlevania</button>
+        <button class="chip" onclick="quickCatalogSearch('Grand Theft Auto')">🚗 GTA</button>
+        <button class="chip" onclick="quickCatalogSearch('Metal Gear')">🐍 MGS</button>
+        <button class="chip" onclick="quickCatalogSearch('Persona')">🎭 Persona</button>
+        <button class="chip" onclick="quickCatalogSearch('Kirby')">⭐ Kirby</button>
+        <button class="chip" onclick="quickCatalogSearch('Donkey Kong')">🦍 DK</button>
       </div>
     </section>
+
+    <!-- Active Console Setup Info Banner -->
+    <div id="console-setup-banner" class="setup-banner">
+      <span id="setup-banner-left">🔴 <strong>Nintendo Switch</strong> · Source : <code>NXBrew + TorBox</code></span>
+      <span id="setup-banner-right">🍎 Mac : <strong>Ryujinx / Recomp</strong> · 🎮 AYN : <strong>Eden / nx2android</strong></span>
+    </div>
 
     <!-- Results Count + Format Toggle -->
     <div class="results-bar">
@@ -578,7 +661,7 @@
     <div class="sheet-panel">
       <div class="sheet-handle"></div>
       <div class="sheet-header">
-        <strong style="font-size:0.9rem;color:var(--accent);">📦 Téléchargement Direct 1-Clic</strong>
+        <strong style="font-size:0.9rem;color:var(--accent);" id="inspector-sheet-title">📦 Téléchargement & Installation Auto 1-Clic</strong>
         <button class="sheet-close" onclick="closeInspectorSheet()">✕ Fermer</button>
       </div>
       <div id="nxbrew-inspector-body" style="font-size:0.83rem;color:var(--text-muted);line-height:1.45;"></div>
@@ -588,6 +671,7 @@
   <div id="toast"></div>
 
   <script>
+    const CACHE_KEY = "ayn-thor-rom-emu-v6";
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(regs => {
         regs.forEach(r => r.unregister());
@@ -600,11 +684,38 @@
     }
 
     let API_BASE = "";
+    let ACTIVE_SYSTEM = "switch";
     let NXBREW_FORMAT = "all";
     let NXBREW_RECOMP = "all";
     let NXBREW_SEARCH_TIMER = null;
     let NXBREW_JOBS_TIMER = null;
-    let LOCAL_CATALOG_CACHE = null;
+    let LOCAL_SWITCH_CACHE = null;
+    let LOCAL_ROMSFUN_CACHE = null;
+
+    const CONSOLE_META_FALLBACK = {
+      switch: { label: "Nintendo Switch", shortLabel: "Switch", icon: "🔴", source: "NXBrew + TorBox / 1Fichier / FileKeeper", macEmu: "Ryujinx (Plein écran + 8BitDo)", aynEmu: "Eden (Turnip V38) + nx2android", aynDir: "/storage/6531-3035/ROMs/switch" },
+      all_consoles: { label: "Toutes Consoles Rétro & HD (20 Systèmes)", shortLabel: "Multi", icon: "🌐", source: "RomsFun CDN + Archive.org Direct", macEmu: "Pegasus + M4 Gaming (Dolphin/Azahar/PCSX2/Cemu/RetroArch)", aynEmu: "ES-DE + Émulateurs AYN Thor (MicroSD)", aynDir: "/storage/6531-3035/ROMs/<console>" },
+      n3ds: { label: "Nintendo 3DS", shortLabel: "3DS", icon: "🕹️", source: "RomsFun CDN (No-Intro Decrypted / CIA)", macEmu: "Azahar (1080p Metal)", aynEmu: "Azahar / Citra Dusk (Double Écran)", aynDir: "/storage/6531-3035/ROMs/n3ds" },
+      nds: { label: "Nintendo DS", shortLabel: "NDS", icon: "📱", source: "RomsFun CDN Direct", macEmu: "RetroArch (melonDS DS)", aynEmu: "melonDS Dual-Screen", aynDir: "/storage/6531-3035/ROMs/nds" },
+      gc: { label: "Nintendo GameCube", shortLabel: "GameCube", icon: "🟣", source: "RomsFun CDN (RVZ) + Archive.org", macEmu: "Dolphin (Metal 1080p) + Dusklight", aynEmu: "Dolphin Android (Vulkan 3x)", aynDir: "/storage/6531-3035/ROMs/gc" },
+      wii: { label: "Nintendo Wii", shortLabel: "Wii", icon: "🐬", source: "RomsFun CDN (RVZ)", macEmu: "Dolphin (Metal 1080p)", aynEmu: "Dolphin Android (Vulkan)", aynDir: "/storage/6531-3035/ROMs/wii" },
+      wiiu: { label: "Nintendo Wii U", shortLabel: "Wii U", icon: "🟦", source: "RomsFun + Archive.org Direct", macEmu: "Cemu (Metal 1080p) + WWHD/BotW Recomp", aynEmu: "Cemu Android + WWHD/BotW Recomp", aynDir: "/storage/6531-3035/ROMs/wiiu" },
+      ps2: { label: "Sony PlayStation 2", shortLabel: "PS2", icon: "💿", source: "RomsFun CDN (Redump / CHD)", macEmu: "PCSX2 v2.8.2 (Metal)", aynEmu: "NetherSX2 / AetherSX2 Turnip", aynDir: "/storage/6531-3035/ROMs/ps2" },
+      psx: { label: "Sony PlayStation 1", shortLabel: "PS1", icon: "🦆", source: "RomsFun CDN (Redump)", macEmu: "DuckStation (Metal 1080p)", aynEmu: "DuckStation Android", aynDir: "/storage/6531-3035/ROMs/psx" },
+      psp: { label: "PlayStation Portable", shortLabel: "PSP", icon: "🛸", source: "RomsFun CDN (ISO)", macEmu: "PPSSPP (Metal 1080p)", aynEmu: "PPSSPP Android (Vulkan 4x)", aynDir: "/storage/6531-3035/ROMs/psp" },
+      gba: { label: "Game Boy Advance", shortLabel: "GBA", icon: "👾", source: "RomsFun CDN Direct", macEmu: "RetroArch (mGBA)", aynEmu: "RetroArch (mGBA)", aynDir: "/storage/6531-3035/ROMs/gba" },
+      n64: { label: "Nintendo 64", shortLabel: "N64", icon: "🦖", source: "RomsFun CDN Direct", macEmu: "RetroArch (Mupen64Plus-Next) / Recomp", aynEmu: "RetroArch / Ports Android", aynDir: "/storage/6531-3035/ROMs/n64" },
+      snes: { label: "Super Nintendo", shortLabel: "SNES", icon: "🎛️", source: "RomsFun CDN Direct", macEmu: "RetroArch (Snes9x)", aynEmu: "RetroArch (Snes9x)", aynDir: "/storage/6531-3035/ROMs/snes" },
+      gbc: { label: "Game Boy Color", shortLabel: "GBC", icon: "🟢", source: "RomsFun CDN Direct", macEmu: "RetroArch (Gambatte)", aynEmu: "RetroArch (Gambatte)", aynDir: "/storage/6531-3035/ROMs/gbc" },
+      gb: { label: "Game Boy", shortLabel: "GB", icon: "⚪", source: "RomsFun CDN Direct", macEmu: "RetroArch (Gambatte)", aynEmu: "RetroArch (Gambatte)", aynDir: "/storage/6531-3035/ROMs/gb" },
+      nes: { label: "Nintendo NES", shortLabel: "NES", icon: "🧱", source: "RomsFun CDN Direct", macEmu: "RetroArch (Mesen)", aynEmu: "RetroArch (Mesen)", aynDir: "/storage/6531-3035/ROMs/nes" },
+      xbox360: { label: "Microsoft Xbox 360", shortLabel: "Xbox 360", icon: "🟢", source: "RomsFun + Archive.org Direct", macEmu: "Skate 3 Recomp ARM64 / Xenia", aynEmu: "XenDroid / Xenia Canary (Turnip V38)", aynDir: "/storage/6531-3035/ROMs/xbox360" },
+      ps3: { label: "Sony PlayStation 3", shortLabel: "PS3", icon: "🖤", source: "RomsFun + Archive.org Direct", macEmu: "RPCS3 ARM64 (Metal)", aynEmu: "RPCS3 Android / Winlator", aynDir: "/storage/6531-3035/ROMs/ps3" },
+      psvita: { label: "PlayStation Vita", shortLabel: "PS Vita", icon: "💎", source: "RomsFun + Archive.org Direct", macEmu: "Vita3K Mac", aynEmu: "Vita3K Android (Turnip V38)", aynDir: "/storage/6531-3035/ROMs/psvita" },
+      dreamcast: { label: "Sega Dreamcast", shortLabel: "Dreamcast", icon: "🌀", source: "RomsFun CDN Direct", macEmu: "Flycast Mac", aynEmu: "Flycast / RetroArch", aynDir: "/storage/6531-3035/ROMs/dreamcast" },
+      saturn: { label: "Sega Saturn", shortLabel: "Saturn", icon: "🪐", source: "RomsFun CDN Direct", macEmu: "OpenEmu / Mednafen", aynEmu: "YabaSanshiro 2 / Beetle Saturn", aynDir: "/storage/6531-3035/ROMs/saturn" },
+      genesis: { label: "Sega Mega Drive / Genesis", shortLabel: "Mega Drive", icon: "🦔", source: "RomsFun CDN Direct", macEmu: "OpenEmu / RetroArch", aynEmu: "RetroArch (Genesis Plus GX)", aynDir: "/storage/6531-3035/ROMs/genesis" },
+    };
 
     function showToast(msg) {
       const el = document.getElementById("toast");
@@ -641,29 +752,53 @@
       }
     }
 
-    function debounceNxbrewSearch() {
-      updateClearBtn();
-      clearTimeout(NXBREW_SEARCH_TIMER);
-      NXBREW_SEARCH_TIMER = setTimeout(() => searchNxbrewCatalog(), 180);
+    function updateConsoleBanner() {
+      const m = CONSOLE_META_FALLBACK[ACTIVE_SYSTEM] || CONSOLE_META_FALLBACK.switch;
+      const leftEl = document.getElementById("setup-banner-left");
+      const rightEl = document.getElementById("setup-banner-right");
+      const fmtSel = document.getElementById("nxbrew-format-select");
+      if (leftEl) {
+        leftEl.innerHTML = `${m.icon} <strong>${m.label}</strong> · Source : <code>${m.source}</code>`;
+      }
+      if (rightEl) {
+        rightEl.innerHTML = `🍎 Mac : <strong>${m.macEmu}</strong> · 🎮 AYN : <strong>${m.aynEmu}</strong>`;
+      }
+      if (fmtSel) {
+        fmtSel.style.display = ACTIVE_SYSTEM === "switch" ? "inline-block" : "none";
+      }
     }
 
-    function quickNxbrewSearch(q) {
+    function selectConsoleSystem(sysId, btn) {
+      ACTIVE_SYSTEM = sysId;
+      document.querySelectorAll("#console-selector-chips .chip").forEach(c => c.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      updateConsoleBanner();
+      searchActiveCatalog();
+    }
+
+    function debounceCatalogSearch() {
+      updateClearBtn();
+      clearTimeout(NXBREW_SEARCH_TIMER);
+      NXBREW_SEARCH_TIMER = setTimeout(() => searchActiveCatalog(), 160);
+    }
+
+    function quickCatalogSearch(q) {
       const inp = document.getElementById("nxbrew-search-input");
       if (inp) inp.value = q;
       updateClearBtn();
-      searchNxbrewCatalog();
+      searchActiveCatalog();
     }
 
     function setNxbrewFormat(fmt) {
       NXBREW_FORMAT = fmt;
-      searchNxbrewCatalog();
+      searchActiveCatalog();
     }
 
-    function setNxbrewRecomp(mode, btn) {
+    function setCatalogRecomp(mode, btn) {
       NXBREW_RECOMP = mode;
       document.querySelectorAll("#nxbrew-recomp-chips .chip").forEach(c => c.classList.remove("active"));
       if (btn) btn.classList.add("active");
-      searchNxbrewCatalog();
+      searchActiveCatalog();
     }
 
     function shortToolLabel(toolStr, fallback) {
@@ -671,7 +806,9 @@
       return toolStr.split("(")[0].trim();
     }
 
-    function renderMobileRecompBadges(rc) {
+    function renderMobileRecompBadges(rc, macEmuFallback = "Ryujinx", aynEmuFallback = "Eden") {
+      const mShortFallback = shortToolLabel(macEmuFallback, "Émulateur Mac");
+      const aShortFallback = shortToolLabel(aynEmuFallback, "Émulateur AYN");
       if (rc && rc.m4 && rc.ayn) {
         const m4Short = shortToolLabel(rc.m4Tool, "Natif ARM64");
         const aynShort = shortToolLabel(rc.aynTool, "Natif Android");
@@ -684,32 +821,41 @@
         const m4Short = shortToolLabel(rc.m4Tool, "Natif ARM64");
         return `
           <span class="badge m4-yes">🍎 M4 : OUI (${m4Short})</span>
-          <span class="badge recomp-no">📱 AYN : Non (Eden)</span>
+          <span class="badge recomp-no">📱 AYN : ${aShortFallback}</span>
         `;
       }
       return `
-        <span class="badge recomp-no">🍎 M4 : Non (Ryujinx)</span>
-        <span class="badge recomp-no">📱 AYN : Non (Eden)</span>
+        <span class="badge recomp-no">🍎 M4 : ${mShortFallback}</span>
+        <span class="badge recomp-no">📱 AYN : ${aShortFallback}</span>
       `;
     }
 
     function renderGameList(games, totalCatalog) {
       const listEl = document.getElementById("nxbrew-catalog-list");
       const countEl = document.getElementById("nxbrew-results-count");
-      countEl.textContent = `${games.length} affichés sur ${(totalCatalog || games.length).toLocaleString("fr-FR")} jeux`;
+      const m = CONSOLE_META_FALLBACK[ACTIVE_SYSTEM] || CONSOLE_META_FALLBACK.switch;
+      countEl.textContent = `${games.length} affichés sur ${(totalCatalog || games.length).toLocaleString("fr-FR")} jeux (${m.shortLabel})`;
 
       if (games.length === 0) {
-        listEl.innerHTML = `<div style="padding:24px 12px;color:var(--text-muted);text-align:center;font-size:0.85rem;">Aucun jeu trouvé pour ce filtre.</div>`;
+        listEl.innerHTML = `<div style="padding:24px 12px;color:var(--text-muted);text-align:center;font-size:0.85rem;">Aucun jeu trouvé pour ce filtre sur ${m.label}.</div>`;
         return;
       }
 
       listEl.innerHTML = games.map((g, idx) => {
         const fmtBadges = [];
+        const gSys = g.system || ACTIVE_SYSTEM;
+        if (gSys !== "switch") {
+          const sysLbl = g.systemLabel || (CONSOLE_META_FALLBACK[gSys] ? CONSOLE_META_FALLBACK[gSys].shortLabel : gSys.toUpperCase());
+          const sysIco = g.systemIcon || (CONSOLE_META_FALLBACK[gSys] ? CONSOLE_META_FALLBACK[gSys].icon : "🎮");
+          fmtBadges.push(`<span class="badge fmt-sys">${sysIco} ${sysLbl}</span>`);
+        }
         if (g.hasNsp) fmtBadges.push('<span class="badge fmt-nsp">NSP</span>');
         if (g.hasXci) fmtBadges.push('<span class="badge fmt-xci">XCI</span>');
         if (g.hasUpdate) fmtBadges.push('<span class="badge fmt-upd">+Upd</span>');
         if (g.hasDlc) fmtBadges.push('<span class="badge fmt-upd">+DLC</span>');
-        if (g.installed) fmtBadges.push('<span class="badge fmt-inst">✅ Sur Mac</span>');
+        if (g.installed || (g.recomp && g.recomp.installedBoth)) {
+          fmtBadges.push('<span class="badge fmt-inst">✅ Sur Mac</span>');
+        }
 
         const rc = g.recomp || null;
         const cardClass = (rc && rc.m4 && rc.ayn)
@@ -720,20 +866,23 @@
 
         const safeUrl = (g.url || "").replace(/'/g, "\\'");
         const safeTitle = (g.shortName || "").replace(/'/g, "\\'");
+        const safeSys = (gSys || "switch").replace(/'/g, "\\'");
+        const macEmu = g.macEmulator || (CONSOLE_META_FALLBACK[gSys] ? CONSOLE_META_FALLBACK[gSys].macEmu : "Ryujinx");
+        const aynEmu = g.aynEmulator || (CONSOLE_META_FALLBACK[gSys] ? CONSOLE_META_FALLBACK[gSys].aynEmu : "Eden");
 
         return `
-          <div class="${cardClass}" onclick="selectAndInspectGame(${idx}, '${safeUrl}', '${safeTitle}')">
+          <div class="${cardClass}" onclick="selectAndInspectGame(${idx}, '${safeUrl}', '${safeTitle}', '${safeSys}')">
             <div class="game-main">
               <div class="game-title-row">
                 <span class="game-name">${g.shortName}</span>
                 ${fmtBadges.join("")}
               </div>
               <div class="recomp-row">
-                ${renderMobileRecompBadges(rc)}
+                ${renderMobileRecompBadges(rc, macEmu, aynEmu)}
               </div>
               ${rc && rc.note ? `<div class="recomp-detail">✓ ${rc.note}</div>` : ""}
             </div>
-            <button class="dl-btn" onclick="event.stopPropagation();selectAndInspectGame(${idx}, '${safeUrl}', '${safeTitle}')">
+            <button class="dl-btn" onclick="event.stopPropagation();selectAndInspectGame(${idx}, '${safeUrl}', '${safeTitle}', '${safeSys}')">
               📥 DL
             </button>
           </div>
@@ -743,21 +892,51 @@
       window._lastRenderedGames = games;
     }
 
-    function selectAndInspectGame(idx, url, shortTitle) {
+    function selectAndInspectGame(idx, url, shortTitle, sysId = "switch") {
       const g = (window._lastRenderedGames || [])[idx];
       const rc = g ? (g.recomp || null) : null;
-      inspectNxbrewGame(url, shortTitle, rc);
+      inspectRomGame(url, shortTitle, rc, sysId || (g && g.system) || ACTIVE_SYSTEM);
     }
 
-    async function loadFallbackCatalog() {
-      if (LOCAL_CATALOG_CACHE) return LOCAL_CATALOG_CACHE;
-      const r = await fetch("data/nxbrew_catalog.json?t=" + Date.now());
-      if (!r.ok) throw new Error("Failed to load local catalog");
-      LOCAL_CATALOG_CACHE = await r.json();
-      return LOCAL_CATALOG_CACHE;
+    async function loadFallbackSwitchCatalog() {
+      if (LOCAL_SWITCH_CACHE) return LOCAL_SWITCH_CACHE;
+      const r = await fetch("data/nxbrew_catalog.json?v=6");
+      if (!r.ok) throw new Error("Failed to load Switch catalog");
+      LOCAL_SWITCH_CACHE = await r.json();
+      return LOCAL_SWITCH_CACHE;
     }
 
-    async function searchNxbrewCatalog() {
+    async function loadFallbackRomsfunCatalog() {
+      if (LOCAL_ROMSFUN_CACHE) return LOCAL_ROMSFUN_CACHE;
+      const r = await fetch("data/romsfun_catalog.json?v=6");
+      if (!r.ok) throw new Error("Failed to load RomsFun catalog");
+      LOCAL_ROMSFUN_CACHE = await r.json();
+      return LOCAL_ROMSFUN_CACHE;
+    }
+
+    function getOfflineInstalledNames(sysId) {
+      const inv = window.AYN_THOR_DATA || {};
+      const roms = inv.roms || [];
+      const out = [];
+      for (const rSys of roms) {
+        const rid = (rSys.id || "").toLowerCase();
+        if (rid === sysId.toLowerCase() || (sysId === "gc" && rid === "gamecube") || (sysId === "n3ds" && rid === "3ds") || (sysId === "psx" && rid === "ps1")) {
+          for (const g of (rSys.games || [])) {
+            if (g.name) out.push(normTxt(g.name.replace(/\.[^.]+$/, "")).replace(/\s+/g, ""));
+          }
+        }
+      }
+      return out;
+    }
+
+    async function searchActiveCatalog() {
+      if (ACTIVE_SYSTEM === "switch") {
+        return searchSwitchCatalog();
+      }
+      return searchConsoleCatalog(ACTIVE_SYSTEM === "all_consoles" ? "all" : ACTIVE_SYSTEM);
+    }
+
+    async function searchSwitchCatalog() {
       const q = (document.getElementById("nxbrew-search-input") || {}).value || "";
       const listEl = document.getElementById("nxbrew-catalog-list");
 
@@ -786,34 +965,40 @@
 
       // Offline / GitHub Pages direct fallback
       try {
-        const data = await loadFallbackCatalog();
+        const data = await loadFallbackSwitchCatalog();
         const allGames = data.games || [];
         const qNorm = normTxt(q);
         const qTokens = qNorm ? qNorm.split(" ") : [];
+        const instClean = getOfflineInstalledNames("switch");
 
-        const matched = allGames.filter(g => {
-          if (NXBREW_FORMAT === "nsp" && !g.hasNsp) return false;
-          if (NXBREW_FORMAT === "xci" && !g.hasXci) return false;
-          if (NXBREW_FORMAT === "update" && !g.hasUpdate) return false;
-          if (NXBREW_FORMAT === "dlc" && !g.hasDlc) return false;
+        const matched = [];
+        for (const g of allGames) {
+          if (NXBREW_FORMAT === "nsp" && !g.hasNsp) continue;
+          if (NXBREW_FORMAT === "xci" && !g.hasXci) continue;
+          if (NXBREW_FORMAT === "update" && !g.hasUpdate) continue;
+          if (NXBREW_FORMAT === "dlc" && !g.hasDlc) continue;
 
           const rc = g.recomp || {};
-          if (NXBREW_RECOMP === "both" && !(rc.m4 && rc.ayn)) return false;
-          if (NXBREW_RECOMP === "m4" && !rc.m4) return false;
-          if (NXBREW_RECOMP === "ayn" && !rc.ayn) return false;
+          if (NXBREW_RECOMP === "both" && !(rc.m4 && rc.ayn)) continue;
+          if (NXBREW_RECOMP === "m4" && !rc.m4) continue;
+          if (NXBREW_RECOMP === "ayn" && !rc.ayn) continue;
 
           if (qTokens.length > 0) {
             const hay = normTxt((g.title || "") + " " + (g.shortName || "") + " " + (g.url || ""));
-            if (!qTokens.every(t => hay.includes(t))) return false;
+            if (!qTokens.every(t => hay.includes(t))) continue;
           }
-          return true;
-        });
+          const snClean = normTxt(g.shortName || "").replace(/\s+/g, "");
+          const isInst = instClean.some(fn => snClean.length >= 4 && fn.includes(snClean));
+          if (NXBREW_RECOMP === "installed" && !isInst) continue;
+
+          matched.push(Object.assign({}, g, { system: "switch", installed: isInst }));
+        }
 
         matched.sort((a, b) => {
           const ra = a.recomp || {};
           const rb = b.recomp || {};
-          const scoreA = (ra.m4 && ra.ayn) ? 2 : (ra.m4 ? 1 : 0);
-          const scoreB = (rb.m4 && rb.ayn) ? 2 : (rb.m4 ? 1 : 0);
+          const scoreA = (ra.m4 && ra.ayn) ? 3 : (ra.m4 ? 2 : (a.installed ? 1 : 0));
+          const scoreB = (rb.m4 && rb.ayn) ? 3 : (rb.m4 ? 2 : (b.installed ? 1 : 0));
           if (scoreA !== scoreB) return scoreB - scoreA;
           return (a.shortName || "").localeCompare(b.shortName || "");
         });
@@ -824,12 +1009,101 @@
       }
     }
 
-    function renderInspectorRecompBox(rc) {
+    async function searchConsoleCatalog(sysId) {
+      const q = (document.getElementById("nxbrew-search-input") || {}).value || "";
+      const listEl = document.getElementById("nxbrew-catalog-list");
+
+      if (API_BASE) {
+        try {
+          const r = await fetch(
+            `${API_BASE}/api/romsfun-catalog?system=${encodeURIComponent(sysId)}&q=${encodeURIComponent(q)}&recomp=${NXBREW_RECOMP}&limit=120`
+          );
+          const res = await r.json();
+          if (res.ok) {
+            renderGameList(res.games, res.totalCatalog);
+            return;
+          }
+        } catch (_) {}
+      }
+
+      // Offline / GitHub Pages direct fallback for all 20 consoles
+      try {
+        const cat = await loadFallbackRomsfunCatalog();
+        const consolesMeta = cat.consoles || {};
+        const recompMap = cat.recompMap || {};
+        const slugMap = cat.slugMap || {};
+        const systemsDict = cat.systems || {};
+        const targetSystems = sysId === "all" ? Object.keys(systemsDict) : (systemsDict[sysId] ? [sysId] : ["n3ds"]);
+
+        const qNorm = normTxt(q);
+        const qTokens = qNorm ? qNorm.split(" ") : [];
+
+        const matched = [];
+        let totalSysGames = 0;
+
+        for (const sId of targetSystems) {
+          const items = systemsDict[sId] || [];
+          totalSysGames += items.length;
+          const cCfg = consolesMeta[sId] || CONSOLE_META_FALLBACK[sId] || {};
+          const rfSlug = slugMap[sId] || sId;
+          const instClean = getOfflineInstalledNames(sId);
+
+          for (let i = 0; i < items.length; i++) {
+            const title = items[i][0];
+            const gSlug = items[i][1];
+            const rc = recompMap[`${sId}/${gSlug}`] || null;
+
+            if (NXBREW_RECOMP === "both" && !(rc && rc.m4 && rc.ayn)) continue;
+            if (NXBREW_RECOMP === "m4" && !(rc && rc.m4)) continue;
+            if (NXBREW_RECOMP === "ayn" && !(rc && rc.ayn)) continue;
+
+            if (qTokens.length > 0) {
+              const hay = normTxt(title + " " + gSlug);
+              if (!qTokens.every(t => hay.includes(t))) continue;
+            }
+
+            const snClean = normTxt(title).replace(/\s+/g, "");
+            const isInst = (rc && rc.installedBoth) || instClean.some(fn => snClean.length >= 4 && (fn.includes(snClean) || snClean.includes(fn)));
+            if (NXBREW_RECOMP === "installed" && !isInst) continue;
+
+            matched.push({
+              system: sId,
+              systemLabel: cCfg.shortLabel || sId.toUpperCase(),
+              systemIcon: cCfg.icon || "🎮",
+              macEmulator: cCfg.macEmulator || cCfg.macEmu || "Mac Emulator",
+              aynEmulator: cCfg.aynEmulator || cCfg.aynEmu || "AYN Emulator",
+              title: title,
+              shortName: title,
+              slug: gSlug,
+              url: `https://romsfun.com/roms/${rfSlug}/${gSlug}.html`,
+              installed: isInst,
+              recomp: rc,
+            });
+          }
+        }
+
+        matched.sort((a, b) => {
+          const ra = a.recomp || {};
+          const rb = b.recomp || {};
+          const scoreA = (ra.m4 && ra.ayn) ? 3 : (ra.m4 ? 2 : (a.installed ? 1 : 0));
+          const scoreB = (rb.m4 && rb.ayn) ? 3 : (rb.m4 ? 2 : (b.installed ? 1 : 0));
+          if (scoreA !== scoreB) return scoreB - scoreA;
+          return (a.shortName || "").localeCompare(b.shortName || "");
+        });
+
+        renderGameList(matched.slice(0, 120), totalSysGames);
+      } catch (e) {
+        listEl.innerHTML = "Impossible de charger le catalogue multi-consoles.";
+      }
+    }
+
+    function renderInspectorRecompBox(rc, sysId = "switch") {
+      const m = CONSOLE_META_FALLBACK[sysId] || CONSOLE_META_FALLBACK.switch;
       if (rc && rc.m4 && rc.ayn) {
         return `
           <div style="margin-top:10px;padding:10px 12px;background:rgba(20,83,45,0.3);border:1px solid rgba(34,197,94,0.45);border-radius:11px;">
             <div style="font-weight:800;font-size:0.8rem;color:#4ade80;margin-bottom:4px;">
-              🔥 Recomp Natif Vérifié (Mac M4 + AYN Thor)
+              🔥 Portage / Recomp Natif Vérifié (Mac M4 + AYN Thor)
             </div>
             <div style="font-size:0.76rem;color:#e2e8f0;line-height:1.45;">
               • <strong>Mac mini M4 :</strong> OUI — <code>${rc.m4Tool}</code><br/>
@@ -843,37 +1117,39 @@
         return `
           <div style="margin-top:10px;padding:10px 12px;background:rgba(12,74,110,0.28);border:1px solid rgba(56,189,248,0.4);border-radius:11px;">
             <div style="font-weight:800;font-size:0.8rem;color:#38bdf8;margin-bottom:4px;">
-              🍎 Recomp Natif Vérifié sur Mac mini M4 uniquement
+              🍎 Portage / Recomp Natif Vérifié sur Mac mini M4
             </div>
             <div style="font-size:0.76rem;color:#e2e8f0;line-height:1.45;">
               • <strong>Mac mini M4 :</strong> OUI — <code>${rc.m4Tool}</code><br/>
-              • <strong>AYN Thor :</strong> Non (utilisez l'émulateur <strong>Eden</strong>)<br/>
+              • <strong>AYN Thor :</strong> Émulation via <strong>${m.aynEmu}</strong> (<code>${m.aynDir}</code>)<br/>
               <span style="color:#bae6fd;">✓ ${rc.note || ""}</span>
             </div>
           </div>
         `;
       }
       return `
-        <div style="margin-top:10px;padding:9px 11px;background:rgba(148,163,184,0.08);border:1px solid var(--border);border-radius:10px;font-size:0.75rem;color:var(--text-muted);">
-          • <strong>Recomp Mac mini M4 :</strong> Non (Émulation <strong>Ryujinx</strong>)<br/>
-          • <strong>Recomp AYN Thor :</strong> Non (Émulation <strong>Eden</strong>)
+        <div style="margin-top:10px;padding:9px 11px;background:rgba(148,163,184,0.08);border:1px solid var(--border);border-radius:10px;font-size:0.75rem;color:var(--text-muted);line-height:1.45;">
+          • <strong>Mac mini M4 :</strong> Installation auto dans <strong>${m.macEmu}</strong> (Pegasus + M4 Gaming)<br/>
+          • <strong>AYN Thor :</strong> Copie auto via ADB vers <strong>${m.aynEmu}</strong> (<code>${m.aynDir}</code>)
         </div>
       `;
     }
 
-    async function inspectNxbrewGame(url, shortTitle = "", fallbackRecomp = null) {
+    async function inspectRomGame(url, shortTitle = "", fallbackRecomp = null, sysId = "switch") {
       openInspectorSheet();
       const bodyEl = document.getElementById("nxbrew-inspector-body");
+      const m = CONSOLE_META_FALLBACK[sysId] || CONSOLE_META_FALLBACK.switch;
+      const siteLabel = url.includes("romsfun.com") ? "RomsFun.com" : "NXBrew.net";
 
       bodyEl.innerHTML = `
         <div style="padding:10px 4px;text-align:center;color:var(--accent);">
           <div style="font-size:1.35rem;margin-bottom:4px;">⏳</div>
-          <strong>Récupération des miroirs de téléchargement…</strong>
+          <strong>Récupération des versions & miroirs directs (${m.shortLabel})…</strong>
           <p style="margin:4px 0 0;font-size:0.75rem;color:var(--text-muted);">
-            Extraction FileKeeper / DataNodes / 1Fichier pour <em>${shortTitle || url}</em>…
+            Extraction ${siteLabel} / CDN sans Captcha pour <em>${shortTitle || url}</em>…
           </p>
           <div style="text-align:left;margin-top:8px;">
-            ${renderInspectorRecompBox(fallbackRecomp)}
+            ${renderInspectorRecompBox(fallbackRecomp, sysId)}
           </div>
         </div>
       `;
@@ -892,12 +1168,12 @@
         bodyEl.innerHTML = `
           <div>
             <h3 style="margin:0 0 6px;font-size:0.95rem;color:var(--text);">${shortTitle || url}</h3>
-            ${renderInspectorRecompBox(fallbackRecomp)}
+            ${renderInspectorRecompBox(fallbackRecomp, sysId)}
             <div style="margin-top:12px;padding:12px;background:#090d16;border:1px solid var(--border);border-radius:10px;">
               <p style="margin:0 0 10px;color:var(--warning);font-size:0.78rem;">
-                ⚠️ Mac mini hors-ligne : ouvrez la fiche NXBrew directement dans votre navigateur :
+                ⚠️ Mac mini hors-ligne : ouvrez la fiche directement dans votre navigateur :
               </p>
-              <a class="btn primary" style="width:100%;" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur NXBrew.net</a>
+              <a class="btn primary" style="width:100%;" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur ${siteLabel}</a>
             </div>
           </div>
         `;
@@ -905,42 +1181,45 @@
       }
 
       try {
-        const r = await fetch(`${API_BASE}/api/nxbrew-info?url=${encodeURIComponent(url)}`);
+        const r = await fetch(`${API_BASE}/api/nxbrew-info?url=${encodeURIComponent(url)}&system=${encodeURIComponent(sysId)}`);
         const res = await r.json();
         if (!res.ok) {
           bodyEl.innerHTML = `
             <div>
-              ${renderInspectorRecompBox(fallbackRecomp)}
+              ${renderInspectorRecompBox(fallbackRecomp, sysId)}
               <div style="color:var(--danger);padding:10px 0;">❌ ${res.error || "Erreur lors de la lecture de la page."}</div>
-              <a class="btn primary" style="width:100%;" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur NXBrew.net</a>
+              <a class="btn primary" style="width:100%;" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur ${siteLabel}</a>
             </div>
           `;
           return;
         }
 
         const rc = res.recomp || fallbackRecomp || null;
-        const safeGameTitle = (res.title || shortTitle || "Switch Game").replace(/'/g, "\\'");
+        const resolvedSys = res.system || sysId || "switch";
+        const safeGameTitle = (res.title || shortTitle || "ROM Game").replace(/'/g, "\\'");
+        const safeThumb = (res.thumb || "").replace(/'/g, "\\'");
 
         const sectionsHtml = (res.sections || []).map(sec => {
           const safeSecType = (sec.type || "Base Game").replace(/'/g, "\\'");
           const secMirrorsJson = encodeURIComponent(JSON.stringify((sec.mirrors || []).map(x => x.url))).replace(/'/g, "%27");
-          const mirrorsHtml = (sec.mirrors || []).map(m => {
-            const isFast = /filekeeper|1fichier/i.test(m.host);
-            const safeMirrorUrl = m.url.replace(/'/g, "\\'");
+          const mirrorsHtml = (sec.mirrors || []).map((mir, mIdx) => {
+            const isFast = resolvedSys !== "switch" ? (mIdx === 0 || /europe|france|\bfr\b|archive\.org/i.test(mir.host)) : /filekeeper|1fichier/i.test(mir.host);
+            const safeMirrorUrl = mir.url.replace(/'/g, "\\'");
             return `
               <div style="display:flex;gap:6px;width:100%;">
                 <button
                   class="btn ${isFast ? 'primary' : ''}"
-                  style="flex:1;padding:10px 12px;font-size:0.8rem;"
-                  onclick="startNxbrewDownload('${safeMirrorUrl}', '${safeGameTitle}', '${safeSecType}', '${secMirrorsJson}')"
+                  style="flex:1;padding:10px 12px;font-size:0.78rem;text-align:left;justify-content:space-between;"
+                  onclick="startRomDownload('${safeMirrorUrl}', '${safeGameTitle}', '${safeSecType}', '${secMirrorsJson}', '${resolvedSys}', '${safeThumb}')"
                 >
-                  ⬇️ ${m.host} ${isFast ? '⚡ (Auto Mac)' : ''}
+                  <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">⬇️ ${mir.host}</span>
+                  ${isFast ? '<span style="flex-shrink:0;font-size:0.7rem;opacity:0.95;">⚡ Auto M4+AYN</span>' : ''}
                 </button>
                 <button
                   class="btn"
-                  style="padding:10px;font-size:0.75rem;"
-                  onclick="unlockNxbrewLink('${safeMirrorUrl}')"
-                  title="Déverrouiller le lien dans le navigateur"
+                  style="padding:10px;font-size:0.75rem;flex-shrink:0;"
+                  onclick="unlockRomLink('${safeMirrorUrl}', '${resolvedSys}')"
+                  title="Déverrouiller le lien direct dans le navigateur"
                 >
                   🔓
                 </button>
@@ -966,10 +1245,10 @@
               ${res.thumb ? `<img src="${res.thumb}" alt="" style="width:58px;height:58px;object-fit:cover;border-radius:10px;border:1px solid var(--border);flex-shrink:0;" />` : ""}
               <div style="flex:1;min-width:0;">
                 <h3 style="margin:0 0 4px;font-size:0.9rem;color:var(--text);line-height:1.25;">${res.title}</h3>
-                <a href="${res.url}" target="_blank" rel="noopener" style="font-size:0.73rem;color:var(--accent);">🔗 Voir sur NXBrew.net</a>
+                <a href="${res.url}" target="_blank" rel="noopener" style="font-size:0.73rem;color:var(--accent);">🔗 Voir sur ${siteLabel}</a>
               </div>
             </div>
-            ${renderInspectorRecompBox(rc)}
+            ${renderInspectorRecompBox(rc, resolvedSys)}
             ${sectionsHtml || '<div style="margin-top:12px;color:var(--warning);">Aucun lien trouvé sur cette page.</div>'}
           </div>
         `;
@@ -978,35 +1257,43 @@
       }
     }
 
-    async function startNxbrewDownload(mirrorUrl, gameTitle, secType, mirrorsEnc = "") {
+    async function startRomDownload(mirrorUrl, gameTitle, secType, mirrorsEnc = "", sysId = "switch", thumbUrl = "") {
       let fallbacks = [];
       try { fallbacks = mirrorsEnc ? JSON.parse(decodeURIComponent(mirrorsEnc)) : []; } catch (_) {}
       if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
-      showToast(`Téléchargement lancé : ${gameTitle} (${secType})`);
+      showToast(`Téléchargement lancé : ${gameTitle}`);
       closeInspectorSheet();
       try {
         const r = await fetch(`${API_BASE}/api/nxbrew-download`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "download", url: mirrorUrl, title: gameTitle, type: secType, fallbacks }),
+          body: JSON.stringify({
+            action: "download",
+            system: sysId,
+            url: mirrorUrl,
+            title: gameTitle,
+            type: secType,
+            thumb: thumbUrl,
+            fallbacks,
+          }),
         });
         const res = await r.json();
         if (!res.ok) return showToast(res.error || "Erreur au lancement du téléchargement.");
-        showToast(`Téléchargement démarré sur le Mac mini !`);
+        showToast(`Téléchargement & installation auto démarrés sur le Mac mini !`);
         refreshNxbrewJobs();
       } catch (e) {
         showToast("Erreur réseau lors du lancement.");
       }
     }
 
-    async function unlockNxbrewLink(mirrorUrl) {
+    async function unlockRomLink(mirrorUrl, sysId = "switch") {
       if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
-      showToast("Déverrouillage ouo.io (5-10s)…");
+      showToast("Extraction du lien CDN direct…");
       try {
         const r = await fetch(`${API_BASE}/api/nxbrew-download`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "resolve", url: mirrorUrl }),
+          body: JSON.stringify({ action: "resolve", system: sysId, url: mirrorUrl }),
         });
         const res = await r.json();
         if (!res.ok) return showToast(res.error || "Impossible de déverrouiller ce lien.");
@@ -1048,7 +1335,7 @@
           const barColor = isDone ? "#22c55e" : isErr ? "#ef4444" : "#38bdf8";
           const safeJobId = (j.jobId || "").replace(/'/g, "\\'");
           const openBtn = (isErr && j.hostUrl)
-            ? `<a href="${j.hostUrl}" target="_blank" rel="noopener" class="btn primary" style="margin-top:6px;padding:6px 10px;font-size:0.72rem;width:100%;">🔓 Ouvrir le lien déverrouillé dans Safari</a>`
+            ? `<a href="${j.hostUrl}" target="_blank" rel="noopener" class="btn primary" style="margin-top:6px;padding:6px 10px;font-size:0.72rem;width:100%;">🔓 Ouvrir le lien dans Safari</a>`
             : "";
           const inst = j.install || null;
           const installHtml = (isDone && inst && !inst.error) ? `
@@ -1134,19 +1421,63 @@
     async function refreshAll(withFeedback = false) {
       const dotDaemon = document.getElementById("dot-daemon");
       const lblDaemon = document.getElementById("lbl-daemon");
-      searchNxbrewCatalog();
+      updateConsoleBanner();
+      searchActiveCatalog();
       const st = await resolveBackend();
       if (st) {
         dotDaemon.className = "dot ok";
         lblDaemon.textContent = "Mac mini prêt";
         refreshNxbrewJobs();
-        searchNxbrewCatalog();
+        searchActiveCatalog();
       } else {
         dotDaemon.className = "dot warn";
         lblDaemon.textContent = "Catalogue";
       }
-      if (withFeedback) showToast("Catalogue Switch actualisé.");
+      if (withFeedback) {
+        if (navigator.vibrate) navigator.vibrate(15);
+        showToast("Catalogue ROMs & Consoles actualisé.");
+      }
     }
+
+    // Pull-to-Refresh (Touch + Mouse)
+    (function initPullToRefresh() {
+      const ptr = document.getElementById("ptr-indicator");
+      let startY = 0;
+      let pulling = false;
+      let triggered = false;
+
+      function onStart(y) {
+        if (window.scrollY <= 2 && !document.getElementById("inspector-backdrop").classList.contains("open")) {
+          startY = y;
+          pulling = true;
+          triggered = false;
+        }
+      }
+      function onMove(y) {
+        if (!pulling) return;
+        const dy = y - startY;
+        if (dy > 15 && window.scrollY <= 2) {
+          const offset = Math.min(48, dy * 0.45) - 60;
+          ptr.style.transform = `translate(-50%, ${offset}px)`;
+          if (dy > 85 && !triggered) {
+            triggered = true;
+            if (navigator.vibrate) navigator.vibrate(12);
+          }
+        }
+      }
+      function onEnd() {
+        if (!pulling) return;
+        pulling = false;
+        ptr.style.transform = "translate(-50%, -60px)";
+        if (triggered) {
+          refreshAll(true);
+        }
+      }
+
+      window.addEventListener("touchstart", e => onStart(e.touches[0].clientY), { passive: true });
+      window.addEventListener("touchmove", e => onMove(e.touches[0].clientY), { passive: true });
+      window.addEventListener("touchend", onEnd, { passive: true });
+    })();
 
     refreshAll(false);
     setInterval(() => {

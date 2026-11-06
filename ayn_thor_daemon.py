@@ -393,10 +393,142 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 }
             )
 
-        if path == "/api/nxbrew-info":
+        if path == "/api/romsfun-catalog":
+            cat_file = os.path.join(DATA_DIR, "romsfun_catalog.json")
+            if not os.path.exists(cat_file):
+                return self._send_json({"ok": False, "games": [], "totalCatalog": 0})
+            import unicodedata
+
+            def _norm_txt(s):
+                return unicodedata.normalize("NFKD", s or "").encode("ascii", "ignore").decode("ascii").lower()
+
+            sys_id = qs.get("system", ["n3ds"])[0].strip().lower()
+            q = _norm_txt(qs.get("q", [""])[0].strip())
+            q_tokens = [t for t in re.split(r"[^a-z0-9]+", q) if t]
+            recomp_filter = qs.get("recomp", ["all"])[0].strip().lower()
+            limit = min(300, max(10, int(qs.get("limit", ["120"])[0])))
+
+            with open(cat_file, "r", encoding="utf-8") as f:
+                cat = json.load(f)
+
+            consoles_meta = cat.get("consoles", {})
+            counts_meta = cat.get("counts", {})
+            recomp_map = cat.get("recompMap", {})
+            slug_map = cat.get("slugMap", {})
+
+            if sys_id == "all":
+                target_systems = list(cat.get("systems", {}).keys())
+            else:
+                target_systems = [sys_id] if sys_id in cat.get("systems", {}) else ["n3ds"]
+
+            installed_by_sys = {}
+            inv_roms = []
+            if os.path.exists(INVENTORY_JSON):
+                try:
+                    with open(INVENTORY_JSON, "r", encoding="utf-8") as inv_f:
+                        inv_roms = json.load(inv_f).get("roms", [])
+                except Exception:
+                    inv_roms = []
+
+            for s_id in target_systems:
+                c_cfg = consoles_meta.get(s_id, {})
+                mac_dir_name = c_cfg.get("macDir", s_id)
+                exts = tuple(e.lower() for e in c_cfg.get("exts", []))
+                s_dir = os.path.join(ROMS_ROOT, mac_dir_name)
+                inst_files = []
+                try:
+                    if os.path.isdir(s_dir):
+                        inst_files = sorted(os.listdir(s_dir))
+                except Exception:
+                    for r_sys in inv_roms:
+                        if r_sys.get("id", "").lower() in (s_id.lower(), mac_dir_name.lower()):
+                            inst_files = [g.get("name", "") for g in r_sys.get("games", []) if g.get("name")]
+                            break
+                installed_by_sys[s_id] = [
+                    re.sub(r"[^a-z0-9]+", "", _norm_txt(os.path.splitext(fn)[0]))
+                    for fn in inst_files
+                    if not fn.startswith(".") and (not exts or fn.lower().endswith(exts))
+                ]
+
+            matched = []
+            total_sys_games = 0
+            for s_id in target_systems:
+                items = cat.get("systems", {}).get(s_id, [])
+                total_sys_games += len(items)
+                c_cfg = consoles_meta.get(s_id, {})
+                rf_slug = slug_map.get(s_id, s_id)
+                inst_clean_list = installed_by_sys.get(s_id, [])
+
+                for entry in items:
+                    title, g_slug = entry[0], entry[1]
+                    rc = recomp_map.get(f"{s_id}/{g_slug}")
+                    if recomp_filter == "both" and not (rc and rc.get("m4") and rc.get("ayn")):
+                        continue
+                    if recomp_filter == "m4" and not (rc and rc.get("m4")):
+                        continue
+                    if recomp_filter == "ayn" and not (rc and rc.get("ayn")):
+                        continue
+                    if recomp_filter == "any" and not rc:
+                        continue
+                    if q_tokens:
+                        hay = _norm_txt(title + " " + g_slug)
+                        if not all(t in hay for t in q_tokens):
+                            continue
+                    sn_clean = re.sub(r"[^a-z0-9]+", "", _norm_txt(title))
+                    is_inst = any(sn_clean and len(sn_clean) >= 4 and (sn_clean in fn_c or fn_c in sn_clean) for fn_c in inst_clean_list)
+                    if recomp_filter == "installed" and not is_inst:
+                        continue
+                    matched.append(
+                        {
+                            "system": s_id,
+                            "systemLabel": c_cfg.get("shortLabel", s_id.upper()),
+                            "systemIcon": c_cfg.get("icon", "🎮"),
+                            "macEmulator": c_cfg.get("macEmulator", "Mac Emulator"),
+                            "aynEmulator": c_cfg.get("aynEmulator", "AYN Emulator"),
+                            "title": title,
+                            "shortName": title,
+                            "slug": g_slug,
+                            "url": f"https://romsfun.com/roms/{rf_slug}/{g_slug}.html",
+                            "installed": is_inst,
+                            "recomp": rc,
+                        }
+                    )
+
+            def _sort_key_rf(x):
+                r = x.get("recomp") or {}
+                rank = 0 if (r.get("m4") and r.get("ayn")) else (1 if r.get("m4") else (2 if x.get("installed") else 3))
+                return (rank, x.get("shortName", "").lower())
+
+            matched.sort(key=_sort_key_rf)
+            return self._send_json(
+                {
+                    "ok": True,
+                    "system": sys_id,
+                    "totalCatalog": total_sys_games,
+                    "totalMatched": len(matched),
+                    "counts": counts_meta,
+                    "consoles": consoles_meta,
+                    "games": matched[:limit],
+                }
+            )
+
+        if path == "/api/nxbrew-info" or path == "/api/rom-info":
             game_url = qs.get("url", [""])[0].strip()
+            sys_id = qs.get("system", [""])[0].strip().lower()
+            if game_url.startswith("https://romsfun.com/"):
+                script = os.path.join(ROOT_DIR, "scripts", "romsfun_service.py")
+                cmd = [script, "info", "--url", game_url]
+                if sys_id:
+                    cmd += ["--system", sys_id]
+                rc, out, err = run_cmd(cmd, timeout=60)
+                if rc == 0 and out:
+                    try:
+                        return self._send_json(json.loads(out))
+                    except Exception:
+                        pass
+                return self._send_json({"ok": False, "error": err or out or "Impossible de charger la fiche RomsFun."})
             if not game_url.startswith("https://nxbrew."):
-                return self._send_json({"ok": False, "error": "URL NXBrew invalide."})
+                return self._send_json({"ok": False, "error": "URL NXBrew/RomsFun invalide."})
             script = os.path.join(ROOT_DIR, "scripts", "nxbrew_service.py")
             rc, out, err = run_cmd([script, "info", "--url", game_url], timeout=95)
             if rc == 0 and out:
@@ -733,10 +865,13 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
             mirror_url = body.get("url", "").strip()
             game_title = body.get("title", "Switch Game").strip()
             sec_type = body.get("type", "Base Game").strip()
+            sys_id = body.get("system", "switch").strip().lower()
+            thumb_url = body.get("thumb", "").strip()
             if not mirror_url:
                 return self._send_json({"ok": False, "error": "URL du miroir manquante."})
 
-            script = os.path.join(ROOT_DIR, "scripts", "nxbrew_service.py")
+            is_romsfun = sys_id != "switch" or mirror_url.startswith("https://romsfun.com/") or mirror_url.startswith("https://archive.org/")
+            script = os.path.join(ROOT_DIR, "scripts", "romsfun_service.py" if is_romsfun else "nxbrew_service.py")
             if action == "resolve":
                 rc, out, err = run_cmd([script, "resolve", "--url", mirror_url], timeout=45)
                 if rc == 0 and out:
@@ -745,12 +880,13 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                     except Exception:
                         pass
                 return self._send_json({"ok": False, "error": err or out or "Impossible de déverrouiller le lien."})
-            job_id = f"nx-{int(time.time() * 1000)}"
+            job_id = f"rom-{int(time.time() * 1000)}" if is_romsfun else f"nx-{int(time.time() * 1000)}"
             state_file = os.path.join(jobs_dir, f"{job_id}.json")
             init_state = {
                 "jobId": job_id,
+                "system": sys_id,
                 "status": "starting",
-                "gameTitle": game_title,
+                "gameTitle": f"[{sys_id.upper()}] {game_title}" if is_romsfun else game_title,
                 "sectionType": sec_type,
                 "mirrorUrl": mirror_url,
                 "percent": 0.0,
@@ -760,25 +896,30 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
             with open(state_file, "w", encoding="utf-8") as sf:
                 json.dump(init_state, sf, ensure_ascii=False, indent=2)
 
+            dl_cmd = [
+                script,
+                "download",
+                "--url",
+                mirror_url,
+                "--title",
+                game_title,
+                "--type",
+                sec_type,
+                "--state-file",
+                state_file,
+            ]
+            if is_romsfun:
+                dl_cmd += ["--system", sys_id]
+                if thumb_url:
+                    dl_cmd += ["--thumb", thumb_url]
+            dl_cmd += [
+                arg
+                for fb in (body.get("fallbacks") or [])[:8]
+                if isinstance(fb, str) and fb.strip().startswith("https://") and fb.strip() != mirror_url
+                for arg in ("--fallback", fb.strip())
+            ]
             subprocess.Popen(
-                [
-                    script,
-                    "download",
-                    "--url",
-                    mirror_url,
-                    "--title",
-                    game_title,
-                    "--type",
-                    sec_type,
-                    "--state-file",
-                    state_file,
-                ]
-                + [
-                    arg
-                    for fb in (body.get("fallbacks") or [])[:8]
-                    if isinstance(fb, str) and fb.strip().startswith("https://") and fb.strip() != mirror_url
-                    for arg in ("--fallback", fb.strip())
-                ],
+                dl_cmd,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )

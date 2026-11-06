@@ -9,8 +9,8 @@ Installation automatique d'un jeu Switch fraîchement téléchargé (appelé par
 2. AYN Thor (Eden, mappage Odin déjà global) : adb push dans /storage/6531-3035/ROMs/switch
    (Eden y lit aussi Updates/DLC : ext_content_from_game_dirs=true). AYN absente → file d'attente
    traitée par le daemon dès qu'elle se reconnecte (commande `process-queue`).
-3. Recomp natif AYN (nx2android) : si le jeu figure dans `porter profiles` (statut playable) et que
-   la version exigée est présente (base + update), portage automatique + installation de l'APK.
+3. Recomp natif AYN (nx2android) : JAMAIS automatique (Thomas décide au cas par cas). L'installeur signale
+   seulement qu'un portage vérifié existe ; portage manuel : `switch_installer.py recomp <titleId>`.
    Recomp Mac (nxnative) : signalé seulement (exige macOS 26.6 + Xcode 27.2, absents du Mac mini).
 """
 import json
@@ -32,6 +32,11 @@ PEGASUS_SYNC = os.path.join(HOME, "ES-DE/scripts/sync_pegasus_metadata.py")
 
 ADB = os.path.join(HOME, ".local/bin/adb")
 AYN_SWITCH_DIR = "/storage/6531-3035/ROMs/switch"
+# Updates/DLC : 2e dossier de jeux d'Eden (stockage interne), NON scanné par Cocoon Shell → pas de doublon dans
+# la tuile Switch, mais Eden les charge (ext_content_from_game_dirs=true).
+AYN_SWITCH_EXTRA_DIR = "/sdcard/Documents/ROMs/switch"
+COCOON_MEDIA = "/sdcard/Documents/downloaded_media"
+COCOON_PKG = "rip.moth.cocoonshell"
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(ROOT_DIR, "data")
@@ -88,9 +93,23 @@ def http_get(url, timeout=30):
         return r.read()
 
 
-def adb_ready():
+def adb_serial():
+    """Série ADB de l'AYN (USB prioritaire sur le Wi-Fi : la même console peut apparaître deux fois)."""
     rc, out, _ = run([ADB, "devices"], timeout=8)
-    return rc == 0 and any(l.strip().endswith("\tdevice") for l in out.splitlines()[1:])
+    if rc != 0:
+        return ""
+    serials = [l.split("\t")[0] for l in out.splitlines()[1:] if l.strip().endswith("\tdevice")]
+    usb = [s for s in serials if ":" not in s]
+    return (usb or serials or [""])[0]
+
+
+def adb(*args):
+    s = adb_serial()
+    return [ADB] + (["-s", s] if s else []) + list(args)
+
+
+def adb_ready():
+    return bool(adb_serial())
 
 
 # ───────────────────────── 1. Mac mini ─────────────────────────
@@ -213,23 +232,65 @@ def queue_add(item):
 
 
 def push_to_ayn(local_path, cb=None):
-    """Copie le fichier dans le dossier Eden de la carte SD de l'AYN. True si OK."""
+    """Base → carte SD ROMs/switch (tuile Switch de Cocoon + Eden) ; Update/DLC → Documents/ROMs/switch
+    (Eden seulement). True si OK."""
+    _, kind, _, _ = classify(local_path)
+    remote_dir = AYN_SWITCH_DIR if kind == "base" else AYN_SWITCH_EXTRA_DIR
+    return push_to_ayn_dir(local_path, remote_dir, cb)
+
+
+def push_cocoon_media(system, stem, mac_media_dir, cb=None):
+    """Copie jaquette / fond / capture dans le dossier médias de Cocoon AVANT le scan (Cocoon ne relit les
+    médias qu'à l'ajout du jeu). Noms = nom du fichier ROM sans extension."""
+    mapping = {"covers": "icon", "fanart": "hero", "screenshots": "screenshot_gameplay", "marquees": "logo"}
+    for src_sub, dst_sub in mapping.items():
+        for ext in (".jpg", ".png"):
+            src = os.path.join(mac_media_dir, src_sub, stem + ext)
+            if os.path.exists(src):
+                remote_dir = f"{COCOON_MEDIA}/{system}/{dst_sub}"
+                run(adb("shell", "mkdir", "-p", remote_dir), timeout=10)
+                run(adb("push", src, f"{remote_dir}/{stem}{ext}"), timeout=60)
+                break
+
+
+def cocoon_idle():
+    """Vrai si Cocoon Shell est au premier plan sur les 2 écrans (aucun jeu lancé)."""
+    rc, out, _ = run(adb("shell", "dumpsys window | grep mFocusedApp"), timeout=10)
+    lines = [l for l in out.splitlines() if "mFocusedApp=" in l]
+    return rc == 0 and bool(lines) and all(COCOON_PKG in l for l in lines)
+
+
+def cocoon_rescan(cb=None):
+    """Lance « Rescanner les jeux » de Cocoon Shell (pas d'API : navigation manette/tactile via ADB).
+    Uniquement si Cocoon est au repos ; sinon file d'attente (retentée par le daemon toutes les 5 min)."""
     if not adb_ready():
+        queue_add({"type": "cocoon_rescan"})
         return False
-    name = os.path.basename(local_path)
-    remote = f"{AYN_SWITCH_DIR}/{name}"
-    size = os.path.getsize(local_path)
-    rc, out, _ = run([ADB, "shell", f"stat -c %s '{remote}' 2>/dev/null"], timeout=10)
-    if rc == 0 and out.strip().isdigit() and int(out.strip()) == size:
-        log(cb, f"AYN : {name} déjà présent dans Eden")
-        return True
-    log(cb, f"AYN : copie de {name} vers Eden ({size / 1e9:.2f} Go)…")
-    run([ADB, "shell", "mkdir", "-p", AYN_SWITCH_DIR], timeout=10)
-    rc, _, err = run([ADB, "push", local_path, remote], timeout=3600)
-    if rc != 0:
-        log(cb, f"AYN : échec de la copie ({err[-160:]})")
+    if not cocoon_idle():
+        log(cb, "AYN : un jeu est en cours, scan Cocoon reporté")
+        queue_add({"type": "cocoon_rescan"})
         return False
-    log(cb, f"AYN : {name} prêt dans Eden ✓")
+    _, power, _ = run(adb("shell", "dumpsys power | grep mWakefulness="), timeout=10)
+    was_asleep = "Awake" not in power
+    log(cb, "AYN : scan de la bibliothèque Cocoon (tuile Switch)…")
+    steps = [
+        ("shell", "input keyevent KEYCODE_WAKEUP", 1.0),
+        ("shell", "input keyevent KEYCODE_HOME", 2.0),
+        ("shell", "input -d 4 keyevent KEYCODE_BUTTON_START", 1.5),  # menu Start (écran du bas)
+        ("shell", "input -d 4 tap 280 938", 2.5),                     # Paramètres
+        ("shell", "input -d 0 tap 299 529", 1.5),                     # Bibliothèque (écran du haut)
+        ("shell", "input -d 0 tap 960 533", 2.5),                     # Rescanner les jeux
+        ("shell", "input -d 0 tap 1700 115", 30.0),                   # Toutes les plateformes ▶
+        ("shell", "input -d 0 tap 960 945", 1.0),                     # OK
+        ("shell", "input -d 0 keyevent KEYCODE_BACK", 1.0),
+        ("shell", "input keyevent KEYCODE_HOME", 1.0),
+    ]
+    for kind, cmd, wait in steps:
+        run(adb(kind, cmd), timeout=15)
+        time.sleep(wait)
+    if was_asleep:
+        run(adb("shell", "input keyevent KEYCODE_SLEEP"), timeout=10)
+    log(cb, "AYN : jeu ajouté à la tuile Switch de Cocoon ✓")
     return True
 
 
@@ -309,7 +370,7 @@ def try_nx2android(base_tid, cb=None):
         args += ["-p", f"v{need_ver}"]
     installed = adb_ready()
     if installed:
-        args.append("--install")
+        args += ["--install", "--device", adb_serial()]
     log(cb, f"Recomp AYN : portage natif nx2android de {prof['name']} (quelques minutes)…")
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=nx2a_env(),
                          cwd=NX2A_DIR)
@@ -344,6 +405,140 @@ def nx2a_install(port_dir, cb=None):
     return rc == 0
 
 
+def add_console_gamelist(rom_path, gamelist_key, fallback_title, thumb_url="", meta_info=None, cb=None):
+    """Ajoute une fiche ES-DE + jaquette pour n'importe quelle console hors Switch. Idempotent."""
+    meta_info = meta_info or {}
+    fname = os.path.basename(rom_path)
+    stem = os.path.splitext(fname)[0]
+    gamelist_path = os.path.join(HOME, "ES-DE/gamelists", gamelist_key, "gamelist.xml")
+    media_dir = os.path.join(HOME, "ES-DE/downloaded_media", gamelist_key)
+    os.makedirs(os.path.dirname(gamelist_path), exist_ok=True)
+    if os.path.exists(gamelist_path):
+        try:
+            tree = ET.parse(gamelist_path)
+            root = tree.getroot()
+        except Exception:
+            root = ET.Element("gameList")
+            tree = ET.ElementTree(root)
+    else:
+        root = ET.Element("gameList")
+        tree = ET.ElementTree(root)
+
+    clean_stem = re.sub(r"\s*\([^)]*\)|\s*\[[^\]]*\]", "", stem).strip()
+    name = (fallback_title or clean_stem or stem).strip()
+
+    existing = None
+    for g in root.findall("game"):
+        if os.path.basename(g.findtext("path", "")) == fname:
+            existing = g
+            break
+
+    if existing is None:
+        g = ET.SubElement(root, "game")
+        ET.SubElement(g, "path").text = f"./{fname}"
+        ET.SubElement(g, "name").text = name
+        if meta_info.get("Description"):
+            ET.SubElement(g, "desc").text = meta_info["Description"]
+        if meta_info.get("Publisher"):
+            ET.SubElement(g, "publisher").text = meta_info["Publisher"]
+        if meta_info.get("Genre"):
+            ET.SubElement(g, "genre").text = meta_info["Genre"]
+        try:
+            ET.indent(tree, space="\t")
+        except AttributeError:
+            pass
+        tree.write(gamelist_path, encoding="utf-8", xml_declaration=True)
+
+    if thumb_url and thumb_url.startswith("http"):
+        for sub in ("covers", "miximages"):
+            dest = os.path.join(media_dir, sub, stem + ".jpg")
+            if os.path.exists(dest):
+                continue
+            try:
+                data = http_get(thumb_url, timeout=20)
+                if len(data) > 1500:
+                    os.makedirs(os.path.dirname(dest), exist_ok=True)
+                    with open(dest, "wb") as f:
+                        f.write(data)
+            except Exception:
+                pass
+    log(cb, f"Mac : fiche « {name} » ({gamelist_key.upper()}) ajoutée (Pegasus + app M4 Gaming)")
+    return name
+
+
+def push_to_ayn_dir(local_path, remote_dir, cb=None):
+    """Copie un fichier ROM dans le dossier cible de l'AYN Thor via ADB. True si OK."""
+    if not adb_ready():
+        return False
+    name = os.path.basename(local_path)
+    remote = f"{remote_dir.rstrip('/')}/{name}"
+    size = os.path.getsize(local_path)
+    rc, out, _ = run(adb("shell", f"stat -c %s '{remote}' 2>/dev/null"), timeout=10)
+    if rc == 0 and out.strip().isdigit() and int(out.strip()) == size:
+        log(cb, f"AYN : {name} déjà présent dans {remote_dir}")
+        return True
+    log(cb, f"AYN : copie de {name} vers {remote_dir} ({size / 1e6:.1f} Mo)…")
+    run(adb("shell", "mkdir", "-p", remote_dir), timeout=10)
+    rc, _, err = run(adb("push", local_path, remote), timeout=3600)
+    if rc != 0:
+        log(cb, f"AYN : échec de la copie ({err[-160:]})")
+        return False
+    log(cb, f"AYN : {name} prêt sur l'AYN Thor ({remote_dir}) ✓")
+    return True
+
+
+def install_console_rom(paths, system_cfg, game_title="", thumb_url="", meta_info=None, recomp_info=None, cb=None):
+    """Installe un jeu hors Switch sur Mac mini M4 (ROMs/<macDir> + ES-DE + Pegasus) et AYN Thor (ADB ou file d'attente)."""
+    summary = {"mac": [], "ayn": [], "recomp": [], "finalPaths": []}
+    mac_dir = os.path.join(HOME, "Games/ROMs", system_cfg["macDir"])
+    os.makedirs(mac_dir, exist_ok=True)
+    gamelist_key = system_cfg["gamelistKey"]
+    ayn_dir = system_cfg["aynDir"]
+    mac_emu = system_cfg["macEmulator"]
+    ayn_emu = system_cfg["aynEmulator"]
+    valid_exts = tuple(e.lower() for e in system_cfg.get("exts", []))
+
+    mac_changed = False
+    for path in paths:
+        if not os.path.exists(path):
+            continue
+        is_bin_with_cue = path.lower().endswith(".bin") and any(p.lower().endswith(".cue") for p in paths)
+        dest = os.path.join(mac_dir, os.path.basename(path))
+        if os.path.realpath(os.path.dirname(path)) != os.path.realpath(mac_dir):
+            shutil.move(path, dest)
+        summary["finalPaths"].append(dest)
+
+        if not is_bin_with_cue and (not valid_exts or dest.lower().endswith(valid_exts)):
+            name = add_console_gamelist(dest, gamelist_key, game_title, thumb_url=thumb_url, meta_info=meta_info, cb=cb)
+            summary["mac"].append(f"{name} → {mac_emu} plein écran (Pegasus + M4 Gaming)")
+            mac_changed = True
+
+        if push_to_ayn_dir(dest, ayn_dir, cb):
+            if not is_bin_with_cue:
+                summary["ayn"].append(f"{os.path.basename(dest)} → {ayn_emu}")
+        else:
+            queue_add({"type": "push_console", "path": dest, "remoteDir": ayn_dir})
+            if not is_bin_with_cue:
+                summary["ayn"].append(f"AYN hors ligne : copie vers {ayn_emu} dès sa reconnexion")
+                log(cb, "AYN non connectée : copie mise en file d'attente")
+
+    if mac_changed:
+        log(cb, "Mac : mise à jour de Pegasus…")
+        refresh_frontends()
+
+    if recomp_info and (recomp_info.get("m4") or recomp_info.get("ayn")):
+        parts = []
+        if recomp_info.get("m4") and recomp_info.get("m4Tool"):
+            parts.append(f"Mac M4 : {recomp_info['m4Tool']}")
+        if recomp_info.get("ayn") and recomp_info.get("aynTool"):
+            parts.append(f"AYN Thor : {recomp_info['aynTool']}")
+        summary["recomp"].append("Portage / Recomp Natif dispo — " + " · ".join(parts))
+    else:
+        summary["recomp"].append(f"Mac : {mac_emu} · AYN Thor : {ayn_emu}")
+
+    return summary
+
+
 # ───────────────────────── orchestration ─────────────────────────
 def install(paths, game_title="", sec_type="", cb=None):
     """Installe les fichiers téléchargés partout. Renvoie un dict de résumé."""
@@ -351,6 +546,7 @@ def install(paths, game_title="", sec_type="", cb=None):
     clean_title = re.sub(r"\s*(Switch\s+)?(NSP|XCI|NSZ)\b.*$", "", game_title or "", flags=re.I).strip()
     base_tids = set()
     mac_changed = False
+    ayn_new_base = False
 
     for path in paths:
         if not path.lower().endswith(SWITCH_EXTS) or not os.path.exists(path):
@@ -367,8 +563,14 @@ def install(paths, game_title="", sec_type="", cb=None):
         if btid:
             base_tids.add(btid)
 
+        if kind == "base" and adb_ready():
+            push_cocoon_media("switch", os.path.splitext(os.path.basename(final))[0], MEDIA, cb)
         if push_to_ayn(final, cb):
-            summary["ayn"].append(f"{os.path.basename(final)} → Eden")
+            if kind == "base":
+                ayn_new_base = True
+                summary["ayn"].append(f"{name} → tuile Switch de l'accueil (Eden plein écran)")
+            else:
+                summary["ayn"].append(f"{'Update' if kind == 'update' else 'DLC'} chargé auto par Eden")
         else:
             queue_add({"type": "push", "path": final})
             summary["ayn"].append("AYN hors ligne : copie vers Eden dès sa reconnexion")
@@ -377,13 +579,15 @@ def install(paths, game_title="", sec_type="", cb=None):
     if mac_changed:
         log(cb, "Mac : mise à jour de Pegasus…")
         refresh_frontends()
+    if ayn_new_base:
+        cocoon_rescan(cb)
 
+    # Recomp AYN : PAS de portage automatique (choix de Thomas, au cas par cas). On signale seulement
+    # qu'un portage natif vérifié existe ; il se lance à la main : switch_installer.py recomp <titleId>.
     for btid in base_tids:
-        st, msg = try_nx2android(btid, cb)
-        if msg:
-            summary["recomp"].append(msg)
-        if st in ("none", "skip"):
-            summary["recomp"].append("Mac : Ryujinx (recomp nxnative non installable : exige macOS 26.6 + Xcode)")
+        prof = next((p for p in nx2a_profiles() if p.get("id", "").upper() == btid and p.get("android")), None)
+        if prof and prof.get("status") == "playable":
+            summary["recomp"].append(f"Recomp natif AYN dispo pour {prof['name']} (nx2android, à lancer au cas par cas)")
     return summary
 
 
@@ -394,19 +598,30 @@ def process_queue(cb=None):
         return 0
     remaining = []
     done = 0
+    need_rescan = any(i.get("type") == "cocoon_rescan" for i in q)
     for item in q:
         ok = False
+        if item.get("type") == "cocoon_rescan":
+            continue  # traité en fin de file
         if item.get("type") == "push" and os.path.exists(item.get("path", "")):
+            if classify(item["path"])[1] == "base":
+                push_cocoon_media("switch", os.path.splitext(os.path.basename(item["path"]))[0], MEDIA, cb)
+                need_rescan = True
             ok = push_to_ayn(item["path"], cb)
+        elif item.get("type") == "push_console" and os.path.exists(item.get("path", "")):
+            ok = push_to_ayn_dir(item["path"], item.get("remoteDir", "/storage/6531-3035/ROMs"), cb)
         elif item.get("type") == "nx2a_install" and os.path.isdir(item.get("dir", "")):
             ok = nx2a_install(item["dir"], cb)
-        elif item.get("type") == "push":
+        elif item.get("type") in ("push", "push_console"):
             ok = True  # fichier disparu : on oublie
         if ok:
             done += 1
         else:
             remaining.append(item)
     save_queue(remaining)
+    if need_rescan:
+        save_queue([i for i in load_queue() if i.get("type") != "cocoon_rescan"])
+        cocoon_rescan(cb)  # se remet lui-même en file si l'AYN est occupée
     return done
 
 
