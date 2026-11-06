@@ -772,6 +772,12 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                     sec_type,
                     "--state-file",
                     state_file,
+                ]
+                + [
+                    arg
+                    for fb in (body.get("fallbacks") or [])[:8]
+                    if isinstance(fb, str) and fb.strip().startswith("https://") and fb.strip() != mirror_url
+                    for arg in ("--fallback", fb.strip())
                 ],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,

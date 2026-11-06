@@ -200,8 +200,20 @@ def resolve_filekeeper_direct(url: str) -> tuple[str, str]:
     raise RuntimeError(f"Impossible d'extraire le lien CDN depuis FileKeeper ({url})")
 
 
-def resolve_1fichier_direct(url: str, state_cb=None) -> tuple[str, str, str]:
-    """Transforme un lien https://1fichier.com/?<id>&af=<af> en lien CDN direct (a-XX.1fichier.com/c...)."""
+class OneFichierWait(RuntimeError):
+    """1Fichier impose un délai gratuit par IP plus long que ce que l'appelant accepte."""
+
+    def __init__(self, seconds: int):
+        super().__init__(f"1Fichier impose une attente de {seconds // 60} min (limite gratuite par IP)")
+        self.seconds = seconds
+
+
+def resolve_1fichier_direct(url: str, state_cb=None, max_wait_secs: int = 75 * 60) -> tuple[str, str, str]:
+    """Transforme un lien https://1fichier.com/?<id>&af=<af> en lien CDN direct (a-XX.1fichier.com/c...).
+
+    Si 1Fichier impose un délai (« Vous devez attendre encore N minutes »), on attend réellement
+    (compte à rebours via state_cb) tant que le délai reste <= max_wait_secs, sinon OneFichierWait.
+    """
     parsed = urlparse(url)
     parts = [p for p in parsed.query.split("&") if p]
     file_id = parts[0] if parts else ""
@@ -216,8 +228,13 @@ def resolve_1fichier_direct(url: str, state_cb=None) -> tuple[str, str, str]:
     soup1 = BeautifulSoup(r1.text, "html.parser")
     tn = soup1.find("span", class_="tier-name")
     filename = tn.get_text(strip=True) if tn else ""
+    if not filename:
+        m_fn = re.search(r"([^\s<>]+\.(?:rar|7z|zip|nsp|xci))\s", soup1.get_text(" ", strip=True), re.I)
+        filename = m_fn.group(1) if m_fn else ""
 
-    for attempt in range(4):
+    waited = 0
+    last_txt = ""
+    for _attempt in range(8):
         r2 = s.post(
             clean_url,
             data={"adz": ""},
@@ -232,18 +249,31 @@ def resolve_1fichier_direct(url: str, state_cb=None) -> tuple[str, str, str]:
             return ok_a["href"], filename, clean_url
 
         txt2 = soup2.get_text(" ", strip=True)
+        last_txt = txt2
         m_wait = re.search(r"attendre encore\s+(\d+)\s*minutes?|wait\s+(\d+)\s*minutes?", txt2, re.I)
-        if m_wait and attempt < 3:
-            mins = int(m_wait.group(1) or m_wait.group(2) or 1)
-            wait_secs = min(mins * 60 + 5, 125)
-            for rem in range(wait_secs, 0, -5):
-                if state_cb:
-                    state_cb(f"File d'attente 1Fichier : démarrage automatique dans {rem}s…")
-                time.sleep(min(5, rem))
-            continue
-        break
+        if not m_wait:
+            break
+        mins = int(m_wait.group(1) or m_wait.group(2) or 1)
+        wait_secs = mins * 60 + 15
+        if waited + wait_secs > max_wait_secs:
+            raise OneFichierWait(wait_secs)
+        end = time.time() + wait_secs
+        while True:
+            rem = int(end - time.time())
+            if rem <= 0:
+                break
+            if state_cb:
+                state_cb(
+                    f"1Fichier (limite gratuite par IP) : démarrage automatique dans "
+                    f"{rem // 60} min {rem % 60:02d} s — laisse le Mac mini tourner."
+                )
+            time.sleep(min(5, rem))
+        waited += wait_secs
 
-    raise RuntimeError(f"Impossible d'extraire le lien CDN direct depuis 1Fichier ({clean_url})")
+    hint = ""
+    if re.search(r"captcha|recaptcha|hcaptcha", last_txt, re.I):
+        hint = " (Captcha exigé)"
+    raise RuntimeError(f"Impossible d'extraire le lien CDN direct depuis 1Fichier{hint} ({clean_url})")
 
 
 def update_job_state(state_file: str, data: dict):
@@ -256,7 +286,7 @@ def update_job_state(state_file: str, data: dict):
         pass
 
 
-def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_file: str = ""):
+def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_file: str = "", fallbacks=None):
     state = {
         "status": "resolving",
         "gameTitle": game_title,
@@ -275,30 +305,66 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
     update_job_state(state_file, state)
 
     try:
-        host_url = resolve_shortener(mirror_url)
-        state["hostUrl"] = host_url
-        state["message"] = f"Lien hébergeur résolu : {host_url}"
-        update_job_state(state_file, state)
-
+        candidates = [mirror_url] + [u for u in (fallbacks or []) if u and u != mirror_url]
+        # Priorité : FileKeeper / 1Fichier (seuls hébergeurs 100 % auto sans Captcha)
         direct_url = ""
         filename = ""
-        referer_url = host_url
-        if "filekeeper.net" in host_url:
-            state["message"] = "Attente du jeton de session FileKeeper (5s)…"
-            update_job_state(state_file, state)
-            direct_url, filename = resolve_filekeeper_direct(host_url)
-        elif "1fichier.com" in host_url:
-            state["message"] = "Extraction du lien CDN direct 1Fichier…"
+        referer_url = ""
+        host_url = ""
+        errors = []
+        deferred_1fichier = []  # (mirror, host_url) à retenter en acceptant la longue attente
+
+        def _on_wait(msg):
+            state["message"] = msg
             update_job_state(state_file, state)
 
-            def _on_wait(msg):
-                state["message"] = msg
+        def _try(mirror, long_wait):
+            nonlocal host_url
+            state["mirrorUrl"] = mirror
+            state["message"] = f"Déverrouillage du lien court ({urlparse(mirror).netloc})…"
+            update_job_state(state_file, state)
+            host_url = resolve_shortener(mirror)
+            state["hostUrl"] = host_url
+            if "filekeeper.net" in host_url:
+                state["message"] = "Attente du jeton de session FileKeeper (5s)…"
                 update_job_state(state_file, state)
+                d, fn = resolve_filekeeper_direct(host_url)
+                return d, fn, host_url
+            if "1fichier.com" in host_url:
+                state["message"] = "Extraction du lien CDN direct 1Fichier…"
+                update_job_state(state_file, state)
+                return resolve_1fichier_direct(
+                    host_url, state_cb=_on_wait, max_wait_secs=(75 * 60 if long_wait else 3 * 60)
+                )
+            # Autres hébergeurs : on vérifie que ce n'est pas une page HTML (Captcha)
+            chk = cffi_requests.Session().get(host_url, impersonate="chrome", stream=True, timeout=30)
+            ctype = (chk.headers.get("Content-Type") or "").lower()
+            chk.close()
+            if "text/html" in ctype:
+                raise RuntimeError(f"{urlparse(host_url).netloc} exige un Captcha navigateur")
+            return host_url, os.path.basename(urlparse(host_url).path) or "download.bin", host_url
 
-            direct_url, filename, referer_url = resolve_1fichier_direct(host_url, state_cb=_on_wait)
-        else:
-            direct_url = host_url
-            filename = os.path.basename(urlparse(host_url).path) or "download.bin"
+        has_alternatives = len(candidates) > 1
+        for mirror in candidates:
+            try:
+                direct_url, filename, referer_url = _try(mirror, long_wait=not has_alternatives)
+                break
+            except OneFichierWait as w:
+                deferred_1fichier.append(mirror)
+                errors.append(str(w))
+            except Exception as e:
+                errors.append(f"{urlparse(mirror).netloc}: {e}")
+
+        if not direct_url:
+            for mirror in deferred_1fichier:
+                try:
+                    direct_url, filename, referer_url = _try(mirror, long_wait=True)
+                    break
+                except Exception as e:
+                    errors.append(str(e))
+
+        if not direct_url:
+            raise RuntimeError("Aucun miroir automatique n'a fonctionné — " + " | ".join(errors[-3:]))
 
         state["directUrl"] = direct_url
         if not filename:
@@ -434,6 +500,7 @@ def main():
     p_dl.add_argument("--title", default="Switch Game")
     p_dl.add_argument("--type", default="Base Game")
     p_dl.add_argument("--state-file", default="")
+    p_dl.add_argument("--fallback", action="append", default=[])
 
     args = parser.parse_args()
     if args.cmd == "info":
@@ -452,7 +519,7 @@ def main():
                 pass
         print(json.dumps({"ok": True, "hostUrl": host_url, "directUrl": direct_url, "filename": filename}, ensure_ascii=False))
     elif args.cmd == "download":
-        download_and_extract(args.url, args.title, args.type, args.state_file)
+        download_and_extract(args.url, args.title, args.type, args.state_file, args.fallback)
 
 
 if __name__ == "__main__":

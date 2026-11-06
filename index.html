@@ -923,6 +923,7 @@
 
         const sectionsHtml = (res.sections || []).map(sec => {
           const safeSecType = (sec.type || "Base Game").replace(/'/g, "\\'");
+          const secMirrorsJson = encodeURIComponent(JSON.stringify((sec.mirrors || []).map(x => x.url))).replace(/'/g, "%27");
           const mirrorsHtml = (sec.mirrors || []).map(m => {
             const isFast = /filekeeper|1fichier/i.test(m.host);
             const safeMirrorUrl = m.url.replace(/'/g, "\\'");
@@ -931,7 +932,7 @@
                 <button
                   class="btn ${isFast ? 'primary' : ''}"
                   style="flex:1;padding:10px 12px;font-size:0.8rem;"
-                  onclick="startNxbrewDownload('${safeMirrorUrl}', '${safeGameTitle}', '${safeSecType}')"
+                  onclick="startNxbrewDownload('${safeMirrorUrl}', '${safeGameTitle}', '${safeSecType}', '${secMirrorsJson}')"
                 >
                   ⬇️ ${m.host} ${isFast ? '⚡ (Auto Mac)' : ''}
                 </button>
@@ -977,7 +978,9 @@
       }
     }
 
-    async function startNxbrewDownload(mirrorUrl, gameTitle, secType) {
+    async function startNxbrewDownload(mirrorUrl, gameTitle, secType, mirrorsEnc = "") {
+      let fallbacks = [];
+      try { fallbacks = mirrorsEnc ? JSON.parse(decodeURIComponent(mirrorsEnc)) : []; } catch (_) {}
       if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
       showToast(`Téléchargement lancé : ${gameTitle} (${secType})`);
       closeInspectorSheet();
@@ -985,7 +988,7 @@
         const r = await fetch(`${API_BASE}/api/nxbrew-download`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "download", url: mirrorUrl, title: gameTitle, type: secType }),
+          body: JSON.stringify({ action: "download", url: mirrorUrl, title: gameTitle, type: secType, fallbacks }),
         });
         const res = await r.json();
         if (!res.ok) return showToast(res.error || "Erreur au lancement du téléchargement.");
