@@ -138,6 +138,11 @@ def parse_game_page(url: str) -> dict:
     if current_section["mirrors"]:
         sections.append(current_section)
 
+    for sec in sections:
+        sec["mirrors"].sort(
+            key=lambda m: 0 if re.search(r"filekeeper", m.get("host", ""), re.I) else (1 if re.search(r"1fichier", m.get("host", ""), re.I) else 2)
+        )
+
     return {
         "ok": True,
         "url": url,
@@ -195,6 +200,52 @@ def resolve_filekeeper_direct(url: str) -> tuple[str, str]:
     raise RuntimeError(f"Impossible d'extraire le lien CDN depuis FileKeeper ({url})")
 
 
+def resolve_1fichier_direct(url: str, state_cb=None) -> tuple[str, str, str]:
+    """Transforme un lien https://1fichier.com/?<id>&af=<af> en lien CDN direct (a-XX.1fichier.com/c...)."""
+    parsed = urlparse(url)
+    parts = [p for p in parsed.query.split("&") if p]
+    file_id = parts[0] if parts else ""
+    af_cookie = "327151"
+    for p in parts[1:]:
+        if p.startswith("af="):
+            af_cookie = p.split("=", 1)[1]
+    clean_url = f"https://1fichier.com/?{file_id}" if file_id else url
+
+    s = cffi_requests.Session()
+    r1 = s.get(clean_url, cookies={"AF": af_cookie}, impersonate="chrome", timeout=30)
+    soup1 = BeautifulSoup(r1.text, "html.parser")
+    tn = soup1.find("span", class_="tier-name")
+    filename = tn.get_text(strip=True) if tn else ""
+
+    for attempt in range(4):
+        r2 = s.post(
+            clean_url,
+            data={"adz": ""},
+            cookies={"AF": af_cookie},
+            headers={"Referer": clean_url},
+            impersonate="chrome",
+            timeout=30,
+        )
+        soup2 = BeautifulSoup(r2.text, "html.parser")
+        ok_a = soup2.find("a", class_="ok")
+        if ok_a and ok_a.get("href"):
+            return ok_a["href"], filename, clean_url
+
+        txt2 = soup2.get_text(" ", strip=True)
+        m_wait = re.search(r"attendre encore\s+(\d+)\s*minutes?|wait\s+(\d+)\s*minutes?", txt2, re.I)
+        if m_wait and attempt < 3:
+            mins = int(m_wait.group(1) or m_wait.group(2) or 1)
+            wait_secs = min(mins * 60 + 5, 125)
+            for rem in range(wait_secs, 0, -5):
+                if state_cb:
+                    state_cb(f"File d'attente 1Fichier : démarrage automatique dans {rem}s…")
+                time.sleep(min(5, rem))
+            continue
+        break
+
+    raise RuntimeError(f"Impossible d'extraire le lien CDN direct depuis 1Fichier ({clean_url})")
+
+
 def update_job_state(state_file: str, data: dict):
     if not state_file:
         return
@@ -231,10 +282,20 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
 
         direct_url = ""
         filename = ""
+        referer_url = host_url
         if "filekeeper.net" in host_url:
             state["message"] = "Attente du jeton de session FileKeeper (5s)…"
             update_job_state(state_file, state)
             direct_url, filename = resolve_filekeeper_direct(host_url)
+        elif "1fichier.com" in host_url:
+            state["message"] = "Extraction du lien CDN direct 1Fichier…"
+            update_job_state(state_file, state)
+
+            def _on_wait(msg):
+                state["message"] = msg
+                update_job_state(state_file, state)
+
+            direct_url, filename, referer_url = resolve_1fichier_direct(host_url, state_cb=_on_wait)
         else:
             direct_url = host_url
             filename = os.path.basename(urlparse(host_url).path) or "download.bin"
@@ -272,14 +333,14 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
         dest_archive = os.path.join(tmp_dir, filename)
 
         s = cffi_requests.Session()
-        resp = s.get(direct_url, impersonate="chrome", stream=True, timeout=120)
+        resp = s.get(direct_url, headers={"Referer": referer_url}, impersonate="chrome", stream=True, timeout=120)
         try:
             resp.raise_for_status()
             ctype = (resp.headers.get("Content-Type") or resp.headers.get("content-type") or "").lower()
             if "text/html" in ctype:
                 raise RuntimeError(
                     f"Ce miroir ({urlparse(host_url).netloc}) demande un Captcha navigateur. "
-                    f"Touchez 🔓 pour l'ouvrir dans Safari ({host_url}) ou choisissez FileKeeper."
+                    f"Utilisez le miroir 1Fichier ⚡ ou FileKeeper ⚡ (Auto Mac), ou touchez 🔓 pour l'ouvrir dans Safari."
                 )
             total = int(resp.headers.get("Content-Length") or resp.headers.get("content-length") or 0)
             state["totalBytes"] = total
@@ -384,6 +445,11 @@ def main():
         filename = ""
         if "filekeeper.net" in host_url:
             direct_url, filename = resolve_filekeeper_direct(host_url)
+        elif "1fichier.com" in host_url:
+            try:
+                direct_url, filename, _ = resolve_1fichier_direct(host_url)
+            except Exception:
+                pass
         print(json.dumps({"ok": True, "hostUrl": host_url, "directUrl": direct_url, "filename": filename}, ensure_ascii=False))
     elif args.cmd == "download":
         download_and_extract(args.url, args.title, args.type, args.state_file)

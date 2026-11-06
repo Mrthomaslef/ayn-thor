@@ -924,7 +924,7 @@
         const sectionsHtml = (res.sections || []).map(sec => {
           const safeSecType = (sec.type || "Base Game").replace(/'/g, "\\'");
           const mirrorsHtml = (sec.mirrors || []).map(m => {
-            const isFast = /filekeeper/i.test(m.host);
+            const isFast = /filekeeper|1fichier/i.test(m.host);
             const safeMirrorUrl = m.url.replace(/'/g, "\\'");
             return `
               <div style="display:flex;gap:6px;width:100%;">
