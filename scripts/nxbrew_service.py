@@ -3,7 +3,7 @@
 Moteur NXBrew Direct Downloader (sans JDownloader ni compte externe) :
 1. Récupère et parse une fiche de jeu sur nxbrew.net (avec contournement IPv4 anti-522).
 2. Déverrouille automatiquement les liens ouo.io / 1link (profil Chrome TLS).
-3. Résout les liens de téléchargement direct sur FileKeeper / DataNodes / 1Fichier.
+3. Débride via TorBox (clé dans t3-vault « torbox ») ; sinon résout FileKeeper / 1Fichier en direct.
 4. Télécharge avec suivi de progression en temps réel, extrait les archives .rar/.7z/.zip
    via 7zz vers /Volumes/GamingSSD/Games/ROMs/Switch (et Updates/DLC).
 """
@@ -200,6 +200,74 @@ def resolve_filekeeper_direct(url: str) -> tuple[str, str]:
     raise RuntimeError(f"Impossible d'extraire le lien CDN depuis FileKeeper ({url})")
 
 
+TORBOX_API = "https://api.torbox.app/v1/api"
+T3_VAULT = os.path.expanduser("~/.t3/bin/t3-vault")
+
+
+def get_torbox_key() -> str:
+    """Clé API TorBox : variable d'env TORBOX_API_KEY, sinon Trousseau macOS (t3-vault « torbox »)."""
+    key = os.environ.get("TORBOX_API_KEY", "").strip()
+    if key:
+        return key
+    try:
+        p = subprocess.run([T3_VAULT, "get", "torbox", "--field", "password"], capture_output=True, text=True, timeout=15)
+        if p.returncode == 0:
+            return p.stdout.strip()
+    except Exception:
+        pass
+    return ""
+
+
+def resolve_torbox(host_url: str, api_key: str, state_cb=None, max_wait_secs: int = 90 * 60) -> tuple[str, str]:
+    """Débride un lien hébergeur (1Fichier, DataNodes, MultiUp…) via TorBox Web Download.
+
+    TorBox récupère le fichier sur ses serveurs (instantané s'il est déjà en cache), puis
+    fournit un lien CDN direct à pleine vitesse, sans attente ni Captcha.
+    """
+    s = cffi_requests.Session()
+    auth = {"Authorization": f"Bearer {api_key}"}
+    r = s.post(f"{TORBOX_API}/webdl/createwebdownload", headers=auth, data={"link": host_url}, timeout=60)
+    d = r.json()
+    if not d.get("success"):
+        raise RuntimeError(f"TorBox refuse ce lien : {d.get('detail') or d.get('error')}")
+    web_id = d["data"]["webdownload_id"]
+
+    deadline = time.time() + max_wait_secs
+    info = {}
+    while True:
+        r = s.get(f"{TORBOX_API}/webdl/mylist", headers=auth, params={"id": web_id, "bypass_cache": "true"}, timeout=30)
+        info = r.json().get("data") or {}
+        if isinstance(info, list):
+            info = info[0] if info else {}
+        st = str(info.get("download_state", ""))
+        if info.get("download_finished") and info.get("download_present"):
+            break
+        if re.search(r"error|failed|stalled|dead", st, re.I):
+            raise RuntimeError(f"TorBox n'a pas pu récupérer le fichier ({st})")
+        if time.time() > deadline:
+            raise RuntimeError("TorBox : délai de récupération dépassé")
+        if state_cb:
+            pct = float(info.get("progress") or 0) * 100
+            spd = float(info.get("download_speed") or 0) / (1024 * 1024)
+            state_cb(f"TorBox récupère le fichier sur ses serveurs : {pct:.0f}% ({spd:.1f} Mo/s)…")
+        time.sleep(5)
+
+    files = info.get("files") or []
+    if not files:
+        raise RuntimeError("TorBox : aucun fichier dans ce téléchargement")
+    best = max(files, key=lambda f: int(f.get("size") or 0))
+    r = s.get(
+        f"{TORBOX_API}/webdl/requestdl",
+        params={"token": api_key, "web_id": web_id, "file_id": best.get("id", 0), "zip_link": "false"},
+        timeout=30,
+    )
+    d = r.json()
+    if not d.get("success") or not d.get("data"):
+        raise RuntimeError(f"TorBox : lien direct indisponible ({d.get('detail')})")
+    filename = os.path.basename(str(best.get("short_name") or best.get("name") or info.get("name") or ""))
+    return d["data"], filename
+
+
 class OneFichierWait(RuntimeError):
     """1Fichier impose un délai gratuit par IP plus long que ce que l'appelant accepte."""
 
@@ -325,6 +393,14 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
             update_job_state(state_file, state)
             host_url = resolve_shortener(mirror)
             state["hostUrl"] = host_url
+            if torbox_key:
+                try:
+                    state["message"] = "TorBox : débridage du lien (sans attente ni Captcha)…"
+                    update_job_state(state_file, state)
+                    d, fn = resolve_torbox(host_url, torbox_key, state_cb=_on_wait)
+                    return d, fn, ""
+                except Exception as e:
+                    errors.append(f"TorBox: {e}")
             if "filekeeper.net" in host_url:
                 state["message"] = "Attente du jeton de session FileKeeper (5s)…"
                 update_job_state(state_file, state)
@@ -344,6 +420,7 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
                 raise RuntimeError(f"{urlparse(host_url).netloc} exige un Captcha navigateur")
             return host_url, os.path.basename(urlparse(host_url).path) or "download.bin", host_url
 
+        torbox_key = get_torbox_key()
         has_alternatives = len(candidates) > 1
         for mirror in candidates:
             try:
@@ -399,7 +476,7 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
         dest_archive = os.path.join(tmp_dir, filename)
 
         s = cffi_requests.Session()
-        resp = s.get(direct_url, headers={"Referer": referer_url}, impersonate="chrome", stream=True, timeout=120)
+        resp = s.get(direct_url, headers=({"Referer": referer_url} if referer_url else {}), impersonate="chrome", stream=True, timeout=120)
         try:
             resp.raise_for_status()
             ctype = (resp.headers.get("Content-Type") or resp.headers.get("content-type") or "").lower()
