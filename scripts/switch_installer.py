@@ -540,9 +540,9 @@ def install_console_rom(paths, system_cfg, game_title="", thumb_url="", meta_inf
 
 
 # ───────────────────────── orchestration ─────────────────────────
-def install(paths, game_title="", sec_type="", cb=None):
+def install(paths, game_title="", sec_type="", cb=None, install_ayn_recomp=False):
     """Installe les fichiers téléchargés partout. Renvoie un dict de résumé."""
-    summary = {"mac": [], "ayn": [], "recomp": [], "finalPaths": []}
+    summary = {"mac": [], "ayn": [], "recomp": [], "recompOptions": [], "finalPaths": []}
     clean_title = re.sub(r"\s*(Switch\s+)?(NSP|XCI|NSZ)\b.*$", "", game_title or "", flags=re.I).strip()
     base_tids = set()
     mac_changed = False
@@ -582,13 +582,76 @@ def install(paths, game_title="", sec_type="", cb=None):
     if ayn_new_base:
         cocoon_rescan(cb)
 
-    # Recomp AYN : PAS de portage automatique (choix de Thomas, au cas par cas). On signale seulement
-    # qu'un portage natif vérifié existe ; il se lance à la main : switch_installer.py recomp <titleId>.
+    # Recomp AYN : au cas par cas selon le choix de Thomas dans la pop-up
     for btid in base_tids:
         prof = next((p for p in nx2a_profiles() if p.get("id", "").upper() == btid and p.get("android")), None)
         if prof and prof.get("status") == "playable":
-            summary["recomp"].append(f"Recomp natif AYN dispo pour {prof['name']} (nx2android, à lancer au cas par cas)")
+            if install_ayn_recomp:
+                st, msg = try_nx2android(btid, cb=cb)
+                if msg:
+                    summary["recomp"].append(msg)
+                summary["recompOptions"].append({
+                    "tid": btid,
+                    "name": prof.get("name", clean_title or btid),
+                    "package": prof.get("package", ""),
+                    "tested": prof.get("tested", ""),
+                    "status": st,
+                    "installed": st in ("ok", "queued"),
+                })
+            else:
+                summary["recomp"].append(f"Recomp natif AYN dispo pour {prof['name']} (nx2android, au cas par cas)")
+                summary["recompOptions"].append({
+                    "tid": btid,
+                    "name": prof.get("name", clean_title or btid),
+                    "package": prof.get("package", ""),
+                    "tested": prof.get("tested", ""),
+                    "status": "available",
+                    "installed": False,
+                })
     return summary
+
+
+def run_recomp_job(base_tid, state_file=""):
+    """Exécute le portage/installation nx2android d'un jeu Switch vers l'AYN Thor avec suivi temps réel."""
+    base_tid = base_tid.strip().upper()
+    prof = next((p for p in nx2a_profiles() if p.get("id", "").upper() == base_tid and p.get("android")), None)
+    game_name = prof.get("name", base_tid) if prof else base_tid
+    state = {
+        "status": "installing",
+        "system": "switch",
+        "gameTitle": f"⚡ Recomp AYN Thor : {game_name}",
+        "sectionType": "Recomp Natif ARM64",
+        "percent": 50.0,
+        "speedMBps": 0.0,
+        "message": f"Génération et installation du Recomp natif AYN Thor ({game_name})…",
+        "outputFiles": [],
+    }
+
+    def _save():
+        if not state_file:
+            return
+        try:
+            with open(state_file, "w", encoding="utf-8") as f:
+                json.dump(state, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+
+    def _cb(msg):
+        state["message"] = msg
+        _save()
+
+    _save()
+    st, msg = try_nx2android(base_tid, cb=_cb)
+    state["percent"] = 100.0
+    if st in ("ok", "queued"):
+        state["status"] = "done"
+        state["message"] = msg or f"Recomp AYN Thor installé pour {game_name} ✓"
+        state["install"] = {"mac": [], "ayn": [msg], "recomp": []}
+    else:
+        state["status"] = "error"
+        state["message"] = msg or f"Échec du Recomp AYN Thor ({base_tid})"
+    _save()
+    return st, msg
 
 
 def process_queue(cb=None):
@@ -634,16 +697,22 @@ def main():
     pi.add_argument("files", nargs="+")
     pi.add_argument("--title", default="")
     pi.add_argument("--type", default="")
+    pi.add_argument("--ayn-recomp", action="store_true")
     sub.add_parser("process-queue")
     pr = sub.add_parser("recomp")
     pr.add_argument("tid")
+    pr.add_argument("--state-file", default="")
     a = ap.parse_args()
     if a.cmd == "install":
-        print(json.dumps(install(a.files, a.title, a.type), ensure_ascii=False, indent=2))
+        print(json.dumps(install(a.files, a.title, a.type, install_ayn_recomp=a.ayn_recomp), ensure_ascii=False, indent=2))
     elif a.cmd == "process-queue":
         print(process_queue())
     elif a.cmd == "recomp":
-        print(try_nx2android(a.tid.upper()))
+        if a.state_file:
+            st, msg = run_recomp_job(a.tid, a.state_file)
+            print(json.dumps({"status": st, "message": msg}, ensure_ascii=False))
+        else:
+            print(try_nx2android(a.tid.upper()))
 
 
 if __name__ == "__main__":

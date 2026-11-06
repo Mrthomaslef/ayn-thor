@@ -715,10 +715,39 @@
     </div>
   </div>
 
+  <!-- Pop-up Modal: AYN Thor Recomp Confirmation -->
+  <div id="recomp-prompt-backdrop" class="sheet-backdrop" style="z-index:2600;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this) closeRecompPrompt()">
+    <div style="width:100%;max-width:410px;background:linear-gradient(165deg,#0f172a,#090d16);border:1px solid rgba(34,197,94,0.55);border-radius:18px;padding:18px 16px;box-shadow:0 20px 50px rgba(0,0,0,0.85);animation:slideUp 0.18s ease-out;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div id="recomp-prompt-thumb-wrap" style="display:none;flex-shrink:0;">
+          <img id="recomp-prompt-thumb" src="" alt="" style="width:50px;height:50px;border-radius:10px;object-fit:cover;border:1px solid var(--border);" onerror="this.parentElement.style.display='none'" />
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,0.18);border:1px solid rgba(34,197,94,0.45);color:#4ade80;font-size:0.68rem;font-weight:800;margin-bottom:4px;">
+            ⚡ RECOMP NATIF AYN THOR DISPONIBLE
+          </div>
+          <h3 id="recomp-prompt-title" style="margin:0;font-size:0.95rem;color:var(--text);line-height:1.25;word-break:break-word;">Jeu Switch</h3>
+        </div>
+      </div>
+      <p id="recomp-prompt-desc" style="margin:0 0 14px;font-size:0.8rem;color:#cbd5e1;line-height:1.45;">
+        Voulez-vous aussi installer le <strong>Recomp natif Android (nx2android)</strong> sur votre <strong>AYN Thor</strong> en plus de l'installation dans <strong>Eden</strong> (tuile Switch) ?
+      </p>
+      <div id="recomp-prompt-tool" style="margin:0 0 14px;padding:8px 10px;background:rgba(20,83,45,0.28);border:1px solid rgba(34,197,94,0.35);border-radius:10px;font-size:0.74rem;color:#a7f3d0;line-height:1.35;"></div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button id="recomp-prompt-yes" class="btn primary" style="width:100%;padding:11px 14px;font-size:0.82rem;background:linear-gradient(135deg,#22c55e,#10b981);color:#04130a;font-weight:800;">
+          ⚡ Oui, mettre le Recomp sur mon AYN Thor (+ Eden)
+        </button>
+        <button id="recomp-prompt-no" class="btn" style="width:100%;padding:11px 14px;font-size:0.8rem;color:#e2e8f0;border-color:rgba(148,163,184,0.35);">
+          🎮 Non, mettre uniquement dans Eden (tuile Switch)
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast"></div>
 
   <script>
-    const CACHE_KEY = "ayn-thor-rom-emu-v8";
+    const CACHE_KEY = "ayn-thor-rom-emu-v9";
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(regs => {
         regs.forEach(r => r.unregister());
@@ -1230,9 +1259,22 @@
       }
     }
 
-    function renderInspectorRecompBox(rc, sysId = "switch") {
+    function renderInspectorRecompBox(rc, sysId = "switch", gameTitle = "", thumbUrl = "", titleId = "") {
       const m = CONSOLE_META_FALLBACK[sysId] || CONSOLE_META_FALLBACK.switch;
       if (rc && rc.m4 && rc.ayn) {
+        const safeTitle = (gameTitle || "Jeu Switch").replace(/'/g, "\\'");
+        const safeThumb = (thumbUrl || "").replace(/'/g, "\\'");
+        const safeTool = ((rc.aynTool || "") + (rc.note ? " — " + rc.note : "")).replace(/'/g, "\\'");
+        const safeTid = (titleId || "").replace(/'/g, "\\'");
+        const directRecompBtn = safeTid ? `
+          <button
+            class="btn"
+            style="margin-top:8px;width:100%;padding:8px 11px;font-size:0.75rem;background:rgba(34,197,94,0.18);border-color:rgba(34,197,94,0.5);color:#4ade80;font-weight:800;"
+            onclick="promptStandaloneAynRecomp('${safeTid}', '${safeTitle}', '${safeThumb}', '${safeTool}')"
+          >
+            📲 Mettre uniquement le Recomp sur mon AYN Thor (si déjà téléchargé)
+          </button>
+        ` : "";
         return `
           <div style="margin-top:10px;padding:10px 12px;background:rgba(20,83,45,0.3);border:1px solid rgba(34,197,94,0.45);border-radius:11px;">
             <div style="font-weight:800;font-size:0.8rem;color:#4ade80;margin-bottom:4px;">
@@ -1240,9 +1282,10 @@
             </div>
             <div style="font-size:0.76rem;color:#e2e8f0;line-height:1.45;">
               • <strong>Mac mini M4 :</strong> OUI — <code>${rc.m4Tool}</code><br/>
-              • <strong>AYN Thor :</strong> OUI — <code>${rc.aynTool}</code><br/>
+              • <strong>AYN Thor :</strong> OUI — <code>${rc.aynTool}</code> (au choix via pop-up)<br/>
               <span style="color:#a7f3d0;">✓ ${rc.note || ""}</span>
             </div>
+            ${directRecompBtn}
           </div>
         `;
       }
@@ -1318,7 +1361,7 @@
             </p>
           </div>
           <div style="text-align:left;margin-top:6px;">
-            ${renderInspectorRecompBox(fallbackRecomp, sysId)}
+            ${renderInspectorRecompBox(fallbackRecomp, sysId, shortTitle, fallbackThumb)}
           </div>
         </div>
       `;
@@ -1337,7 +1380,7 @@
         bodyEl.innerHTML = `
           <div>
             ${headerPreviewHtml}
-            ${renderInspectorRecompBox(fallbackRecomp, sysId)}
+            ${renderInspectorRecompBox(fallbackRecomp, sysId, shortTitle, fallbackThumb)}
             <div style="margin-top:12px;padding:12px;background:#090d16;border:1px solid var(--border);border-radius:10px;">
               <p style="margin:0 0 10px;color:var(--warning);font-size:0.78rem;">
                 ⚠️ Mac mini hors-ligne : ouvrez la fiche directement dans votre navigateur :
@@ -1356,7 +1399,7 @@
           bodyEl.innerHTML = `
             <div>
               ${headerPreviewHtml}
-              ${renderInspectorRecompBox(fallbackRecomp, sysId)}
+              ${renderInspectorRecompBox(fallbackRecomp, sysId, shortTitle, fallbackThumb)}
               <div style="color:var(--danger);padding:10px 0;">❌ ${res.error || "Erreur lors de la lecture de la page."}</div>
               <a class="btn primary" style="width:100%;" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur ${siteLabel}</a>
             </div>
@@ -1370,6 +1413,10 @@
         const primaryThumb = fallbackThumb || res.thumb || "";
         const backupThumb = (fallbackThumb && res.thumb && res.thumb !== fallbackThumb) ? res.thumb.replace(/"/g, "&quot;") : "";
         const safeThumb = primaryThumb.replace(/'/g, "\\'");
+        const hasAynRecomp = Boolean(rc && rc.ayn && resolvedSys === "switch");
+        const safeRecompTool = ((rc && rc.aynTool ? rc.aynTool : "nx2android") + (rc && rc.note ? " — " + rc.note : "")).replace(/'/g, "\\'");
+        const rawTid = (res.meta && (res.meta["Title ID"] || res.meta["TitleID"])) || "";
+        const cleanTid = (rawTid.match(/0100[0-9A-Fa-f]{12}/) || [""])[0].toUpperCase();
 
         const sectionsHtml = (res.sections || []).map(sec => {
           const safeSecType = (sec.type || "Base Game").replace(/'/g, "\\'");
@@ -1382,7 +1429,7 @@
                 <button
                   class="btn ${isFast ? 'primary' : ''}"
                   style="flex:1;min-width:0;max-width:100%;overflow:hidden;padding:9px 11px;font-size:0.78rem;text-align:left;justify-content:space-between;"
-                  onclick="startRomDownload('${safeMirrorUrl}', '${safeGameTitle}', '${safeSecType}', '${secMirrorsJson}', '${resolvedSys}', '${safeThumb}')"
+                  onclick="startRomDownload('${safeMirrorUrl}', '${safeGameTitle}', '${safeSecType}', '${secMirrorsJson}', '${resolvedSys}', '${safeThumb}', ${hasAynRecomp}, '${safeRecompTool}')"
                 >
                   ${formatMirrorButtonContent(mir.host, resolvedSys)}
                   ${isFast ? '<span style="flex-shrink:0;font-size:0.68rem;opacity:0.95;margin-left:4px;">⚡ Auto</span>' : ''}
@@ -1420,7 +1467,7 @@
                 <a href="${res.url}" target="_blank" rel="noopener" style="font-size:0.73rem;color:var(--accent);">🔗 Voir sur ${siteLabel}</a>
               </div>
             </div>
-            ${renderInspectorRecompBox(rc, resolvedSys)}
+            ${renderInspectorRecompBox(rc, resolvedSys, res.title || shortTitle, primaryThumb, cleanTid)}
             ${sectionsHtml || '<div style="margin-top:12px;color:var(--warning);">Aucun lien trouvé sur cette page.</div>'}
           </div>
         `;
@@ -1429,11 +1476,123 @@
       }
     }
 
-    async function startRomDownload(mirrorUrl, gameTitle, secType, mirrorsEnc = "", sysId = "switch", thumbUrl = "") {
+    let PENDING_RECOMP_ACTION = null;
+    const PROMPTED_RECOMP_JOBS = new Set();
+
+    function openRecompPrompt({ title, thumb, toolNote, descHtml, yesLabel, noLabel, onDecision }) {
+      PENDING_RECOMP_ACTION = onDecision;
+      const backdrop = document.getElementById("recomp-prompt-backdrop");
+      const titleEl = document.getElementById("recomp-prompt-title");
+      const descEl = document.getElementById("recomp-prompt-desc");
+      const toolEl = document.getElementById("recomp-prompt-tool");
+      const thumbWrap = document.getElementById("recomp-prompt-thumb-wrap");
+      const thumbImg = document.getElementById("recomp-prompt-thumb");
+      const yesBtn = document.getElementById("recomp-prompt-yes");
+      const noBtn = document.getElementById("recomp-prompt-no");
+
+      if (titleEl) titleEl.textContent = title || "Jeu Switch";
+      if (descEl) {
+        descEl.innerHTML = descHtml || `Voulez-vous mettre le <strong>Recomp natif Android (nx2android)</strong> sur votre <strong>AYN Thor</strong> en plus de l'installation dans <strong>Eden</strong> (tuile Switch) ?`;
+      }
+      if (toolEl) {
+        if (toolNote) {
+          toolEl.style.display = "block";
+          toolEl.innerHTML = `⚡ <strong>Portage vérifié :</strong> ${toolNote}`;
+        } else {
+          toolEl.style.display = "none";
+        }
+      }
+      if (thumbWrap && thumbImg) {
+        if (thumb) {
+          thumbImg.src = thumb;
+          thumbWrap.style.display = "block";
+        } else {
+          thumbWrap.style.display = "none";
+        }
+      }
+      if (yesBtn) {
+        yesBtn.textContent = yesLabel || "⚡ Oui, mettre le Recomp sur mon AYN Thor (+ Eden)";
+        yesBtn.onclick = () => {
+          const cb = PENDING_RECOMP_ACTION;
+          closeRecompPrompt();
+          if (cb) cb(true);
+        };
+      }
+      if (noBtn) {
+        noBtn.textContent = noLabel || "🎮 Non, mettre uniquement dans Eden (tuile Switch)";
+        noBtn.onclick = () => {
+          const cb = PENDING_RECOMP_ACTION;
+          closeRecompPrompt();
+          if (cb) cb(false);
+        };
+      }
+      if (backdrop) backdrop.classList.add("open");
+    }
+
+    function closeRecompPrompt() {
+      const backdrop = document.getElementById("recomp-prompt-backdrop");
+      if (backdrop) backdrop.classList.remove("open");
+      PENDING_RECOMP_ACTION = null;
+    }
+
+    function promptStandaloneAynRecomp(tid, gameTitle, thumbUrl = "", toolNote = "") {
+      openRecompPrompt({
+        title: gameTitle || tid,
+        thumb: thumbUrl,
+        toolNote: toolNote || `nx2android (${tid})`,
+        descHtml: `Voulez-vous compiler et installer maintenant le <strong>Recomp natif Android (nx2android)</strong> de <strong>${gameTitle || tid}</strong> sur votre <strong>AYN Thor</strong> ?`,
+        yesLabel: "⚡ Oui, installer le Recomp sur mon AYN Thor",
+        noLabel: "✕ Non, garder uniquement dans Eden",
+        onDecision: (yes) => {
+          if (yes) triggerStandaloneAynRecomp(tid, gameTitle);
+        },
+      });
+    }
+
+    async function triggerStandaloneAynRecomp(tid, gameTitle) {
+      if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
+      closeInspectorSheet();
+      showToast(`Compilation & installation Recomp AYN Thor lancée : ${gameTitle}`);
+      try {
+        const r = await fetch(`${API_BASE}/api/nxbrew-download`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "recomp",
+            tid,
+            title: gameTitle,
+          }),
+        });
+        const res = await r.json();
+        if (!res.ok) return showToast(res.error || "Erreur au lancement du Recomp AYN Thor.");
+        showToast("⚡ Recomp AYN Thor en cours sur le Mac mini !");
+        refreshNxbrewJobs();
+      } catch (e) {
+        showToast("Erreur réseau lors du lancement du Recomp.");
+      }
+    }
+
+    async function startRomDownload(mirrorUrl, gameTitle, secType, mirrorsEnc = "", sysId = "switch", thumbUrl = "", hasAynRecomp = false, recompNote = "", aynRecompDecision = null) {
+      if (hasAynRecomp && sysId === "switch" && (secType === "Base Game" || secType === "Update") && aynRecompDecision === null) {
+        openRecompPrompt({
+          title: gameTitle,
+          thumb: thumbUrl,
+          toolNote: recompNote || "nx2android Natif 60 FPS",
+          descHtml: `Ce jeu possède un <strong>Recomp natif AYN Thor</strong>. Voulez-vous l'installer sur votre AYN Thor en plus d'<strong>Eden</strong> (tuile Switch de Cocoon) ?`,
+          yesLabel: "⚡ Oui, mettre le Recomp sur mon AYN Thor (+ Eden)",
+          noLabel: "🎮 Non, mettre uniquement dans Eden (tuile Switch)",
+          onDecision: (choice) => {
+            startRomDownload(mirrorUrl, gameTitle, secType, mirrorsEnc, sysId, thumbUrl, hasAynRecomp, recompNote, Boolean(choice));
+          },
+        });
+        return;
+      }
+
       let fallbacks = [];
       try { fallbacks = mirrorsEnc ? JSON.parse(decodeURIComponent(mirrorsEnc)) : []; } catch (_) {}
       if (!API_BASE) return showToast("Daemon Mac mini non connecté.");
-      showToast(`Téléchargement lancé : ${gameTitle}`);
+      const useAynRecomp = Boolean(aynRecompDecision);
+      showToast(useAynRecomp ? `Téléchargement + Recomp AYN lancé : ${gameTitle}` : `Téléchargement lancé (Eden) : ${gameTitle}`);
       closeInspectorSheet();
       try {
         const r = await fetch(`${API_BASE}/api/nxbrew-download`, {
@@ -1447,10 +1606,12 @@
             type: secType,
             thumb: thumbUrl,
             fallbacks,
+            aynRecomp: useAynRecomp,
           }),
         });
         const res = await r.json();
         if (!res.ok) return showToast(res.error || "Erreur au lancement du téléchargement.");
+        if (res.jobId) PROMPTED_RECOMP_JOBS.add(res.jobId);
         showToast(`Téléchargement & installation auto démarrés sur le Mac mini !`);
         refreshNxbrewJobs();
       } catch (e) {
@@ -1510,11 +1671,47 @@
             ? `<a href="${j.hostUrl}" target="_blank" rel="noopener" class="btn primary" style="margin-top:6px;padding:6px 10px;font-size:0.72rem;width:100%;">🔓 Ouvrir le lien dans Safari</a>`
             : "";
           const inst = j.install || null;
+          const recompOpts = (isDone && inst && Array.isArray(inst.recompOptions))
+            ? inst.recompOptions.filter(o => o && o.status === "available" && !o.installed && o.tid)
+            : [];
+
+          if (recompOpts.length > 0 && j.jobId && !PROMPTED_RECOMP_JOBS.has(j.jobId)) {
+            PROMPTED_RECOMP_JOBS.add(j.jobId);
+            const firstOpt = recompOpts[0];
+            openRecompPrompt({
+              title: firstOpt.name || j.gameTitle,
+              thumb: "",
+              toolNote: `nx2android (${firstOpt.package || firstOpt.tid}) — v${firstOpt.tested || "vérifiée"}`,
+              descHtml: `Le jeu <strong>${firstOpt.name || j.gameTitle}</strong> est installé dans Eden. Voulez-vous aussi mettre son <strong>Recomp natif Android</strong> sur votre <strong>AYN Thor</strong> ?`,
+              yesLabel: "⚡ Oui, installer le Recomp sur mon AYN Thor",
+              noLabel: "🎮 Non, garder uniquement dans Eden",
+              onDecision: (yes) => {
+                if (yes) triggerStandaloneAynRecomp(firstOpt.tid, firstOpt.name || j.gameTitle);
+              },
+            });
+          }
+
+          const recompBtnsHtml = recompOpts.map(opt => {
+            const sTid = String(opt.tid || "").replace(/'/g, "\\'");
+            const sName = String(opt.name || j.gameTitle || "").replace(/'/g, "\\'");
+            const sNote = `nx2android (${opt.package || opt.tid})`.replace(/'/g, "\\'");
+            return `
+              <button
+                class="btn"
+                style="margin-top:5px;width:100%;padding:7px 10px;font-size:0.73rem;background:rgba(34,197,94,0.16);border-color:rgba(34,197,94,0.45);color:#4ade80;font-weight:800;"
+                onclick="promptStandaloneAynRecomp('${sTid}', '${sName}', '', '${sNote}')"
+              >
+                ⚡ Mettre le Recomp sur mon AYN Thor (${opt.name || opt.tid})
+              </button>
+            `;
+          }).join("");
+
           const installHtml = (isDone && inst && !inst.error) ? `
             <div style="margin-top:6px;display:flex;flex-direction:column;gap:3px;font-size:0.7rem;line-height:1.3;">
               ${(inst.mac || []).map(m => `<div style="color:#86efac;">🍎 Mac : ${m}</div>`).join("")}
               ${(inst.ayn || []).map(a => `<div style="color:#7dd3fc;">🎮 AYN : ${a}</div>`).join("")}
               ${(inst.recomp || []).map(r => `<div style="color:#fcd34d;">⚡ ${r}</div>`).join("")}
+              ${recompBtnsHtml}
             </div>` : "";
           return `
             <div style="padding:8px 10px;background:#080c14;border:1px solid var(--border);border-radius:9px;">

@@ -354,7 +354,7 @@ def update_job_state(state_file: str, data: dict):
         pass
 
 
-def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_file: str = "", fallbacks=None):
+def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_file: str = "", fallbacks=None, install_ayn_recomp: bool = False):
     state = {
         "status": "resolving",
         "gameTitle": game_title,
@@ -369,6 +369,7 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
         "speedMBps": 0.0,
         "message": "Déverrouillage du lien court (ouo.io)…",
         "outputFiles": [],
+        "aynRecompRequested": bool(install_ayn_recomp),
     }
     update_job_state(state_file, state)
 
@@ -563,7 +564,7 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
                 out_paths.append(fp)
         state["outputFiles"] = out_paths
 
-        # Installation automatique : Mac (Ryujinx/Pegasus/M4 Gaming) + AYN Thor (Eden / recomp nx2android)
+        # Installation automatique : Mac (Ryujinx/Pegasus/M4 Gaming) + AYN Thor (Eden + recomp nx2android si choisi)
         state["status"] = "installing"
         state["percent"] = 100.0
         state["speedMBps"] = 0.0
@@ -574,7 +575,9 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
             sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
             import switch_installer
 
-            summary = switch_installer.install(out_paths, game_title, sec_type, cb=_on_install)
+            summary = switch_installer.install(
+                out_paths, game_title, sec_type, cb=_on_install, install_ayn_recomp=install_ayn_recomp
+            )
             state["outputFiles"] = summary.get("finalPaths") or out_paths
             state["install"] = summary
         except Exception as ie:
@@ -613,6 +616,7 @@ def main():
     p_dl.add_argument("--type", default="Base Game")
     p_dl.add_argument("--state-file", default="")
     p_dl.add_argument("--fallback", action="append", default=[])
+    p_dl.add_argument("--ayn-recomp", action="store_true")
 
     args = parser.parse_args()
     if args.cmd == "info":
@@ -631,7 +635,7 @@ def main():
                 pass
         print(json.dumps({"ok": True, "hostUrl": host_url, "directUrl": direct_url, "filename": filename}, ensure_ascii=False))
     elif args.cmd == "download":
-        download_and_extract(args.url, args.title, args.type, args.state_file, args.fallback)
+        download_and_extract(args.url, args.title, args.type, args.state_file, args.fallback, args.ayn_recomp)
 
 
 if __name__ == "__main__":

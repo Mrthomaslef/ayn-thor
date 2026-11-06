@@ -864,11 +864,39 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                         pass
                 return self._send_json({"ok": True, "removed": removed})
 
+            if action == "recomp":
+                tid = body.get("tid", "").strip().upper()
+                game_title = body.get("title", tid or "Switch Game").strip()
+                if not tid:
+                    return self._send_json({"ok": False, "error": "Title ID manquant pour le Recomp AYN Thor."})
+                job_id = f"recomp-{int(time.time() * 1000)}"
+                state_file = os.path.join(jobs_dir, f"{job_id}.json")
+                init_state = {
+                    "jobId": job_id,
+                    "system": "switch",
+                    "status": "installing",
+                    "gameTitle": f"⚡ Recomp AYN Thor : {game_title}",
+                    "sectionType": "Recomp Natif ARM64",
+                    "percent": 25.0,
+                    "speedMBps": 0.0,
+                    "message": f"Démarrage du portage natif nx2android ({game_title}) vers l'AYN Thor…",
+                }
+                with open(state_file, "w", encoding="utf-8") as sf:
+                    json.dump(init_state, sf, ensure_ascii=False, indent=2)
+                installer_script = os.path.join(ROOT_DIR, "scripts", "switch_installer.py")
+                subprocess.Popen(
+                    [installer_script, "recomp", tid, "--state-file", state_file],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                return self._send_json({"ok": True, "jobId": job_id, "state": init_state})
+
             mirror_url = body.get("url", "").strip()
             game_title = body.get("title", "Switch Game").strip()
             sec_type = body.get("type", "Base Game").strip()
             sys_id = body.get("system", "switch").strip().lower()
             thumb_url = body.get("thumb", "").strip()
+            install_ayn_recomp = bool(body.get("aynRecomp", False))
             if not mirror_url:
                 return self._send_json({"ok": False, "error": "URL du miroir manquante."})
 
@@ -893,6 +921,7 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 "mirrorUrl": mirror_url,
                 "percent": 0.0,
                 "speedMBps": 0.0,
+                "aynRecompRequested": install_ayn_recomp,
                 "message": "Initialisation du téléchargement direct…",
             }
             with open(state_file, "w", encoding="utf-8") as sf:
@@ -914,6 +943,8 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 dl_cmd += ["--system", sys_id]
                 if thumb_url:
                     dl_cmd += ["--thumb", thumb_url]
+            elif install_ayn_recomp:
+                dl_cmd += ["--ayn-recomp"]
             dl_cmd += [
                 arg
                 for fb in (body.get("fallbacks") or [])[:8]
