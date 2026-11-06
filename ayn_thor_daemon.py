@@ -722,7 +722,7 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                         if not target_id:
                             with open(fp, "r", encoding="utf-8") as jf:
                                 jd = json.load(jf)
-                            if jd.get("status") in ("starting", "resolving", "downloading", "extracting"):
+                            if jd.get("status") in ("starting", "resolving", "downloading", "extracting", "installing"):
                                 continue
                         os.remove(fp)
                         removed += 1
@@ -814,6 +814,7 @@ def usb_adb_watchdog():
     """Maintient la session ADB USB active et synchronise automatiquement les sauvegardes (Mac <-> GamingSSD <-> AYN Thor)."""
     was_ready = False
     last_auto_sync = 0.0
+    last_queue_try = 0.0
     while True:
         try:
             st = get_live_status()
@@ -832,6 +833,16 @@ def usb_adb_watchdog():
                     if rc_inst == 0:
                         with open(marker, "w") as mf:
                             mf.write(datetime.datetime.now().isoformat())
+            queue_file = os.path.join(DATA_DIR, "ayn_install_queue.json")
+            if is_ready and os.path.exists(queue_file) and os.path.getsize(queue_file) > 4 and (
+                not was_ready or (now - last_queue_try) >= 300.0
+            ):
+                last_queue_try = now
+                subprocess.Popen(
+                    [os.path.join(ROOT_DIR, "scripts", "switch_installer.py"), "process-queue"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
             if is_ready and (not was_ready or (now - last_auto_sync) >= 120.0):
                 last_auto_sync = now
                 run_cmd(

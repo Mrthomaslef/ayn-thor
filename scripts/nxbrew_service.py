@@ -386,6 +386,10 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
             state["message"] = msg
             update_job_state(state_file, state)
 
+        def _on_install(msg):
+            state["message"] = msg
+            update_job_state(state_file, state)
+
         def _try(mirror, long_wait):
             nonlocal host_url
             state["mirrorUrl"] = mirror
@@ -549,9 +553,40 @@ def download_and_extract(mirror_url: str, game_title: str, sec_type: str, state_
             shutil.move(dest_archive, final_path)
             extracted_files = [filename]
 
+        out_paths = []
+        for x in extracted_files:
+            fp = os.path.join(target_dir, x)
+            if os.path.isdir(fp):
+                for dp, _, fns in os.walk(fp):
+                    out_paths += [os.path.join(dp, fn) for fn in fns]
+            else:
+                out_paths.append(fp)
+        state["outputFiles"] = out_paths
+
+        # Installation automatique : Mac (Ryujinx/Pegasus/M4 Gaming) + AYN Thor (Eden / recomp nx2android)
+        state["status"] = "installing"
+        state["percent"] = 100.0
+        state["speedMBps"] = 0.0
+        state["message"] = "Installation automatique (Mac mini + AYN Thor)…"
+        update_job_state(state_file, state)
+        summary = None
+        try:
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            import switch_installer
+
+            summary = switch_installer.install(out_paths, game_title, sec_type, cb=_on_install)
+            state["outputFiles"] = summary.get("finalPaths") or out_paths
+            state["install"] = summary
+        except Exception as ie:
+            state["install"] = {"error": str(ie)}
+
         state["status"] = "done"
-        state["outputFiles"] = [os.path.join(target_dir, x) for x in extracted_files]
-        state["message"] = f"Terminé ! Fichier(s) installé(s) dans {target_dir} : {', '.join(extracted_files) or filename}"
+        if summary:
+            parts = ["Prêt à jouer !"] + [f"🍎 {m}" for m in summary["mac"][:1]] + \
+                    [f"🎮 {a}" for a in summary["ayn"][:1]] + [f"⚡ {r}" for r in summary["recomp"][:1]]
+            state["message"] = " · ".join(parts)
+        else:
+            state["message"] = f"Téléchargé dans {target_dir} — installation auto échouée : {state['install'].get('error')}"
         update_job_state(state_file, state)
         print(json.dumps(state, ensure_ascii=False))
     except Exception as e:
