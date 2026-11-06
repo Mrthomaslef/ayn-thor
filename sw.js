@@ -1,5 +1,5 @@
-// Self-clearing Service Worker v3 — purges any old cached index.html from ayn-thor-studio-v1
-const CACHE_NAME = "ayn-thor-switch-dl-v3";
+// Self-clearing Service Worker v8 — purges any old cached index.html
+const CACHE_NAME = "ayn-thor-switch-dl-v8";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();

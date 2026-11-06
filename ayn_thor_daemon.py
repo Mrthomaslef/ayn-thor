@@ -498,7 +498,7 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
 
             def _sort_key_rf(x):
                 r = x.get("recomp") or {}
-                rank = 0 if (r.get("m4") and r.get("ayn")) else (1 if r.get("m4") else (2 if x.get("installed") else 3))
+                rank = 0 if (r.get("m4") and r.get("ayn")) else (1 if r.get("m4") else (2 if x.get("installed") else (3 if x.get("icon") else 4)))
                 return (rank, x.get("shortName", "").lower())
 
             matched.sort(key=_sort_key_rf)
