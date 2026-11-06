@@ -461,6 +461,7 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
 
                 for entry in items:
                     title, g_slug = entry[0], entry[1]
+                    g_icon = entry[2] if len(entry) >= 3 else ""
                     rc = recomp_map.get(f"{s_id}/{g_slug}")
                     if recomp_filter == "both" and not (rc and rc.get("m4") and rc.get("ayn")):
                         continue
@@ -488,6 +489,7 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                             "title": title,
                             "shortName": title,
                             "slug": g_slug,
+                            "icon": g_icon,
                             "url": f"https://romsfun.com/roms/{rf_slug}/{g_slug}.html",
                             "installed": is_inst,
                             "recomp": rc,

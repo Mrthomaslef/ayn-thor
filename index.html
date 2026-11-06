@@ -300,14 +300,14 @@
     .games-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
 
     .game-card {
       background: #0c1220;
       border: 1px solid var(--border);
       border-radius: 13px;
-      padding: 11px 12px;
+      padding: 9px 11px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -316,6 +316,7 @@
       transition: background 0.12s ease, border-color 0.12s ease;
       max-width: 100%;
       overflow: hidden;
+      touch-action: manipulation;
     }
     .game-card:active {
       transform: scale(0.992);
@@ -329,6 +330,44 @@
       border-color: rgba(56, 189, 248, 0.35);
     }
 
+    .game-thumb-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: linear-gradient(145deg, #131c31, #0b1120);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.38);
+    }
+
+    .game-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .game-thumb-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #94a3b8;
+      letter-spacing: -0.02em;
+      user-select: none;
+      line-height: 1.1;
+      text-align: center;
+    }
+
     .game-main {
       min-width: 0;
       flex: 1;
@@ -337,15 +376,15 @@
     .game-title-row {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
     }
 
     .game-name {
       font-weight: 800;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--text);
-      line-height: 1.25;
+      line-height: 1.22;
       word-break: break-word;
     }
 
@@ -353,13 +392,13 @@
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
-      margin-top: 6px;
+      margin-top: 5px;
     }
 
     .badge {
-      font-size: 0.69rem;
+      font-size: 0.68rem;
       font-weight: 700;
-      padding: 3px 7px;
+      padding: 2px 6px;
       border-radius: 6px;
       display: inline-flex;
       align-items: center;
@@ -392,11 +431,13 @@
     .badge.fmt-inst { background: rgba(34, 197, 94, 0.28); color: #86efac; }
 
     .recomp-detail {
-      font-size: 0.71rem;
+      font-size: 0.69rem;
       color: #a7f3d0;
-      margin-top: 4px;
-      line-height: 1.3;
-      word-break: break-word;
+      margin-top: 3px;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .dl-btn {
@@ -405,14 +446,15 @@
       color: #fff;
       border: none;
       border-radius: 10px;
-      padding: 9px 11px;
-      font-size: 0.78rem;
+      padding: 8px 10px;
+      font-size: 0.76rem;
       font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 4px;
       box-shadow: 0 4px 12px rgba(2, 132, 199, 0.28);
+      touch-action: manipulation;
     }
 
     .btn {
@@ -671,7 +713,7 @@
   <div id="toast"></div>
 
   <script>
-    const CACHE_KEY = "ayn-thor-rom-emu-v6";
+    const CACHE_KEY = "ayn-thor-rom-emu-v7";
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(regs => {
         regs.forEach(r => r.unregister());
@@ -691,6 +733,29 @@
     let NXBREW_JOBS_TIMER = null;
     let LOCAL_SWITCH_CACHE = null;
     let LOCAL_ROMSFUN_CACHE = null;
+
+    const LIBRETRO_FOLDERS = {
+      n3ds: "Nintendo - Nintendo 3DS",
+      nds: "Nintendo - Nintendo DS",
+      gc: "Nintendo - GameCube",
+      wii: "Nintendo - Wii",
+      wiiu: "Nintendo - Wii U",
+      ps2: "Sony - PlayStation 2",
+      psx: "Sony - PlayStation",
+      psp: "Sony - PlayStation Portable",
+      gba: "Nintendo - Game Boy Advance",
+      n64: "Nintendo - Nintendo 64",
+      snes: "Nintendo - Super Nintendo Entertainment System",
+      gbc: "Nintendo - Game Boy Color",
+      gb: "Nintendo - Game Boy",
+      nes: "Nintendo - Nintendo Entertainment System",
+      genesis: "Sega - Mega Drive - Genesis",
+      dreamcast: "Sega - Dreamcast",
+      saturn: "Sega - Saturn",
+      psvita: "Sony - PlayStation Vita",
+      xbox360: "Microsoft - Xbox 360",
+      ps3: "Sony - PlayStation 3",
+    };
 
     const CONSOLE_META_FALLBACK = {
       switch: { label: "Nintendo Switch", shortLabel: "Switch", icon: "🔴", source: "NXBrew + TorBox / 1Fichier / FileKeeper", macEmu: "Ryujinx (Plein écran + 8BitDo)", aynEmu: "Eden (Turnip V38) + nx2android", aynDir: "/storage/6531-3035/ROMs/switch" },
@@ -716,6 +781,60 @@
       saturn: { label: "Sega Saturn", shortLabel: "Saturn", icon: "🪐", source: "RomsFun CDN Direct", macEmu: "OpenEmu / Mednafen", aynEmu: "YabaSanshiro 2 / Beetle Saturn", aynDir: "/storage/6531-3035/ROMs/saturn" },
       genesis: { label: "Sega Mega Drive / Genesis", shortLabel: "Mega Drive", icon: "🦔", source: "RomsFun CDN Direct", macEmu: "OpenEmu / RetroArch", aynEmu: "RetroArch (Genesis Plus GX)", aynDir: "/storage/6531-3035/ROMs/genesis" },
     };
+
+    function getGameCoverInfo(g, sysId = "switch") {
+      const ic = (g && (g.icon || g.thumb)) ? String(g.icon || g.thumb).trim() : "";
+      const sId = (g && g.system) || sysId || "switch";
+      let rawUrl = "";
+      if (ic) {
+        if (ic.startsWith("http://") || ic.startsWith("https://")) {
+          rawUrl = ic;
+        } else if (sId === "switch" || /^[0-9a-f]{64}$/i.test(ic)) {
+          rawUrl = `https://img-eshop.cdn.nintendo.net/i/${ic}.jpg`;
+        } else if (LIBRETRO_FOLDERS[sId]) {
+          rawUrl = `https://thumbnails.libretro.com/${encodeURIComponent(LIBRETRO_FOLDERS[sId])}/Named_Boxarts/${encodeURIComponent(ic)}`;
+        }
+      }
+      const thumbUrl = rawUrl
+        ? `https://wsrv.nl/?url=${encodeURIComponent(rawUrl)}&w=104&h=104&fit=cover&output=webp&q=80`
+        : "";
+      return { rawUrl, thumbUrl };
+    }
+
+    function getInitials(title) {
+      const words = String(title || "GM").replace(/[^a-zA-Z0-9\s]/g, " ").trim().split(/\s+/).filter(Boolean);
+      if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+      return (words[0] || "GM").slice(0, 2).toUpperCase();
+    }
+
+    function renderGameThumbHtml(g, sysId = "switch") {
+      const sId = (g && g.system) || sysId || "switch";
+      const sysIco = (g && g.systemIcon) || (CONSOLE_META_FALLBACK[sId] ? CONSOLE_META_FALLBACK[sId].icon : "🎮");
+      const initials = getInitials(g ? g.shortName : "");
+      const { rawUrl, thumbUrl } = getGameCoverInfo(g, sId);
+      if (!thumbUrl) {
+        return `
+          <div class="game-thumb-wrap">
+            <div class="game-thumb-fallback"><span>${sysIco}</span><span>${initials}</span></div>
+          </div>
+        `;
+      }
+      const safeRaw = rawUrl.replace(/"/g, "&quot;");
+      return `
+        <div class="game-thumb-wrap">
+          <img
+            class="game-thumb"
+            src="${thumbUrl}"
+            data-raw="${safeRaw}"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            onerror="if(!this.dataset.fb && this.dataset.raw){this.dataset.fb='1';this.src=this.dataset.raw;}else{this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='flex';}"
+          />
+          <div class="game-thumb-fallback" style="display:none;"><span>${sysIco}</span><span>${initials}</span></div>
+        </div>
+      `;
+    }
 
     function showToast(msg) {
       const el = document.getElementById("toast");
@@ -872,6 +991,7 @@
 
         return `
           <div class="${cardClass}" onclick="selectAndInspectGame(${idx}, '${safeUrl}', '${safeTitle}', '${safeSys}')">
+            ${renderGameThumbHtml(g, gSys)}
             <div class="game-main">
               <div class="game-title-row">
                 <span class="game-name">${g.shortName}</span>
@@ -895,12 +1015,14 @@
     function selectAndInspectGame(idx, url, shortTitle, sysId = "switch") {
       const g = (window._lastRenderedGames || [])[idx];
       const rc = g ? (g.recomp || null) : null;
-      inspectRomGame(url, shortTitle, rc, sysId || (g && g.system) || ACTIVE_SYSTEM);
+      const resolvedSys = sysId || (g && g.system) || ACTIVE_SYSTEM;
+      const coverInfo = getGameCoverInfo(g, resolvedSys);
+      inspectRomGame(url, shortTitle, rc, resolvedSys, coverInfo.thumbUrl || coverInfo.rawUrl || "");
     }
 
     async function loadFallbackSwitchCatalog() {
       if (LOCAL_SWITCH_CACHE) return LOCAL_SWITCH_CACHE;
-      const r = await fetch("data/nxbrew_catalog.json?v=6");
+      const r = await fetch("data/nxbrew_catalog.json?v=7");
       if (!r.ok) throw new Error("Failed to load Switch catalog");
       LOCAL_SWITCH_CACHE = await r.json();
       return LOCAL_SWITCH_CACHE;
@@ -908,7 +1030,7 @@
 
     async function loadFallbackRomsfunCatalog() {
       if (LOCAL_ROMSFUN_CACHE) return LOCAL_ROMSFUN_CACHE;
-      const r = await fetch("data/romsfun_catalog.json?v=6");
+      const r = await fetch("data/romsfun_catalog.json?v=7");
       if (!r.ok) throw new Error("Failed to load RomsFun catalog");
       LOCAL_ROMSFUN_CACHE = await r.json();
       return LOCAL_ROMSFUN_CACHE;
@@ -1051,6 +1173,7 @@
           for (let i = 0; i < items.length; i++) {
             const title = items[i][0];
             const gSlug = items[i][1];
+            const gIcon = items[i][2] || "";
             const rc = recompMap[`${sId}/${gSlug}`] || null;
 
             if (NXBREW_RECOMP === "both" && !(rc && rc.m4 && rc.ayn)) continue;
@@ -1075,6 +1198,7 @@
               title: title,
               shortName: title,
               slug: gSlug,
+              icon: gIcon,
               url: `https://romsfun.com/roms/${rfSlug}/${gSlug}.html`,
               installed: isInst,
               recomp: rc,
@@ -1135,20 +1259,32 @@
       `;
     }
 
-    async function inspectRomGame(url, shortTitle = "", fallbackRecomp = null, sysId = "switch") {
+    async function inspectRomGame(url, shortTitle = "", fallbackRecomp = null, sysId = "switch", fallbackThumb = "") {
       openInspectorSheet();
       const bodyEl = document.getElementById("nxbrew-inspector-body");
       const m = CONSOLE_META_FALLBACK[sysId] || CONSOLE_META_FALLBACK.switch;
       const siteLabel = url.includes("romsfun.com") ? "RomsFun.com" : "NXBrew.net";
 
+      const headerPreviewHtml = `
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:8px;">
+          ${fallbackThumb ? `<img src="${fallbackThumb}" alt="" style="width:54px;height:54px;object-fit:cover;border-radius:10px;border:1px solid var(--border);flex-shrink:0;" onerror="this.style.display='none'" />` : ""}
+          <div style="flex:1;min-width:0;text-align:left;">
+            <h3 style="margin:0 0 2px;font-size:0.9rem;color:var(--text);line-height:1.25;">${shortTitle || url}</h3>
+            <span style="font-size:0.73rem;color:var(--accent);">${m.icon} ${m.label}</span>
+          </div>
+        </div>
+      `;
+
       bodyEl.innerHTML = `
-        <div style="padding:10px 4px;text-align:center;color:var(--accent);">
-          <div style="font-size:1.35rem;margin-bottom:4px;">⏳</div>
-          <strong>Récupération des versions & miroirs directs (${m.shortLabel})…</strong>
-          <p style="margin:4px 0 0;font-size:0.75rem;color:var(--text-muted);">
-            Extraction ${siteLabel} / CDN sans Captcha pour <em>${shortTitle || url}</em>…
-          </p>
-          <div style="text-align:left;margin-top:8px;">
+        <div style="padding:6px 4px;color:var(--accent);">
+          ${headerPreviewHtml}
+          <div style="text-align:center;padding:6px 0;">
+            <strong>⏳ Récupération des versions & miroirs directs (${m.shortLabel})…</strong>
+            <p style="margin:3px 0 0;font-size:0.74rem;color:var(--text-muted);">
+              Extraction ${siteLabel} / CDN sans Captcha…
+            </p>
+          </div>
+          <div style="text-align:left;margin-top:6px;">
             ${renderInspectorRecompBox(fallbackRecomp, sysId)}
           </div>
         </div>
@@ -1167,7 +1303,7 @@
       if (!API_BASE) {
         bodyEl.innerHTML = `
           <div>
-            <h3 style="margin:0 0 6px;font-size:0.95rem;color:var(--text);">${shortTitle || url}</h3>
+            ${headerPreviewHtml}
             ${renderInspectorRecompBox(fallbackRecomp, sysId)}
             <div style="margin-top:12px;padding:12px;background:#090d16;border:1px solid var(--border);border-radius:10px;">
               <p style="margin:0 0 10px;color:var(--warning);font-size:0.78rem;">
@@ -1186,6 +1322,7 @@
         if (!res.ok) {
           bodyEl.innerHTML = `
             <div>
+              ${headerPreviewHtml}
               ${renderInspectorRecompBox(fallbackRecomp, sysId)}
               <div style="color:var(--danger);padding:10px 0;">❌ ${res.error || "Erreur lors de la lecture de la page."}</div>
               <a class="btn primary" style="width:100%;" href="${url}" target="_blank" rel="noopener">🔗 Ouvrir sur ${siteLabel}</a>
@@ -1197,7 +1334,8 @@
         const rc = res.recomp || fallbackRecomp || null;
         const resolvedSys = res.system || sysId || "switch";
         const safeGameTitle = (res.title || shortTitle || "ROM Game").replace(/'/g, "\\'");
-        const safeThumb = (res.thumb || "").replace(/'/g, "\\'");
+        const finalThumb = res.thumb || fallbackThumb || "";
+        const safeThumb = finalThumb.replace(/'/g, "\\'");
 
         const sectionsHtml = (res.sections || []).map(sec => {
           const safeSecType = (sec.type || "Base Game").replace(/'/g, "\\'");
@@ -1242,7 +1380,7 @@
         bodyEl.innerHTML = `
           <div>
             <div style="display:flex;gap:10px;align-items:center;">
-              ${res.thumb ? `<img src="${res.thumb}" alt="" style="width:58px;height:58px;object-fit:cover;border-radius:10px;border:1px solid var(--border);flex-shrink:0;" />` : ""}
+              ${finalThumb ? `<img src="${finalThumb}" alt="" style="width:58px;height:58px;object-fit:cover;border-radius:10px;border:1px solid var(--border);flex-shrink:0;" onerror="this.style.display='none'" />` : ""}
               <div style="flex:1;min-width:0;">
                 <h3 style="margin:0 0 4px;font-size:0.9rem;color:var(--text);line-height:1.25;">${res.title}</h3>
                 <a href="${res.url}" target="_blank" rel="noopener" style="font-size:0.73rem;color:var(--accent);">🔗 Voir sur ${siteLabel}</a>
