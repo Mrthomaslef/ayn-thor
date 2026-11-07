@@ -181,13 +181,25 @@ SYNC_PROFILES = [
         "name": "Zelda: Breath of the Wild Recomp & Duo (Mac mini M4 ↔ AYN Thor Recomp & Eden Duo)",
         "icon": "🏹",
         "type": "directory",
-        "macPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/BotW_Recomp_Mac/profile",
+        "macPath": os.path.join(APP_SUPPORT, "MacNativeGames", "BotW", "profile", "save", "a8dd94460e68852ab0a7651212ce42c6"),
         "ssdPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Switch_Eden/save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/01007EF00011E000",
         "thorPaths": [
             "/sdcard/Android/data/com.botwrecomp.android/files/v190/save/save_0",
             "/sdcard/Android/data/com.botwrecomp.android/files/save/save_0",
             "/sdcard/Android/data/dev.igawa6.edenduo/files/nand/user/save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/01007EF00011E000",
             "/sdcard/Android/data/dev.eden.eden_emulator/files/nand/user/save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/01007EF00011E000",
+        ],
+    },
+    {
+        "id": "dusklight_recomp",
+        "name": "Zelda: Twilight Princess — Dusklight (Mac mini M4 ↔ Dolphin GC ↔ AYN Thor)",
+        "icon": "🐺",
+        "type": "directory",
+        "macPath": os.path.join(APP_SUPPORT, "TwilitRealm", "Dusklight", "EUR", "Card A"),
+        "ssdPath": os.path.join(GAMING_SSD_SAVES, "Dolphin_GC", "GC", "EUR", "Card A"),
+        "thorPaths": [
+            "/sdcard/Android/data/org.dolphinemu.dolphinemu/files/GC/EUR/Card A",
+            "/sdcard/Android/data/dev.twilitrealm.dusk/files/EUR/Card A",
         ],
     },
     {
@@ -243,9 +255,9 @@ def scan_local_tree(root: str, ignore_ext: Tuple[str, ...] = ()) -> Dict[str, Di
     if not os.path.isdir(root):
         return res
     for r, dirs, files in os.walk(root):
-        dirs[:] = [d for d in dirs if d not in ("rom_data", "assets", "assets_src", "__MACOSX")]
+        dirs[:] = [d for d in dirs if d not in ("rom_data", "assets", "assets_src", "__MACOSX", "temp", "cache")]
         for f in files:
-            if f.startswith(".") or f in ("ExtraData0", "ExtraData1", "systeminfo.txt", "systeminfo_1.txt", "baserom.gba", "zelda3_assets.dat"):
+            if f.startswith(".") or f in ("ExtraData0", "ExtraData1", "systeminfo.txt", "systeminfo_1.txt", "baserom.gba", "zelda3_assets.dat", "users.txt", "pso_user.tsv", "playtime.json"):
                 continue
             if ignore_ext and f.lower().endswith(ignore_ext):
                 continue
@@ -597,10 +609,10 @@ def sync_profile(profile: Dict, serial: Optional[str], mode: str = "smart") -> D
             tmc_tmp = os.path.join(tmp_dir, "tmc_saves")
             os.makedirs(tmc_tmp, exist_ok=True)
             rc_tmc, out_tmc, _ = run_adb(["-s", serial, "shell", f"ls -1 {tmc_remote}/*.sav {tmc_remote}/state_*.bin 2>/dev/null"], timeout=6)
-            if rc_tmc == 0 and out_tmc:
+            if out_tmc:
                 for rf in out_tmc.splitlines():
                     rf = rf.strip()
-                    if rf:
+                    if rf and rf.startswith("/"):
                         run_adb(["-s", serial, "pull", "-a", rf, os.path.join(tmc_tmp, os.path.basename(rf))], timeout=15)
             sub_tmc = merge_trees(f"{pid}_tmc", tmc_local, tmc_tmp, None, mode, only_extensions=(".sav", ".bin"))
             result["totalFiles"] += sub_tmc["totalFiles"]
@@ -612,6 +624,44 @@ def sync_profile(profile: Dict, serial: Optional[str], mode: str = "smart") -> D
                     lf = os.path.join(tmc_tmp, f_rel)
                     if os.path.isfile(lf):
                         push_single_file_to_thor(serial, lf, f"{tmc_remote}/{f_rel}")
+
+            # Emerald 3DS (ZallaxDev v0.5.0) : synchroniser uniquement les sauvegardes/options (.sav, .clock, .nuzlocke, .bin)
+            em3ds_remote = "/storage/6531-3035/ROMs/n3ds2/sdmc/3ds/emerald3ds"
+            em3ds_mac = os.path.join(APP_SUPPORT, "Azahar", "sdmc", "3ds", "emerald3ds")
+            em3ds_ssd = (
+                os.path.join(GAMING_SSD_SAVES, "3DS_n3ds2", "sdmc", "3ds", "emerald3ds")
+                if is_ssd_mounted()
+                else None
+            )
+            em3ds_tmp = os.path.join(tmp_dir, "emerald3ds_saves")
+            os.makedirs(em3ds_tmp, exist_ok=True)
+            os.makedirs(em3ds_mac, exist_ok=True)
+            rc_em, out_em, _ = run_adb(
+                ["-s", serial, "shell", f"ls -1 {em3ds_remote}/*.sav {em3ds_remote}/*.clock {em3ds_remote}/*.nuzlocke {em3ds_remote}/*.bin 2>/dev/null"],
+                timeout=6,
+            )
+            if out_em:
+                for rf in out_em.splitlines():
+                    rf = rf.strip()
+                    if rf and rf.startswith("/"):
+                        run_adb(["-s", serial, "pull", "-a", rf, os.path.join(em3ds_tmp, os.path.basename(rf))], timeout=15)
+            sub_em = merge_trees(
+                f"{pid}_emerald3ds",
+                em3ds_mac,
+                em3ds_tmp,
+                em3ds_ssd,
+                mode,
+                only_extensions=(".sav", ".clock", ".nuzlocke", ".bin"),
+            )
+            result["totalFiles"] += sub_em["totalFiles"]
+            result["identical"] += sub_em["identical"]
+            result["updatedOnMac"].extend([f"Emerald3DS/{x}" for x in sub_em["updatedOnMac"]])
+            result["updatedOnThor"].extend([f"Emerald3DS/{x}" for x in sub_em["updatedOnThor"]])
+            if mode != "status" and sub_em["updatedOnThor"]:
+                for f_rel in sub_em["updatedOnThor"]:
+                    lf = os.path.join(em3ds_tmp, f_rel)
+                    if os.path.isfile(lf):
+                        push_single_file_to_thor(serial, lf, f"{em3ds_remote}/{f_rel}")
 
         else:
             # Type 'directory' standard (3DS, GC, Wii, WiiU, PS2, PS1, RetroArch, PSP)

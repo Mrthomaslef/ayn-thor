@@ -1,5 +1,5 @@
 window.AYN_THOR_DATA = {
-  "generatedAt": "06/11/2026 07:33:39",
+  "generatedAt": "07/11/2026 03:04:16",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -31,11 +31,11 @@ window.AYN_THOR_DATA = {
   },
   "summary": {
     "saveFoldersCount": 25,
-    "saveFilesCount": 52584,
+    "saveFilesCount": 52585,
     "saveTotalMB": 10190.6,
     "romSystemsCount": 20,
-    "romGamesCount": 149,
-    "romTotalGB": 106.53,
+    "romGamesCount": 151,
+    "romTotalGB": 107.53,
     "bonusToolsCount": 10
   },
   "saves": [
@@ -89,8 +89,8 @@ window.AYN_THOR_DATA = {
       "icon": "🎮",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/3DS_n3ds2",
       "androidPath": "/storage/6531-3035/ROMs/n3ds2",
-      "fileCount": 32,
-      "sizeBytes": 81873052,
+      "fileCount": 33,
+      "sizeBytes": 81873068,
       "sizeMB": 78.08,
       "sampleFiles": [
         "sdmc/3ds/dspfirm.cdc",
@@ -98,9 +98,9 @@ window.AYN_THOR_DATA = {
         "sdmc/3ds/emerald3ds/Emerald3DS.smdh",
         "sdmc/3ds/emerald3ds/emerald3ds.pak",
         "sdmc/3ds/emerald3ds/emerald3ds.sav",
-        "sdmc/Nintendo 3DS/00000000000000000000000000000000/00000000000000000000000000000000/extdata/00000000/000011C5/icon"
+        "sdmc/3ds/emerald3ds/plates.bin"
       ],
-      "updatedAt": "05/11/2026 22:18"
+      "updatedAt": "05/11/2026 22:19"
     },
     {
       "id": "BotW_Recomp_Mac",
@@ -1118,6 +1118,39 @@ window.AYN_THOR_DATA = {
       ]
     },
     {
+      "id": "3DS",
+      "label": "Nintendo 3DS",
+      "emulator": "Azahar / Lime3DS",
+      "icon": "🕹️",
+      "localPath": "/Volumes/GamingSSD/Games/ROMs/3DS",
+      "androidPath": "/sdcard/ROMs/n3ds",
+      "gameCount": 5,
+      "totalSizeGB": 1.01,
+      "totalSizeMB": 1030.0,
+      "games": [
+        {
+          "name": "Emerald3DS.3dsx",
+          "sizeMB": 6.0
+        },
+        {
+          "name": "Emerald3DS.smdh",
+          "sizeMB": 0.0
+        },
+        {
+          "name": "Legend of Zelda, The - Majora's Mask 3D (Europe) (En,Fr,De,Es,It) (Rev 1).3ds",
+          "sizeMB": 1024.0
+        },
+        {
+          "name": "metadata.pegasus.txt",
+          "sizeMB": 0.0
+        },
+        {
+          "name": "readme.txt",
+          "sizeMB": 0.0
+        }
+      ]
+    },
+    {
       "id": "SNES",
       "label": "Super Nintendo",
       "emulator": "RetroArch (Snes9x)",
@@ -1255,31 +1288,6 @@ window.AYN_THOR_DATA = {
         {
           "name": "Pokemon - Crystal Version (USA, Europe) (Rev 1).gbc",
           "sizeMB": 2.0
-        },
-        {
-          "name": "metadata.pegasus.txt",
-          "sizeMB": 0.0
-        }
-      ]
-    },
-    {
-      "id": "3DS",
-      "label": "Nintendo 3DS",
-      "emulator": "Azahar / Lime3DS",
-      "icon": "🕹️",
-      "localPath": "/Volumes/GamingSSD/Games/ROMs/3DS",
-      "androidPath": "/sdcard/ROMs/n3ds",
-      "gameCount": 3,
-      "totalSizeGB": 0.01,
-      "totalSizeMB": 6.0,
-      "games": [
-        {
-          "name": "Emerald3DS.3dsx",
-          "sizeMB": 6.0
-        },
-        {
-          "name": "Emerald3DS.smdh",
-          "sizeMB": 0.0
         },
         {
           "name": "metadata.pegasus.txt",
