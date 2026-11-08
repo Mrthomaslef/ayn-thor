@@ -479,6 +479,53 @@ def sync_profile(profile: Dict, serial: Optional[str], mode: str = "smart") -> D
     if not serial:
         # Si l'AYN Thor n'est pas branchée, on synchronise au moins Mac <-> Hub GamingSSD
         result["status"] = "offline_mac_ssd_only"
+        if not is_ssd_mounted():
+            return result
+        if ptype == "switch_bridge":
+            ryu_map = get_ryujinx_save_map(profile["macPath"])
+            all_tids = sorted(set(ryu_map.keys()) | set(os.listdir(SSD_EDEN_SAVE_BASE) if os.path.isdir(SSD_EDEN_SAVE_BASE) else []))
+            for tid in all_tids:
+                if not tid or tid.startswith("."):
+                    continue
+                game_name = SWITCH_TITLES.get(tid.upper(), f"Title {tid}")
+                mac_slot = ryu_map.get(tid.upper())
+                ssd_slot = os.path.join(SSD_EDEN_SAVE_BASE, tid.upper())
+                if not mac_slot:
+                    continue
+                os.makedirs(ssd_slot, exist_ok=True)
+                sub_res = merge_trees(f"{pid}_{tid}", mac_slot, ssd_slot, None, mode)
+                result["totalFiles"] += sub_res["totalFiles"]
+                result["identical"] += sub_res["identical"]
+                for r in sub_res["updatedOnMac"]:
+                    result["updatedOnMac"].append(f"{game_name}: {r}")
+                for r in sub_res["updatedOnThor"]:
+                    result["updatedOnThor"].append(f"{game_name}: {r}")
+        elif ptype == "standalone_bundle":
+            em3ds_mac = os.path.join(APP_SUPPORT, "Azahar", "sdmc", "3ds", "emerald3ds")
+            em3ds_ssd = os.path.join(GAMING_SSD_SAVES, "3DS_n3ds2", "sdmc", "3ds", "emerald3ds")
+            os.makedirs(em3ds_mac, exist_ok=True)
+            os.makedirs(em3ds_ssd, exist_ok=True)
+            sub_em = merge_trees(
+                f"{pid}_emerald3ds",
+                em3ds_mac,
+                em3ds_ssd,
+                None,
+                mode,
+                only_extensions=(".sav", ".clock", ".nuzlocke", ".bin"),
+            )
+            result["totalFiles"] += sub_em["totalFiles"]
+            result["identical"] += sub_em["identical"]
+            result["updatedOnMac"].extend([f"Emerald3DS/{x}" for x in sub_em["updatedOnMac"]])
+            result["updatedOnThor"].extend([f"Emerald3DS/{x}" for x in sub_em["updatedOnThor"]])
+        else:
+            exts = (".sav", ".dsv", ".srm") if ptype == "nds_bridge" else None
+            os.makedirs(profile["macPath"], exist_ok=True)
+            os.makedirs(profile["ssdPath"], exist_ok=True)
+            sub_res = merge_trees(pid, profile["macPath"], profile["ssdPath"], None, mode, only_extensions=exts)
+            result["totalFiles"] = sub_res["totalFiles"]
+            result["identical"] = sub_res["identical"]
+            result["updatedOnMac"] = sub_res["updatedOnMac"]
+            result["updatedOnThor"] = sub_res["updatedOnThor"]
         return result
 
     with tempfile.TemporaryDirectory(prefix=f"aynthor_sync_{pid}_") as tmp_dir:

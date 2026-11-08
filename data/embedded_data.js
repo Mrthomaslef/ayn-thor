@@ -1,5 +1,5 @@
 window.AYN_THOR_DATA = {
-  "generatedAt": "07/11/2026 03:04:16",
+  "generatedAt": "08/11/2026 03:05:49",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -7,36 +7,25 @@ window.AYN_THOR_DATA = {
     "gamingSsdMounted": true
   },
   "device": {
-    "connected": true,
+    "connected": false,
     "vendor": "AYN",
-    "productName": "QCS_KALAMAP-HDK_CID:0437_SN:6320BBAD",
-    "serial": "ef1ee24",
-    "idVendor": 6353,
-    "idProduct": 20194,
-    "usbMode": "adb_enabled",
-    "usbModeLabel": "MTP + ADB actif (0x4ee2)",
-    "adbReady": true,
-    "adbDevices": [
-      {
-        "id": "ef1ee24",
-        "state": "device",
-        "raw": "ef1ee24                device usb:17825792X product:kalama model:AYN_Thor device:kalama transport_id:9"
-      },
-      {
-        "id": "192.168.1.192:5555",
-        "state": "device",
-        "raw": "192.168.1.192:5555     device product:kalama model:AYN_Thor device:kalama transport_id:6"
-      }
-    ]
+    "productName": "",
+    "serial": "",
+    "idVendor": 0,
+    "idProduct": 0,
+    "usbMode": "disconnected",
+    "usbModeLabel": "Non branchée",
+    "adbReady": false,
+    "adbDevices": []
   },
   "summary": {
     "saveFoldersCount": 25,
-    "saveFilesCount": 52585,
-    "saveTotalMB": 10190.6,
+    "saveFilesCount": 52565,
+    "saveTotalMB": 10184.6,
     "romSystemsCount": 20,
-    "romGamesCount": 151,
-    "romTotalGB": 107.53,
-    "bonusToolsCount": 10
+    "romGamesCount": 152,
+    "romTotalGB": 130.83,
+    "bonusToolsCount": 12
   },
   "saves": [
     {
@@ -121,7 +110,7 @@ window.AYN_THOR_DATA = {
         "game-slot/history.log",
         "game-slot/holder"
       ],
-      "updatedAt": "05/11/2026 22:23"
+      "updatedAt": "06/11/2026 07:14"
     },
     {
       "id": "Dolphin_GC",
@@ -421,9 +410,9 @@ window.AYN_THOR_DATA = {
       "icon": "🔴",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Switch_Eden",
       "androidPath": "/sdcard/Android/data/dev.eden.eden_emulator/files/nand/user",
-      "fileCount": 122,
-      "sizeBytes": 46852672,
-      "sizeMB": 44.68,
+      "fileCount": 102,
+      "sizeBytes": 40552120,
+      "sizeMB": 38.67,
       "sampleFiles": [
         "save/0000000000000000/00000000000000000000000000000000/0100152000022000/rp001b00500301e7a2b1100000.dat",
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100000000010000/Common.bin",
@@ -432,7 +421,7 @@ window.AYN_THOR_DATA = {
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100152000022000/rp001011530330000abec00000.dat",
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100152000022000/rp012d11510300001d21000000.dat"
       ],
-      "updatedAt": "05/11/2026 22:23"
+      "updatedAt": "06/11/2026 07:14"
     },
     {
       "id": "Switch_Eden_System",
@@ -775,6 +764,75 @@ window.AYN_THOR_DATA = {
       ]
     },
     {
+      "id": "Switch",
+      "label": "Nintendo Switch",
+      "emulator": "Eden / Citron (Turnip T29)",
+      "icon": "🔴",
+      "localPath": "/Volumes/GamingSSD/Games/ROMs/Switch",
+      "androidPath": "/sdcard/ROMs/switch",
+      "gameCount": 14,
+      "totalSizeGB": 95.32,
+      "totalSizeMB": 97608.9,
+      "games": [
+        {
+          "name": "Celeste [01002B30028F6000][v0][Base].nsp",
+          "sizeMB": 1123.6
+        },
+        {
+          "name": "Donkey Kong Country Tropical Freeze [0100C1F0051B6000][v0].nsp",
+          "sizeMB": 6802.4
+        },
+        {
+          "name": "Hollow Knight Silksong [010013C00E930000][v0].nsp",
+          "sizeMB": 2377.0
+        },
+        {
+          "name": "Mario Kart 8 Deluxe [0100152000022000][v0].nsp",
+          "sizeMB": 6931.8
+        },
+        {
+          "name": "Pokemon Lets Go Eevee.xci",
+          "sizeMB": 7616.0
+        },
+        {
+          "name": "Pokemon Shining Pearl v0 - xcinspdotcom.nsp",
+          "sizeMB": 4398.1
+        },
+        {
+          "name": "Pokemon Sword.xci",
+          "sizeMB": 15232.0
+        },
+        {
+          "name": "Pokémon Legends Z-A [0100F43008C44000][v1.0.0][US][Base][eShop].nsp",
+          "sizeMB": 4125.6
+        },
+        {
+          "name": "Super Mario Odyssey [0100000000010000][v0].nsp",
+          "sizeMB": 5351.1
+        },
+        {
+          "name": "The Legend of Zelda Breath of the Wild [01007EF00011E000][v0](eShop).nsp",
+          "sizeMB": 13805.6
+        },
+        {
+          "name": "The Legend of Zelda Link’s Awakening switch [01006BB00C6F0000][v0].nsp",
+          "sizeMB": 5984.1
+        },
+        {
+          "name": "The Legend of Zelda Ocarina of TIme [04004860224DEC000].nup",
+          "sizeMB": 23861.6
+        },
+        {
+          "name": "Updates",
+          "sizeMB": 0.0
+        },
+        {
+          "name": "metadata.pegasus.txt",
+          "sizeMB": 0.0
+        }
+      ]
+    },
+    {
       "id": "GBA",
       "label": "Game Boy Advance",
       "emulator": "RetroArch (mGBA)",
@@ -836,71 +894,6 @@ window.AYN_THOR_DATA = {
         {
           "name": "poketransform_v1.4.gba",
           "sizeMB": 32.0
-        }
-      ]
-    },
-    {
-      "id": "Switch",
-      "label": "Nintendo Switch",
-      "emulator": "Eden / Citron (Turnip T29)",
-      "icon": "🔴",
-      "localPath": "/Volumes/GamingSSD/Games/ROMs/Switch",
-      "androidPath": "/sdcard/ROMs/switch",
-      "gameCount": 13,
-      "totalSizeGB": 72.02,
-      "totalSizeMB": 73747.2,
-      "games": [
-        {
-          "name": "Celeste [01002B30028F6000][v0][Base].nsp",
-          "sizeMB": 1123.6
-        },
-        {
-          "name": "Donkey Kong Country Tropical Freeze [0100C1F0051B6000][v0].nsp",
-          "sizeMB": 6802.4
-        },
-        {
-          "name": "Hollow Knight Silksong [010013C00E930000][v0].nsp",
-          "sizeMB": 2377.0
-        },
-        {
-          "name": "Mario Kart 8 Deluxe [0100152000022000][v0].nsp",
-          "sizeMB": 6931.8
-        },
-        {
-          "name": "Pokemon Lets Go Eevee.xci",
-          "sizeMB": 7616.0
-        },
-        {
-          "name": "Pokemon Shining Pearl v0 - xcinspdotcom.nsp",
-          "sizeMB": 4398.1
-        },
-        {
-          "name": "Pokemon Sword.xci",
-          "sizeMB": 15232.0
-        },
-        {
-          "name": "Pokémon Legends Z-A [0100F43008C44000][v1.0.0][US][Base][eShop].nsp",
-          "sizeMB": 4125.6
-        },
-        {
-          "name": "Super Mario Odyssey [0100000000010000][v0].nsp",
-          "sizeMB": 5351.1
-        },
-        {
-          "name": "The Legend of Zelda Breath of the Wild [01007EF00011E000][v0](eShop).nsp",
-          "sizeMB": 13805.6
-        },
-        {
-          "name": "The Legend of Zelda Link’s Awakening switch [01006BB00C6F0000][v0].nsp",
-          "sizeMB": 5984.1
-        },
-        {
-          "name": "Updates",
-          "sizeMB": 0.0
-        },
-        {
-          "name": "metadata.pegasus.txt",
-          "sizeMB": 0.0
         }
       ]
     },
@@ -1400,6 +1393,15 @@ window.AYN_THOR_DATA = {
       "sizeMB": 14.07
     },
     {
+      "filename": "Lichii-Android-0.3.0.apk",
+      "label": "Lichii-Android-0.3.0.apk",
+      "type": "Fichier Bonus",
+      "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Lichii-Android-0.3.0.apk",
+      "androidPath": "/sdcard/Download/Lichii-Android-0.3.0.apk",
+      "usage": "Outil ou ressource AYN Thor.",
+      "sizeMB": 28.6
+    },
+    {
       "filename": "PokeDaisy-1.4.0.apk",
       "label": "PokeDaisy-1.4.0.apk",
       "type": "Fichier Bonus",
@@ -1443,6 +1445,15 @@ window.AYN_THOR_DATA = {
       "androidPath": "/sdcard/Download/Turnip_v27.0.0-R1.zip",
       "usage": "Nouveau driver StevenMXZ V38 / Mesa 27.0.0-R1 (A6xx/A7xx) — Optimal sur AYN Thor pour XenDroid (Xbox 360), Eden / Eden Duo (Switch), Azahar / Dusk (3DS) et Cemu.",
       "sizeMB": 2.64
+    },
+    {
+      "filename": "lichii-macos-arm64.zip",
+      "label": "lichii-macos-arm64.zip",
+      "type": "Fichier Bonus",
+      "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/lichii-macos-arm64.zip",
+      "androidPath": "/sdcard/Download/lichii-macos-arm64.zip",
+      "usage": "Outil ou ressource AYN Thor.",
+      "sizeMB": 71.49
     },
     {
       "filename": "nxbrew-dl",

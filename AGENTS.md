@@ -44,15 +44,17 @@ Ces règles sont extraites chaque nuit des inputs et corrections de Thomas. **Ap
 - [0.95][GLOBAL][ui-pwa] pull-to-refresh-systematic: WHEN Lors de la création ou modification d'une application web ou PWA mobile/desktop -> Implanter systématiquement le Pull-to-Refresh tactile (touch) et souris (mouse) avec overscroll-behavior-y: contain et vibration haptique.
 - [0.95][GLOBAL][security] t3-vault-keychain-only: WHEN Lorsqu'un identifiant, secret, token API ou mot de passe est requis ou fourni -> Ne jamais demander ni afficher de mot de passe en clair dans le chat. Toujours interroger /Users/thomaslefevre/.t3/bin/t3-vault ou utiliser request_secret (delivery: file) puis t3-vault set.
 - [0.95][GLOBAL][git-deploy] tapp-mapp-store-dual-publish: WHEN Après toute création, mise à jour ou déploiement d'une web-app -> Mettre à jour et pousser systématiquement sur Tapp Store (allinone) ET sur Mapp Store (mapp-store) si l'app concerne Marie, Émile ou la famille.
+- [0.95][GLOBAL][workflow] tapp-store-custom-logo-and-cache-bust: WHEN À chaque création ou modification d'une application web ou PWA référencée sur le Tapp Store (allinone) ou Mapp Store -> Créer systématiquement un vrai logo SVG/PNG dédié dans assets/, isoler chaque nouvelle web-app dans son propre dépôt GitHub Pages (sans écraser un autre projet), incrémenter CACHE_KEY + purger les Service Workers pour affichage immédiat sans cache, et pousser sur le projet ET sur Tapp Store / Mapp Store.
 - [0.92][GLOBAL][architecture] offline-embedded-bundle-pwa: WHEN Lors de la construction d'une PWA statique hébergée sur GitHub Pages avec données JSON -> Générer un fichier data/embedded_data.js (window.*_DATA) en plus des fichiers .json afin que l'application fonctionne à 100 % hors-ligne et en file:// sans erreur CORS.
 - [0.92][GLOBAL][workflow] superpowers-verify-before-completion: WHEN Avant d'affirmer qu'une tâche, un script ou un déploiement est terminé -> Exécuter une vérification réelle (test, build_data.py, sync_projects.py, git status/diff) et citer le résultat observé. Pas de sous-agent par micro-tâche pour les petits correctifs afin de préserver les quotas 5h.
 - [0.85][GLOBAL][git-deploy] git-push-systematic-verification: WHEN À la fin de toute modification de code, d'application web ou de configuration -> Vérifier systématiquement avec git status et git push que tous les dépôts modifiés (ainsi que Tapp Store / Mapp Store) sont poussés et à jour sur GitHub.
-- [0.85][GLOBAL][git-deploy] tapp-store-custom-logo-and-cache-bust: WHEN À chaque création ou modification d'une application web ou PWA référencée sur le Tapp Store (allinone) ou Mapp Store -> Créer systématiquement un vrai logo SVG/PNG illustré dans assets/, le copier dans allinone/assets/, incrémenter CACHE_KEY dans index.html, purger les Service Workers pour que les modifications soient visibles immédiatement sans cache, et faire git commit + git push sur le projet ET sur le store.
 - [0.75][PROJECT:AYN-THOR][workflow] ayn-recomp-case-by-case: WHEN Lors de l'installation automatique d'un jeu Switch sur l'AYN Thor -> Ne jamais lancer de recomp nx2android automatiquement : mettre le jeu dans Eden (tuile Switch de Cocoon Shell) et seulement signaler qu'un recomp existe ; Thomas décide au cas par cas
 ```
 - Dès que Thomas exprime une préférence récurrente ou corrige un comportement en session, enregistrez l'instinct immédiatement :
   `/Users/thomaslefevre/.t3/bin/t3-instincts learn --id "<slug>" --trigger "<quand>" --action "<action>" --project "$PWD"`
 <!-- SUPER_AGENT_ROUTER_END -->
+
+
 
 
 

@@ -1,9 +1,9 @@
 {
-  "timestamp": "07/11/2026 03:03:29",
+  "timestamp": "08/11/2026 03:05:48",
   "mode": "smart",
-  "thorConnected": true,
-  "serial": "ef1ee24",
-  "totalFilesChecked": 349,
+  "thorConnected": false,
+  "serial": "",
+  "totalFilesChecked": 318,
   "updatedOnMacCount": 0,
   "updatedOnThorCount": 0,
   "profiles": [
@@ -12,195 +12,195 @@
       "name": "Nintendo Switch (Ryujinx Mac ↔ Eden AYN Thor)",
       "icon": "🔴",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 98,
       "identical": 98,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "3ds_azahar",
       "name": "Nintendo 3DS (Azahar Mac ↔ Azahar / Citra Dusk AYN Thor)",
       "icon": "🕹️",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 20,
       "identical": 20,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "gc_dolphin",
       "name": "Nintendo GameCube (Dolphin Mac ↔ Dolphin AYN Thor)",
       "icon": "🐬",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 12,
       "identical": 12,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "wii_dolphin",
       "name": "Nintendo Wii (Dolphin Mac ↔ Dolphin AYN Thor)",
       "icon": "🎾",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 29,
       "identical": 29,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "wiiu_cemu",
       "name": "Nintendo Wii U (Cemu Mac ↔ Cemu AYN Thor)",
       "icon": "🟦",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 55,
       "identical": 55,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "ps2_pcsx2_aethersx2",
       "name": "PlayStation 2 (PCSX2 Mac ↔ NetherSX2 / AetherSX2 AYN Thor)",
       "icon": "💿",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 2,
       "identical": 2,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "ps1_duckstation",
       "name": "PlayStation 1 (DuckStation Mac ↔ DuckStation AYN Thor)",
       "icon": "🦆",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 1,
       "identical": 1,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "retroarch_saves",
       "name": "RetroArch SRAM — GBA, GBC, GB, SNES, N64 (Mac ↔ AYN Thor)",
       "icon": "👾",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 21,
       "identical": 21,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "retroarch_states",
       "name": "RetroArch Save States (Mac ↔ AYN Thor)",
       "icon": "⚡",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 4,
       "identical": 4,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "nds_melonds",
       "name": "Nintendo DS (RetroArch melonDS Mac ↔ melonDS Dual-Screen + ROMs/nds AYN Thor)",
       "icon": "📱",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 3,
       "identical": 3,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "psp_ppsspp",
       "name": "Sony PSP (PPSSPP Mac ↔ PPSSPP AYN Thor)",
       "icon": "🛸",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 0,
       "identical": 0,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "wwhd_recomp",
       "name": "Zelda: The Wind Waker HD Recomp (Mac mini M4 ↔ AYN Thor ↔ Cemu)",
       "icon": "⛵",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 41,
       "identical": 41,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "botw_recomp",
       "name": "Zelda: Breath of the Wild Recomp & Duo (Mac mini M4 ↔ AYN Thor Recomp & Eden Duo)",
       "icon": "🏹",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 20,
       "identical": 20,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "dusklight_recomp",
       "name": "Zelda: Twilight Princess — Dusklight (Mac mini M4 ↔ Dolphin GC ↔ AYN Thor)",
       "icon": "🐺",
       "mode": "smart",
-      "thorConnected": true,
+      "thorConnected": false,
       "totalFiles": 10,
       "identical": 10,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     },
     {
       "id": "standalone_ports",
       "name": "Portages & Decomps (PokéEmerald DualScreen, PokéRogue, Minish Cap, Zelda 3, Red Recomp, Wind Waker HD)",
       "icon": "💎",
       "mode": "smart",
-      "thorConnected": true,
-      "totalFiles": 33,
-      "identical": 33,
+      "thorConnected": false,
+      "totalFiles": 2,
+      "identical": 2,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
-      "status": "ok"
+      "status": "offline_mac_ssd_only"
     }
   ]
 }
