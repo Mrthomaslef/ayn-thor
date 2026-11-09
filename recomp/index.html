@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0f1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Recomp Check">
+  <title>Recomp Check — AYN Thor & Mac mini M4</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    :root {
+      --bg: #0b0f1a; --panel: #131a2a; --panel2: #1a2337; --line: #26324b;
+      --text: #e8edf7; --muted: #8a97b2; --ayn: #ff5a5f; --m4: #5ab0ff; --both: #34d399;
+      --warn: #fbbf24; --radius: 14px;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
+    body {
+      font: 15px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      overscroll-behavior-y: contain;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
+    }
+    button, input, a, .card { touch-action: manipulation; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 14px 14px calc(env(safe-area-inset-bottom) + 40px); }
+
+    /* Pull-to-refresh : uniquement la flèche ↻ */
+    #ptr { position: fixed; top: calc(env(safe-area-inset-top) + 8px); left: 50%; z-index: 50;
+      width: 34px; height: 34px; margin-left: -17px; border-radius: 50%; background: var(--panel2);
+      border: 1px solid var(--line); display: grid; place-items: center; opacity: 0; pointer-events: none;
+      transform: translateY(-40px); transition: opacity .15s; }
+    #ptr svg { width: 18px; height: 18px; color: var(--text); }
+    #ptr.spin svg { animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    header { display: flex; gap: 12px; align-items: center; margin: 4px 0 14px; }
+    header img { width: 46px; height: 46px; border-radius: 12px; flex: none; }
+    h1 { font-size: 1.25rem; margin: 0; letter-spacing: -.01em; }
+    .sub { color: var(--muted); font-size: .8rem; margin-top: 2px; }
+
+    .hw { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .hw div { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 9px 11px; font-size: .74rem; color: var(--muted); display: flex; gap: 8px; align-items: center; min-width: 0; }
+    .hw b { color: var(--text); display: block; font-size: .85rem; }
+    .hw svg { flex: none; width: 26px; height: 26px; }
+
+    .seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+    .seg button { background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 12px;
+      padding: 9px 4px 8px; font: inherit; font-size: .72rem; cursor: pointer; line-height: 1.15; }
+    .seg button strong { display: block; font-size: 1.25rem; color: var(--text); font-variant-numeric: tabular-nums; }
+    .seg button[aria-pressed="true"] { border-color: currentColor; background: var(--panel2); }
+    .seg button[data-f="both"][aria-pressed="true"] { color: var(--both); }
+    .seg button[data-f="ayn"][aria-pressed="true"] { color: var(--ayn); }
+    .seg button[data-f="m4"][aria-pressed="true"] { color: var(--m4); }
+    .seg button[data-f="all"][aria-pressed="true"] { color: var(--text); }
+
+    .tools { display: flex; gap: 8px; margin-bottom: 10px; }
+    .tools input[type=search] { flex: 1; min-width: 0; background: var(--panel); border: 1px solid var(--line);
+      color: var(--text); border-radius: 12px; padding: 10px 12px; font-size: 16px; outline: none; }
+    .tools input[type=search]:focus { border-color: var(--m4); }
+    .toggle { display: flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--line);
+      border-radius: 12px; padding: 0 12px; font-size: .78rem; color: var(--muted); cursor: pointer; white-space: nowrap; user-select: none; }
+    .toggle input { accent-color: var(--both); width: 16px; height: 16px; margin: 0; }
+
+    .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chips button { flex: none; background: transparent; border: 1px solid var(--line); color: var(--muted);
+      border-radius: 999px; padding: 6px 11px; font: inherit; font-size: .76rem; cursor: pointer; }
+    .chips button[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+    .count { color: var(--muted); font-size: .76rem; margin: 2px 2px 8px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    @media (min-width: 700px) { .grid { grid-template-columns: 1fr 1fr; } .wrap { padding-left: 20px; padding-right: 20px; } }
+
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px;
+      display: grid; grid-template-columns: 58px 1fr; gap: 10px; min-width: 0; }
+    .cover { width: 58px; height: 58px; border-radius: 10px; background: var(--panel2); object-fit: cover;
+      display: grid; place-items: center; font-size: .62rem; font-weight: 700; color: var(--muted); text-align: center; overflow: hidden; }
+    .info { min-width: 0; }
+    .t { font-weight: 650; font-size: .92rem; line-height: 1.2; overflow-wrap: anywhere; }
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 6px; }
+    .tag { font-size: .63rem; padding: 2px 6px; border-radius: 6px; background: var(--panel2); color: var(--muted); }
+    .tag.inst { background: rgba(52,211,153,.15); color: var(--both); }
+    .row { display: grid; grid-template-columns: 18px 1fr; gap: 6px; align-items: start; font-size: .74rem; margin-top: 3px; }
+    .row svg { width: 16px; height: 16px; margin-top: 1px; }
+    .row .ok { color: var(--text); overflow-wrap: anywhere; }
+    .row .no { color: var(--muted); opacity: .7; }
+    .row.ayn svg { color: var(--ayn); } .row.m4 svg { color: var(--m4); }
+    .row .st { font-size: .62rem; font-weight: 700; text-transform: uppercase; color: var(--warn); margin-left: 4px; }
+    .note { color: var(--muted); font-size: .7rem; margin-top: 5px; overflow-wrap: anywhere; }
+    .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
+    footer { color: var(--muted); font-size: .7rem; text-align: center; margin-top: 18px; }
+  </style>
+</head>
+<body>
+  <div id="ptr" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-ayn" viewBox="0 0 32 32"><rect x="2" y="9" width="28" height="15" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="12" width="12" height="9" rx="1.5" fill="currentColor" opacity=".35"/><circle cx="6.5" cy="16.5" r="1.8" fill="currentColor"/><circle cx="25.5" cy="15" r="1.1" fill="currentColor"/><circle cx="25.5" cy="18.4" r="1.1" fill="currentColor"/></symbol>
+    <symbol id="i-m4" viewBox="0 0 32 32"><rect x="3" y="11" width="26" height="10" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 21v2h22v-2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="16" r="1.2" fill="currentColor"/><path d="M8 16h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <div class="wrap">
+    <header>
+      <img src="icon.svg" alt="">
+      <div>
+        <h1>Recomp Check</h1>
+        <div class="sub">Portages & recompilations natives compatibles avec ton matériel</div>
+      </div>
+    </header>
+
+    <div class="hw">
+      <div style="color:var(--ayn)"><svg><use href="#i-ayn"/></svg><span><b>AYN Thor</b><span style="color:var(--muted)">SD 8 Gen 2 · Android</span></span></div>
+      <div style="color:var(--m4)"><svg><use href="#i-m4"/></svg><span><b>Mac mini M4</b><span style="color:var(--muted)">ARM64 · Metal</span></span></div>
+    </div>
+
+    <div class="seg" role="group" aria-label="Compatibilité">
+      <button data-f="both" aria-pressed="true"><strong id="n-both">–</strong>Les deux</button>
+      <button data-f="ayn" aria-pressed="false"><strong id="n-ayn">–</strong>AYN Thor</button>
+      <button data-f="m4" aria-pressed="false"><strong id="n-m4">–</strong>Mac M4</button>
+      <button data-f="all" aria-pressed="false"><strong id="n-all">–</strong>Tous</button>
+    </div>
+
+    <div class="tools">
+      <input id="q" type="search" placeholder="Rechercher un jeu ou un outil…" autocomplete="off">
+      <label class="toggle"><input id="inst" type="checkbox">Installés</label>
+    </div>
+
+    <div class="chips" id="chips" role="group" aria-label="Console d'origine"></div>
+    <div class="count" id="count"></div>
+    <div class="grid" id="grid"></div>
+    <footer id="foot"></footer>
+  </div>
+
+  <script src="data/embedded_data.js"></script>
+  <script>
+    const state = { f: "both", sys: "all", q: "", inst: false };
+    let DATA = window.RECOMP_DATA || { games: [], stats: {}, systems: [], systemLabels: {} };
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const norm = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+    function passCompat(g, f) {
+      if (f === "both") return g.m4 && g.ayn;
+      if (f === "ayn") return g.ayn;
+      if (f === "m4") return g.m4;
+      return true;
+    }
+
+    function renderChips() {
+      const sysList = ["all", ...DATA.systems];
+      $("chips").innerHTML = sysList.map(s => {
+        const n = DATA.games.filter(g => passCompat(g, state.f) && (s === "all" || g.systems.includes(s))).length;
+        if (s !== "all" && !n) return "";
+        const label = s === "all" ? "Toutes consoles" : (DATA.systemLabels[s] || s);
+        return `<button data-s="${s}" aria-pressed="${state.sys === s}">${esc(label)} · ${n}</button>`;
+      }).join("");
+    }
+
+    function row(kind, ok, tool, status) {
+      const st = status && status !== "playable" ? `<span class="st">${esc(status)}</span>` : "";
+      const label = kind === "ayn" ? "AYN Thor" : "Mac M4";
+      const txt = ok ? `<span class="ok">${esc(String(tool || "Natif").replace(/`/g, ""))}${st}</span>`
+                     : `<span class="no">${label} : pas de portage natif (émulation)</span>`;
+      return `<div class="row ${kind}"><svg><use href="#${ok ? "i-" + kind : "i-x"}"/></svg>${txt}</div>`;
+    }
+
+    function render() {
+      const q = norm(state.q);
+      const list = DATA.games.filter(g =>
+        passCompat(g, state.f) &&
+        (state.sys === "all" || g.systems.includes(state.sys)) &&
+        (!state.inst || g.installed) &&
+        (!q || norm(g.title + " " + (g.m4Tool || "") + " " + (g.aynTool || "")).includes(q)));
+      $("count").textContent = `${list.length} jeu${list.length > 1 ? "x" : ""}`;
+      $("grid").innerHTML = list.length ? list.map(g => {
+        const sysTags = g.systems.map(s => `<span class="tag">${esc(DATA.systemLabels[s] || s)}</span>`).join("");
+        const cover = g.cover
+          ? `<img class="cover" loading="lazy" src="${esc(g.cover)}" alt="" onerror="this.outerHTML='<div class=cover>${esc(DATA.systemLabels[g.systems[0]] || "")}</div>'">`
+          : `<div class="cover">${esc(DATA.systemLabels[g.systems[0]] || "")}</div>`;
+        return `<article class="card">${cover}<div class="info">
+          <div class="t">${esc(g.title)}</div>
+          <div class="tags">${sysTags}${g.installed ? '<span class="tag inst">✓ Installé</span>' : ""}</div>
+          ${row("ayn", g.ayn, g.aynTool, g.aynStatus)}
+          ${row("m4", g.m4, g.m4Tool)}
+          ${g.note ? `<div class="note">${esc(g.note)}</div>` : ""}
+        </div></article>`;
+      }).join("") : `<div class="empty">Aucun jeu ne correspond à ces filtres.</div>`;
+    }
+
+    function renderAll() {
+      const s = DATA.stats || {};
+      $("n-both").textContent = s.both ?? "–"; $("n-ayn").textContent = s.ayn ?? "–";
+      $("n-m4").textContent = s.m4 ?? "–"; $("n-all").textContent = s.total ?? "–";
+      if (DATA.generatedAt) $("foot").textContent = "Données du " + new Date(DATA.generatedAt).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" }) + " · source : catalogue ayn-thor";
+      renderChips(); render();
+    }
+
+    document.querySelector(".seg").addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      state.f = b.dataset.f;
+      document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b));
+      if (state.sys !== "all" && !DATA.games.some(g => passCompat(g, state.f) && g.systems.includes(state.sys))) state.sys = "all";
+      renderChips(); render();
+    });
+    $("chips").addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      state.sys = b.dataset.s; renderChips(); render();
+    });
+    $("q").addEventListener("input", e => { state.q = e.target.value; render(); });
+    $("inst").addEventListener("change", e => { state.inst = e.target.checked; render(); });
+
+    async function refresh() {
+      try {
+        const r = await fetch("data/recomp.json?t=" + Date.now(), { cache: "no-store" });
+        if (r.ok) { DATA = await r.json(); renderAll(); }
+      } catch (_) { /* hors-ligne : on garde les données embarquées */ }
+    }
+
+    // Pull-to-refresh tactile + souris
+    (function ptr() {
+      const el = $("ptr"), icon = el.querySelector("svg"), MAX = 90, TRIG = 65;
+      let y0 = null, dy = 0, busy = false;
+      const start = (y) => { if (!busy && window.scrollY <= 0) { y0 = y; dy = 0; } };
+      const move = (y, ev) => {
+        if (y0 === null) return;
+        dy = Math.min(MAX, Math.max(0, (y - y0) * 0.55));
+        if (dy > 0 && ev && ev.cancelable) ev.preventDefault();
+        el.style.opacity = Math.min(1, dy / TRIG);
+        el.style.transform = `translateY(${dy - 40}px)`;
+        icon.style.transform = `rotate(${dy * 4}deg)`;
+      };
+      const end = async () => {
+        if (y0 === null) return; y0 = null;
+        if (dy >= TRIG) {
+          busy = true; if (navigator.vibrate) navigator.vibrate(12);
+          icon.style.transform = ""; el.classList.add("spin");
+          await Promise.all([refresh(), new Promise(r => setTimeout(r, 600))]);
+          el.classList.remove("spin"); busy = false;
+        }
+        el.style.opacity = 0; el.style.transform = "translateY(-40px)";
+      };
+      addEventListener("touchstart", e => start(e.touches[0].clientY), { passive: true });
+      addEventListener("touchmove", e => move(e.touches[0].clientY, e), { passive: false });
+      addEventListener("touchend", end);
+      addEventListener("mousedown", e => { if (e.button === 0 && !e.target.closest("input,button,label,a")) start(e.clientY); });
+      addEventListener("mousemove", e => { if (y0 !== null) move(e.clientY); });
+      addEventListener("mouseup", end);
+    })();
+
+    renderAll();
+    refresh();
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js");
+  </script>
+</body>
+</html>
