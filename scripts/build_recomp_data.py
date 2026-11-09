@@ -9,6 +9,8 @@ Sources (déjà dans le repo) :
 """
 import json
 import re
+import urllib.parse
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -55,6 +57,61 @@ CANON = {
     "UnleashedRecomp": "Sonic Unleashed",
     "BanjoRecomp": "Banjo-Kazooie",
 }
+
+
+# Jaquettes des portages rétro (libretro-thumbnails Named_Boxarts, sinon Wikipédia)
+LR = "https://thumbnails.libretro.com/"
+COVERS = {
+    "The Legend of Zelda: A Link to the Past": ("Nintendo - Super Nintendo Entertainment System", "Legend of Zelda, The - A Link to the Past (USA)"),
+    "Pokémon Émeraude": ("Nintendo - Game Boy Advance", "Pokemon - Emerald Version (USA, Europe)"),
+    "Pokémon Rouge / Bleu": ("Nintendo - Game Boy", "Pokemon - Red Version (USA, Europe) (SGB Enhanced)"),
+    "Skate 3": "https://upload.wikimedia.org/wikipedia/en/8/84/Skate-3-Boxart.jpg",
+    "The Legend of Zelda: Breath of the Wild": ("Nintendo - Wii U", "Legend of Zelda, The - Breath of the Wild (Europe) (En,Fr,De,Es,It,Nl,Ru)"),
+    "The Legend of Zelda: The Minish Cap": ("Nintendo - Game Boy Advance", "Legend of Zelda, The - The Minish Cap (USA)"),
+    "The Legend of Zelda: The Wind Waker HD": ("Nintendo - Wii U", "Legend of Zelda, The - The Wind Waker HD (Europe, Australia) (En,Fr,De,Es,It)"),
+    "Castlevania: Symphony of the Night": ("Sony - PlayStation", "Castlevania - Symphony of the Night (USA)"),
+    "Grand Theft Auto III": ("Sony - PlayStation 2", "Grand Theft Auto III (USA)"),
+    "Grand Theft Auto: Vice City": ("Sony - PlayStation 2", "Grand Theft Auto - Vice City (USA) (v3.00)"),
+    "Star Fox 64": ("Nintendo - Nintendo 64", "Star Fox 64 (USA)"),
+    "Mario Kart 64": ("Nintendo - Nintendo 64", "Mario Kart 64 (USA)"),
+    "The Legend of Zelda: Ocarina of Time": ("Nintendo - Nintendo 64", "Legend of Zelda, The - Ocarina of Time (USA)"),
+    "Perfect Dark": ("Nintendo - Nintendo 64", "Perfect Dark (USA)"),
+    "Super Mario 64": ("Nintendo - Nintendo 64", "Super Mario 64 (USA)"),
+    "Super Metroid": ("Nintendo - Super Nintendo Entertainment System", "Super Metroid (Japan, USA) (En,Ja)"),
+    "The Legend of Zelda: Majora's Mask": ("Nintendo - Nintendo 64", "Legend of Zelda, The - Majora's Mask (USA)"),
+    "WipEout": ("Sony - PlayStation", "WipEout (Europe)"),
+    "The Legend of Zelda: Twilight Princess": ("Nintendo - Wii", "Legend of Zelda, The - Twilight Princess (Europe, Australia) (En,Fr,De,Es,It)"),
+    "Crash Team Racing": ("Sony - PlayStation", "CTR - Crash Team Racing (USA)"),
+    "Jak II": ("Sony - PlayStation 2", "Jak II (USA) (En,Ja,Fr,De,Es,It,Ko) (v1.00)"),
+    "Jak and Daxter: The Precursor Legacy": ("Sony - PlayStation 2", "Jak and Daxter - The Precursor Legacy (USA) (En,Fr,De,Es,It)"),
+    "Paper Mario": ("Nintendo - Nintendo 64", "Paper Mario (USA)"),
+    "Sonic Unleashed": "https://upload.wikimedia.org/wikipedia/en/a/a0/Sonic_unleashed_boxart.jpg",
+    "Banjo-Kazooie": ("Nintendo - Nintendo 64", "Banjo-Kazooie (USA)"),
+}
+
+
+def retro_cover(title: str):
+    c = COVERS.get(title)
+    if isinstance(c, tuple):
+        q = lambda x: urllib.parse.quote(x, safe="")
+        return f"{LR}{q(c[0])}/Named_Boxarts/{q(c[1])}.png"
+    return c
+
+
+def eshop_cover(title: str):
+    """Jaquette Switch via la recherche eShop Nintendo Europe (jeux absents du catalogue nxbrew)."""
+    url = ("https://searching.nintendo-europe.com/fr/select?wt=json&rows=3&fq=type:GAME&q="
+           + urllib.parse.quote(title))
+    try:
+        with urllib.request.urlopen(url, timeout=10) as r:
+            docs = json.load(r)["response"]["docs"]
+    except Exception:
+        return None
+    key = norm(re.sub(r"\(.*?\)", "", title))
+    for d in docs:
+        if norm(d.get("title")) == key or norm(d.get("title")).startswith(key):
+            return d.get("image_url_sq_s") or d.get("image_url")
+    return None
 
 
 def canon_title(m4tool: str):
@@ -147,6 +204,7 @@ def build_retro():
     for g in groups.values():
         ts = sorted(set(g.pop("titles")), key=lambda t: (len(t), t))
         g["title"] = canon_title(g["m4Tool"]) or ts[0]
+        g["cover"] = retro_cover(g["title"])
         g["systems"].sort(key=lambda s: SYSTEM_ORDER.index(s) if s in SYSTEM_ORDER else 99)
         out.append(g)
     return out
@@ -154,6 +212,9 @@ def build_retro():
 
 def main():
     games = build_switch() + build_retro()
+    for g in games:
+        if not g["cover"] and g["systems"] == ["switch"]:
+            g["cover"] = eshop_cover(g["title"])
     games.sort(key=lambda g: (not (g["m4"] and g["ayn"]), not g["installed"], g["title"].lower()))
     stats = {
         "total": len(games),

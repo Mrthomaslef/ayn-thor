@@ -76,8 +76,9 @@
     @media (min-width: 700px) { .grid { grid-template-columns: 1fr 1fr; } .wrap { padding-left: 20px; padding-right: 20px; } }
 
     .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px;
-      display: grid; grid-template-columns: 58px 1fr; gap: 10px; min-width: 0; }
-    .cover { width: 58px; height: 58px; border-radius: 10px; background: var(--panel2); object-fit: cover;
+      display: grid; grid-template-columns: 84px 1fr; gap: 12px; min-width: 0; align-items: start; }
+    .cover { width: 84px; height: 84px; border-radius: 10px; background: var(--panel2); object-fit: contain;
+      box-shadow: 0 4px 14px rgba(0,0,0,.35);
       display: grid; place-items: center; font-size: .62rem; font-weight: 700; color: var(--muted); text-align: center; overflow: hidden; }
     .info { min-width: 0; }
     .t { font-weight: 650; font-size: .92rem; line-height: 1.2; overflow-wrap: anywhere; }
@@ -182,7 +183,7 @@
       $("grid").innerHTML = list.length ? list.map(g => {
         const sysTags = g.systems.map(s => `<span class="tag">${esc(DATA.systemLabels[s] || s)}</span>`).join("");
         const cover = g.cover
-          ? `<img class="cover" loading="lazy" src="${esc(g.cover)}" alt="" onerror="this.outerHTML='<div class=cover>${esc(DATA.systemLabels[g.systems[0]] || "")}</div>'">`
+          ? `<img class="cover" loading="lazy" referrerpolicy="no-referrer" src="${esc(g.cover)}" alt="" onerror="this.outerHTML='<div class=cover>${esc(DATA.systemLabels[g.systems[0]] || "")}</div>'">`
           : `<div class="cover">${esc(DATA.systemLabels[g.systems[0]] || "")}</div>`;
         return `<article class="card">${cover}<div class="info">
           <div class="t">${esc(g.title)}</div>
