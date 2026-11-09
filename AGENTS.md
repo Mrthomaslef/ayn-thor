@@ -64,3 +64,26 @@ Ces règles sont extraites chaque nuit des inputs et corrections de Thomas. **Ap
 
 
 
+
+
+## ⚡ Recomp Check — trouver les Recomp / portages natifs compatibles (AYN Thor & Mac mini M4)
+
+Quand Thomas demande **« quels recomp… », « est-ce qu'il y a un recomp/portage natif pour <jeu> », « ça tourne sur mon AYN / mon Mac ? »** → utiliser ce flux, ne pas chercher sur le web en premier.
+
+- **Source de vérité (à lire en priorité)** : `/Users/thomaslefevre/.t3/projects/ayn-thor/recomp/data/recomp.json`
+  - `games[]` : `title`, `systems` (switch, n64, wiiu…), `ayn` / `m4` (bool = portage natif dispo), `aynTool` / `m4Tool` (outil exact : nxnative, nx2android, Ship of Harkinian, Zelda64Recomp…), `aynStatus` (playable / wip / experimental / boots), `installed` (déjà installé chez Thomas), `note`, `cover`.
+  - `stats` : `both`, `ayn`, `m4`, `total`, `installed`.
+  - Requête rapide :
+    ```bash
+    python3 -c "import json;d=json.load(open('/Users/thomaslefevre/.t3/projects/ayn-thor/recomp/data/recomp.json'));[print(g['title'],'|AYN:',g['aynTool'] if g['ayn'] else '✗','|Mac:',g['m4Tool'] if g['m4'] else '✗') for g in d['games'] if 'zelda' in g['title'].lower()]"
+    ```
+- **App web (à donner à Thomas)** : https://mrthomaslef.github.io/ayn-thor/recomp/ (aussi sur le Tapp Store, id `recomp-check`).
+- **Données brutes en amont** (si un jeu manque) :
+  - Switch : `data/nxbrew_catalog.json` (champ `recomp` par jeu) + `data/nx2android_profiles.json` (statut Android nx2android).
+  - Rétro : `CONSOLE_RECOMP_DB` dans `scripts/romsfun_service.py` → `recompMap` de `data/romsfun_catalog.json`.
+- **Ajouter / corriger un recomp** : modifier la source amont ci-dessus, puis pour un jeu rétro ajouter son nom canonique (`CANON`) et sa jaquette (`COVERS`, libretro-thumbnails) dans `scripts/build_recomp_data.py`, puis :
+  ```bash
+  cd /Users/thomaslefevre/.t3/projects/ayn-thor && python3 scripts/build_recomp_data.py && git commit -m "chore(recomp): …" -- recomp/data scripts && git push
+  ```
+- **Installer un recomp** : passer par le daemon/portail ayn-thor (`scripts/switch_installer.py recomp <TitleID>`, bouton « ⚡ Mettre le Recomp sur mon AYN Thor » de l'app principale).
+- **Mise à jour automatique** : launchd `com.thomas.recompcheck.weekly` (dimanche 9h) → `scripts/weekly_recomp_update.sh` (rebuild + push uniquement si la compatibilité a changé ; log `/tmp/recomp_check_weekly.log`).
