@@ -747,7 +747,7 @@
   <div id="toast"></div>
 
   <script>
-    const CACHE_KEY = "ayn-thor-rom-emu-v9";
+    const CACHE_KEY = "ayn-thor-rom-emu-v10";
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(regs => {
         regs.forEach(r => r.unregister());
@@ -792,7 +792,7 @@
     };
 
     const CONSOLE_META_FALLBACK = {
-      switch: { label: "Nintendo Switch", shortLabel: "Switch", icon: "🔴", source: "NXBrew + TorBox / 1Fichier / FileKeeper", macEmu: "Ryujinx (Plein écran + 8BitDo)", aynEmu: "Eden (Turnip V38) + nx2android", aynDir: "/storage/6531-3035/ROMs/switch" },
+      switch: { label: "Nintendo Switch", shortLabel: "Switch", icon: "🔴", source: "NXBrew + TorBox / 1Fichier / FileKeeper", macEmu: "Ryujinx (Plein écran + 8BitDo)", aynEmu: "Eden (Turnip V39) + nx2android", aynDir: "/storage/6531-3035/ROMs/switch" },
       all_consoles: { label: "Toutes Consoles Rétro & HD (20 Systèmes)", shortLabel: "Multi", icon: "🌐", source: "RomsFun CDN + Archive.org Direct", macEmu: "Pegasus + M4 Gaming (Dolphin/Azahar/PCSX2/Cemu/RetroArch)", aynEmu: "ES-DE + Émulateurs AYN Thor (MicroSD)", aynDir: "/storage/6531-3035/ROMs/<console>" },
       n3ds: { label: "Nintendo 3DS", shortLabel: "3DS", icon: "🕹️", source: "RomsFun CDN (No-Intro Decrypted / CIA)", macEmu: "Azahar (1080p Metal)", aynEmu: "Azahar / Citra Dusk (Double Écran)", aynDir: "/storage/6531-3035/ROMs/n3ds" },
       nds: { label: "Nintendo DS", shortLabel: "NDS", icon: "📱", source: "RomsFun CDN Direct", macEmu: "RetroArch (melonDS DS)", aynEmu: "melonDS Dual-Screen", aynDir: "/storage/6531-3035/ROMs/nds" },
@@ -808,9 +808,9 @@
       gbc: { label: "Game Boy Color", shortLabel: "GBC", icon: "🟢", source: "RomsFun CDN Direct", macEmu: "RetroArch (Gambatte)", aynEmu: "RetroArch (Gambatte)", aynDir: "/storage/6531-3035/ROMs/gbc" },
       gb: { label: "Game Boy", shortLabel: "GB", icon: "⚪", source: "RomsFun CDN Direct", macEmu: "RetroArch (Gambatte)", aynEmu: "RetroArch (Gambatte)", aynDir: "/storage/6531-3035/ROMs/gb" },
       nes: { label: "Nintendo NES", shortLabel: "NES", icon: "🧱", source: "RomsFun CDN Direct", macEmu: "RetroArch (Mesen)", aynEmu: "RetroArch (Mesen)", aynDir: "/storage/6531-3035/ROMs/nes" },
-      xbox360: { label: "Microsoft Xbox 360", shortLabel: "Xbox 360", icon: "🟢", source: "RomsFun + Archive.org Direct", macEmu: "Skate 3 Recomp ARM64 / Xenia", aynEmu: "XenDroid / Xenia Canary (Turnip V38)", aynDir: "/storage/6531-3035/ROMs/xbox360" },
+      xbox360: { label: "Microsoft Xbox 360", shortLabel: "Xbox 360", icon: "🟢", source: "RomsFun + Archive.org Direct", macEmu: "Skate 3 Recomp ARM64 / Xenia", aynEmu: "XenDroid / Xenia Canary (Turnip V39)", aynDir: "/storage/6531-3035/ROMs/xbox360" },
       ps3: { label: "Sony PlayStation 3", shortLabel: "PS3", icon: "🖤", source: "RomsFun + Archive.org Direct", macEmu: "RPCS3 ARM64 (Metal)", aynEmu: "RPCS3 Android / Winlator", aynDir: "/storage/6531-3035/ROMs/ps3" },
-      psvita: { label: "PlayStation Vita", shortLabel: "PS Vita", icon: "💎", source: "RomsFun + Archive.org Direct", macEmu: "Vita3K Mac", aynEmu: "Vita3K Android (Turnip V38)", aynDir: "/storage/6531-3035/ROMs/psvita" },
+      psvita: { label: "PlayStation Vita", shortLabel: "PS Vita", icon: "💎", source: "RomsFun + Archive.org Direct", macEmu: "Vita3K Mac", aynEmu: "Vita3K Android (Turnip V39)", aynDir: "/storage/6531-3035/ROMs/psvita" },
       dreamcast: { label: "Sega Dreamcast", shortLabel: "Dreamcast", icon: "🌀", source: "RomsFun CDN Direct", macEmu: "Flycast Mac", aynEmu: "Flycast / RetroArch", aynDir: "/storage/6531-3035/ROMs/dreamcast" },
       saturn: { label: "Sega Saturn", shortLabel: "Saturn", icon: "🪐", source: "RomsFun CDN Direct", macEmu: "OpenEmu / Mednafen", aynEmu: "YabaSanshiro 2 / Beetle Saturn", aynDir: "/storage/6531-3035/ROMs/saturn" },
       genesis: { label: "Sega Mega Drive / Genesis", shortLabel: "Mega Drive", icon: "🦔", source: "RomsFun CDN Direct", macEmu: "OpenEmu / RetroArch", aynEmu: "RetroArch (Genesis Plus GX)", aynDir: "/storage/6531-3035/ROMs/genesis" },

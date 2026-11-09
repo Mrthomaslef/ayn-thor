@@ -1,5 +1,5 @@
 window.AYN_THOR_DATA = {
-  "generatedAt": "09/11/2026 03:00:32",
+  "generatedAt": "09/11/2026 22:55:38",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -15,8 +15,14 @@ window.AYN_THOR_DATA = {
     "idProduct": 0,
     "usbMode": "disconnected",
     "usbModeLabel": "Non branchée",
-    "adbReady": false,
-    "adbDevices": []
+    "adbReady": true,
+    "adbDevices": [
+      {
+        "id": "192.168.1.192:5555",
+        "state": "device",
+        "raw": "192.168.1.192:5555     device product:kalama model:AYN_Thor device:kalama transport_id:1"
+      }
+    ]
   },
   "summary": {
     "saveFoldersCount": 25,
@@ -25,7 +31,7 @@ window.AYN_THOR_DATA = {
     "romSystemsCount": 20,
     "romGamesCount": 152,
     "romTotalGB": 130.83,
-    "bonusToolsCount": 12
+    "bonusToolsCount": 17
   },
   "saves": [
     {
@@ -405,11 +411,11 @@ window.AYN_THOR_DATA = {
     {
       "id": "Switch_Eden",
       "label": "Nintendo Switch — Sauvegardes NAND Eden (Synchronisé avec Ryujinx Mac)",
-      "emulator": "Eden (`dev.eden.eden_emulator`)",
+      "emulator": "Eden Nightly (`dev.eden.eden_emulator.nightly`)",
       "category": "Nintendo Switch",
       "icon": "🔴",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Switch_Eden",
-      "androidPath": "/sdcard/Android/data/dev.eden.eden_emulator/files/nand/user",
+      "androidPath": "/sdcard/Android/data/dev.eden.eden_emulator.nightly/files/nand/user",
       "fileCount": 102,
       "sizeBytes": 40552120,
       "sizeMB": 38.67,
@@ -426,11 +432,11 @@ window.AYN_THOR_DATA = {
     {
       "id": "Switch_Eden_System",
       "label": "Nintendo Switch — Clés (`prod.keys`), Config & Profils Système Eden",
-      "emulator": "Eden (`dev.eden.eden_emulator`)",
+      "emulator": "Eden Nightly (`dev.eden.eden_emulator.nightly`)",
       "category": "Nintendo Switch",
       "icon": "🔑",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Switch_Eden_System",
-      "androidPath": "/sdcard/Android/data/dev.eden.eden_emulator/files/nand/system",
+      "androidPath": "/sdcard/Android/data/dev.eden.eden_emulator.nightly/files/nand/system",
       "fileCount": 6,
       "sizeBytes": 219768,
       "sizeMB": 0.21,
@@ -447,7 +453,7 @@ window.AYN_THOR_DATA = {
     {
       "id": "Switch_Mods_Updates",
       "label": "Nintendo Switch — Mods & Updates (MicroSD)",
-      "emulator": "Eden (`dev.eden.eden_emulator`)",
+      "emulator": "Eden Nightly (`dev.eden.eden_emulator.nightly`)",
       "category": "Nintendo Switch",
       "icon": "🧩",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Switch_Mods_Updates",
@@ -1411,12 +1417,21 @@ window.AYN_THOR_DATA = {
       "sizeMB": 29.42
     },
     {
+      "filename": "Skyrim-0.30.15.apk",
+      "label": "Skyrim-0.30.15.apk",
+      "type": "Fichier Bonus",
+      "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Skyrim-0.30.15.apk",
+      "androidPath": "/sdcard/Download/Skyrim-0.30.15.apk",
+      "usage": "Outil ou ressource AYN Thor.",
+      "sizeMB": 39.92
+    },
+    {
       "filename": "Turnip_Gen8_V38.zip",
       "label": "Driver GPU Turnip StevenMXZ Gen8 V38 (Mesa 27.0.0-R1 · Vulkan 1.4.363)",
       "type": "Driver GPU Vulkan 1.4.363 (.zip)",
       "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Turnip_Gen8_V38.zip",
       "androidPath": "/sdcard/Download/Turnip_Gen8_V38.zip",
-      "usage": "Build StevenMXZ V38 unifié (Mesa 27.0.0 + patches Vauzi/Hugo) présenté par Graves pour XenDroid Plus, Switch et Winlator.",
+      "usage": "Build StevenMXZ V38 unifié conservé en fallback.",
       "sizeMB": 2.64
     },
     {
@@ -1425,8 +1440,26 @@ window.AYN_THOR_DATA = {
       "type": "Driver GPU Vulkan 1.4.363 (.zip)",
       "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Turnip_Gen8_V38_Patched.zip",
       "androidPath": "/sdcard/Download/Turnip_Gen8_V38_Patched.zip",
-      "usage": "Variante V38 patchée avec les hacks WinNative & Vauzi-17 pour les jeux Xbox 360 (XenDroid) et PC (Winlator/GameHub) exigeants.",
+      "usage": "Variante V38 patchée conservée en fallback.",
       "sizeMB": 2.68
+    },
+    {
+      "filename": "Turnip_Gen8_V39.zip",
+      "label": "Driver GPU Turnip StevenMXZ Gen8 V39 (Mesa 27.0.0-R2 · Vulkan 1.4.367)",
+      "type": "Driver GPU Vulkan 1.4.367 (.zip)",
+      "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Turnip_Gen8_V39.zip",
+      "androidPath": "/sdcard/Download/Turnip_Gen8_V39.zip",
+      "usage": "Build StevenMXZ V39 unifié depuis Mesa upstream (Vulkan 1.4.367) pour Switch, XenDroid et Winlator/GameHub/GameNative.",
+      "sizeMB": 2.54
+    },
+    {
+      "filename": "Turnip_Gen8_V39_Patched.zip",
+      "label": "Driver GPU Turnip StevenMXZ Gen8 V39-Patched (AAA Games / Performance Patches)",
+      "type": "Driver GPU Vulkan 1.4.367 (.zip)",
+      "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Turnip_Gen8_V39_Patched.zip",
+      "androidPath": "/sdcard/Download/Turnip_Gen8_V39_Patched.zip",
+      "usage": "Variante V39 patchée avec correctifs AAA/performance non fusionnés pour les jeux Xbox 360 (XenDroid) et PC (GameNative/GameHub/Winlator) exigeants.",
+      "sizeMB": 2.58
     },
     {
       "filename": "Turnip_v27.0.0-R1-Oneui.zip",
@@ -1434,17 +1467,35 @@ window.AYN_THOR_DATA = {
       "type": "Driver GPU Vulkan 1.4.363 (.zip)",
       "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Turnip_v27.0.0-R1-Oneui.zip",
       "androidPath": "/sdcard/Download/Turnip_v27.0.0-R1-Oneui.zip",
-      "usage": "Variante anti-glitch de Turnip v27.0.0-R1 (V38) en cas d'artéfacts graphiques sur certains moteurs Vulkan.",
+      "usage": "Variante anti-glitch V38 conservée en fallback.",
       "sizeMB": 2.64
     },
     {
       "filename": "Turnip_v27.0.0-R1.zip",
-      "label": "Driver GPU Turnip StevenMXZ v27.0.0-R1 / V38 (Adreno 740 / Snapdragon 8 Gen 2)",
+      "label": "Driver GPU Turnip StevenMXZ v27.0.0-R1 / V38 (Adreno 740 / Fallback)",
       "type": "Driver GPU Vulkan 1.4.363 (.zip)",
       "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Turnip_v27.0.0-R1.zip",
       "androidPath": "/sdcard/Download/Turnip_v27.0.0-R1.zip",
-      "usage": "Nouveau driver StevenMXZ V38 / Mesa 27.0.0-R1 (A6xx/A7xx) — Optimal sur AYN Thor pour XenDroid (Xbox 360), Eden / Eden Duo (Switch), Azahar / Dusk (3DS) et Cemu.",
+      "usage": "Version précédente StevenMXZ V38 / Mesa 27.0.0-R1 conservée en fallback.",
       "sizeMB": 2.64
+    },
+    {
+      "filename": "Turnip_v27.0.0-R2-Oneui.zip",
+      "label": "Driver GPU Turnip StevenMXZ v27.0.0-R2 OneUI Fix (A6xx/A7xx · V39)",
+      "type": "Driver GPU Vulkan 1.4.367 (.zip)",
+      "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Turnip_v27.0.0-R2-Oneui.zip",
+      "androidPath": "/sdcard/Download/Turnip_v27.0.0-R2-Oneui.zip",
+      "usage": "Variante anti-glitch de Turnip v27.0.0-R2 (V39) en cas d'artéfacts graphiques sur certains moteurs Vulkan.",
+      "sizeMB": 2.54
+    },
+    {
+      "filename": "Turnip_v27.0.0-R2.zip",
+      "label": "Driver GPU Turnip StevenMXZ v27.0.0-R2 / V39 (Adreno 740 / Snapdragon 8 Gen 2)",
+      "type": "Driver GPU Vulkan 1.4.367 (.zip)",
+      "localPath": "/Volumes/GamingSSD/Games/Outils_Bonus/Turnip_v27.0.0-R2.zip",
+      "androidPath": "/sdcard/Download/Turnip_v27.0.0-R2.zip",
+      "usage": "Driver actif StevenMXZ V39 / Mesa 27.0.0-R2 (A7xx · Vulkan 1.4.367) — Optimal sur AYN Thor pour Eden Nightly / Eden / Eden Duo (Switch), Azahar / Dusk (3DS), Cemu (Wii U) et XenDroid (Xbox 360).",
+      "sizeMB": 2.54
     },
     {
       "filename": "lichii-macos-arm64.zip",
@@ -1490,10 +1541,10 @@ window.AYN_THOR_DATA = {
       "package": "xendroid.compose",
       "icon": "🟢",
       "socProfile": "Mode Performance Max / Ventilateur Sport",
-      "gpuDriver": "Turnip_v27.0.0-R1.zip (StevenMXZ V38)",
-      "resolution": "1x (720p Natif Xbox 360) — Vulkan 1.4.363",
+      "gpuDriver": "Turnip_v27.0.0-R2.zip (StevenMXZ V39)",
+      "resolution": "1x (720p Natif Xbox 360) — Vulkan 1.4.367",
       "settings": [
-        "Driver GPU : `Turnip_v27.0.0-R1.zip` (StevenMXZ V38 A7xx) ou `Turnip_Gen8_V38_Patched.zip`",
+        "Driver GPU : `Turnip_v27.0.0-R2.zip` (StevenMXZ V39 A7xx) ou `Turnip_Gen8_V39_Patched.zip`",
         "Vulkan : `vulkan_in_pass_resolve = true` | `vulkan_dynamic_rendering = true`",
         "Pipeline : `vulkan_pipeline_creation_threads = 4` | `vulkan_fast_register_ranges = true`",
         "Drivers pré-déployés dans `/sdcard/Download/` et prêts à sélectionner dans XenDroid"
@@ -1505,7 +1556,7 @@ window.AYN_THOR_DATA = {
       "package": "org.wwhdrecomp.wwhd",
       "icon": "⛵",
       "socProfile": "Mode Standard / Ventilateur Intelligent (60 FPS)",
-      "gpuDriver": "Vulkan 1.4 Turnip v27.0.0-R1 (V38)",
+      "gpuDriver": "Vulkan 1.4 Turnip v27.0.0-R2 (V39)",
       "resolution": "1.5x à 2x (1080p/1440p) — 60 FPS",
       "settings": [
         "Compilation AOT native arm64 depuis `The Wind Waker HD (EU).wua` (Français inclus)",
@@ -1516,14 +1567,15 @@ window.AYN_THOR_DATA = {
     },
     {
       "id": "eden_switch",
-      "name": "Eden / Eden Duo (Nintendo Switch)",
-      "package": "dev.eden.eden_emulator",
+      "name": "Eden Nightly / Eden Duo (Nintendo Switch)",
+      "package": "dev.eden.eden_emulator.nightly",
       "icon": "🔴",
       "socProfile": "Mode Performance / Ventilateur Intelligent",
-      "gpuDriver": "Turnip_v27.0.0-R1.zip (StevenMXZ V38)",
+      "gpuDriver": "Turnip_v27.0.0-R2.zip — StevenMXZ V39 (identique sur Eden Nightly, Eden stable et Eden Duo)",
       "resolution": "1x (720p/1080p Docked) — FSR 80%",
       "settings": [
-        "Graphics > GPU Driver : `Turnip_v27.0.0-R1.zip` (StevenMXZ V38 · Vulkan 1.4.363) activé",
+        "Eden Nightly officielle (nightly.eden-emu.dev) = lecteur par défaut de la tuile Switch Cocoon ; Eden stable gardé en secours (saves en miroir)",
+        "Graphics > GPU Driver : `Turnip_v27.0.0-R2.zip` (StevenMXZ V39, global + profil par jeu)",
         "Graphics > API : Vulkan | Disk Shader Cache : ON | Async Shaders : ON",
         "CPU > Accuracy : Auto | NCE (Native Code Execution) : Activé (arm64 natif)",
         "Audio > Output Engine : cubeb"
@@ -1535,10 +1587,10 @@ window.AYN_THOR_DATA = {
       "package": "org.azahar_emu.azahar",
       "icon": "🕹️",
       "socProfile": "Mode Standard / Équilibré",
-      "gpuDriver": "Turnip_v27.0.0-R1.zip (StevenMXZ V38)",
+      "gpuDriver": "Turnip_v27.0.0-R2.zip (StevenMXZ V39)",
       "resolution": "3x à 4x (1080p OLED)",
       "settings": [
-        "Graphics > GPU Driver : `Turnip_v27.0.0-R1.zip` (StevenMXZ V38)",
+        "Graphics > GPU Driver : `Turnip_v27.0.0-R2.zip` (StevenMXZ V39 · Vulkan 1.4.367) activé",
         "Graphics > Graphics API : Vulkan | Async Shader Compilation : ON",
         "Audio > Audio Stretching : ON (évite les craquements)",
         "Layout : Double écran natif AYN Thor (Haut 1080p + Bas Tactile 1240×1080)"
@@ -1550,7 +1602,7 @@ window.AYN_THOR_DATA = {
       "package": "xyz.aethersx2.tturnip",
       "icon": "💿",
       "socProfile": "Mode Performance",
-      "gpuDriver": "Turnip v27.0.0-R1 (V38) ou Pilote Système",
+      "gpuDriver": "Turnip v27.0.0-R2 (V39) ou Pilote Système",
       "resolution": "2.5x à 3x (1080p) — Widescreen Patches ON",
       "settings": [
         "Graphics > GPU Renderer : Vulkan",

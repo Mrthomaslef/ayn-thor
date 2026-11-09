@@ -1,5 +1,5 @@
-// Self-clearing Service Worker v8 — purges any old cached index.html
-const CACHE_NAME = "ayn-thor-switch-dl-v8";
+// Self-clearing Service Worker v9 — purges any old cached index.html
+const CACHE_NAME = "ayn-thor-switch-dl-v9";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
