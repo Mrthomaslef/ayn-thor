@@ -127,6 +127,7 @@
         </div>
         <div class="meter"><i id="bMeter"></i></div>
         <div class="mut">Niveau sonore dans la chambre</div>
+        <div class="mut" id="bNotif" style="margin-top:8px">🔔 Notifications iPhone : prêtes</div>
       </div>
       <button class="btn" id="bNight">🌙 Mode nuit (écran noir)</button>
       <div style="height:10px"></div>
@@ -164,13 +165,28 @@
       <div class="card">
         <div class="row between"><b>Sensibilité de l'alerte</b><span class="mut" id="pThrVal"></span></div>
         <input type="range" id="pThr" min="10" max="95" step="1">
-        <div class="mut">Alerte sonore + flash quand le bruit dépasse le trait blanc.</div>
+        <div class="mut">Bip + flash ici, et notification ntfy sur l'iPhone, quand le bruit dépasse le trait blanc.</div>
       </div>
       <div class="card">
         <div class="row between"><b>Journal de la nuit</b><button class="btn sec small" id="pClear">Effacer</button></div>
         <ul class="log" id="pLog"></ul>
       </div>
       <button class="btn bad" id="pStop">Arrêter l'écoute</button>
+    </div>
+    <div class="card" id="pNotifCard" style="margin-top:14px">
+      <b>🔔 Notification sur l'iPhone en cas de bruit</b>
+      <div class="mut" style="margin:6px 0 10px">Fonctionne même iPhone verrouillé ou appli fermée : c'est l'AYN qui envoie l'alerte (bruit fort, batterie faible).</div>
+      <ol class="mut" style="margin:0 0 12px;padding-left:20px;line-height:1.7">
+        <li>Installe l'appli gratuite <b>ntfy</b> (une seule fois)</li>
+        <li>Dans ntfy : <b>+</b> → colle le nom ci-dessous → <b>Subscribe</b></li>
+      </ol>
+      <div class="code" id="pTopic" style="font-size:17px;letter-spacing:1px;word-break:break-all">—</div>
+      <div class="grid2" style="margin-top:10px">
+        <a class="btn sec" style="text-align:center;text-decoration:none" href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener">📲 Installer ntfy</a>
+        <button class="btn sec" id="pCopyTopic">📋 Copier le nom</button>
+      </div>
+      <div style="height:10px"></div>
+      <button class="btn" id="pTestNotif">Envoyer une notification test</button>
     </div>
   </section>
 
@@ -196,6 +212,15 @@ const cleanCode = (s) => (s || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice
 const babyId = (c) => PREFIX + c.toLowerCase();
 const hhmm = () => new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
 let sessionActive = false;
+const NTFY = "https://ntfy.sh/";
+async function topicFor(code) {
+  const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("babyphone-emile:" + code));
+  return "babyphone-" + [...new Uint8Array(h)].slice(0, 8).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+function ntfySend(topic, title, msg, prio, tags) {
+  const q = new URLSearchParams({ title, priority: String(prio || 4), tags: tags || "baby" });
+  return fetch(NTFY + topic + "?" + q, { method: "POST", body: msg }).then((r) => r.ok);
+}
 
 /* ---------- Wake Lock (écran toujours allumé) ---------- */
 let wakeLock = null;
@@ -221,6 +246,14 @@ $("back").addEventListener("click", () => show("home"));
 let bPeer, bStream, bCtx, bAnalyser, bTimer, bPeak = 0, bRetry;
 const bParents = new Map(); // peerId -> {conn, call}
 let bBattery = null, bVeil = false;
+let bTopic = null, bThr = +(localStorage.getItem("bp_baby_thr") || 50), bHist = [], bLastNotif = 0, bLowBatSent = false;
+const NOTIF_COOLDOWN = 2 * 60 * 1000; // pas plus d'une notification toutes les 2 min
+function babyNotify(title, msg, prio, tags) {
+  if (!bTopic) return;
+  ntfySend(bTopic, title, msg, prio, tags)
+    .then((ok) => { $("bNotif").textContent = (ok ? "🔔 Notification envoyée à " : "⚠️ Échec notification à ") + hhmm(); })
+    .catch(() => { $("bNotif").textContent = "⚠️ Pas d'Internet pour notifier (" + hhmm() + ")"; });
+}
 
 function newCode() { let c = ""; const r = crypto.getRandomValues(new Uint8Array(8)); for (const x of r) c += ALPHA[x % ALPHA.length]; return c; }
 function initBaby() {
@@ -246,6 +279,7 @@ $("bStart").addEventListener("click", async () => {
   bAnalyser = bCtx.createAnalyser(); bAnalyser.fftSize = 1024;
   bCtx.createMediaStreamSource(bStream).connect(bAnalyser);
   try { const b = await navigator.getBattery(); bBattery = b; } catch (e) {}
+  bTopic = await topicFor(localStorage.getItem("bp_baby_code"));
   sessionActive = true; keepAwake();
   $("bSetup").classList.add("hidden"); $("bLive").classList.remove("hidden"); $("back").classList.add("hidden");
   $("bNewCode").classList.add("hidden");
@@ -264,6 +298,16 @@ $("bStart").addEventListener("click", async () => {
       $("nightDot").style.background = bPeak > 55 ? "#5a1a24" : "#1a3a2a";
       const msg = { t: "lvl", v: Math.round(bPeak), bat: bBattery ? Math.round(bBattery.level * 100) : null, chg: bBattery ? bBattery.charging : null, veil: bVeil };
       for (const p of bParents.values()) if (p.conn && p.conn.open) { try { p.conn.send(msg); } catch (e) {} }
+      // détection d'un bruit significatif : ≥3 pics au-dessus du seuil sur 2 s
+      bHist.push(bPeak >= bThr ? 1 : 0); if (bHist.length > 8) bHist.shift();
+      if (bHist.reduce((a, b) => a + b, 0) >= 3 && Date.now() - bLastNotif > NOTIF_COOLDOWN) {
+        bLastNotif = Date.now(); bHist = [];
+        babyNotify("👶 Émile fait du bruit", "Bruit fort dans la chambre à " + hhmm() + " (niveau " + Math.round(bPeak) + "/100)", 5, "baby,loud_sound");
+      }
+      if (bBattery && bBattery.level <= 0.15 && !bBattery.charging && !bLowBatSent) {
+        bLowBatSent = true; babyNotify("🔋 Batterie AYN faible", "Batterie à " + Math.round(bBattery.level * 100) + " % : branche l'AYN Thor", 4, "battery");
+      }
+      if (bBattery && bBattery.charging) bLowBatSent = false;
       bPeak = 0;
     }
   }, 50);
@@ -287,6 +331,7 @@ function startBabyPeer() {
       updParents();
     });
     conn.on("data", (d) => {
+      if (d && d.t === "cfg" && d.thr) { bThr = +d.thr; localStorage.setItem("bp_baby_thr", bThr); }
       if (d && d.t === "veil") { bVeil = !!d.on; $("night").classList.toggle("veil", bVeil); if (bVeil) enterNight(); else exitNight(); }
     });
     const drop = () => { const p = bParents.get(conn.peer); if (p && p.conn === conn) { try { p.call && p.call.close(); } catch (e) {} bParents.delete(conn.peer); } updParents(); };
@@ -356,10 +401,31 @@ function initParent() {
   $("pCode").value = fmtCode(fromUrl || saved);
   const thr = +(localStorage.getItem("bp_thr") || 50);
   $("pThr").value = thr; setThr(thr);
-  renderLog();
+  renderLog(); refreshTopic();
 }
 $("pCode").addEventListener("input", (e) => { const c = cleanCode(e.target.value); e.target.value = c.length > 4 ? fmtCode(c) : c; });
-function setThr(v) { $("pThrVal").textContent = v; $("pThrMark").style.left = v + "%"; localStorage.setItem("bp_thr", v); }
+function setThr(v) { $("pThrVal").textContent = v; $("pThrMark").style.left = v + "%"; localStorage.setItem("bp_thr", v); sendCfg(); }
+function sendCfg() { if (pConn && pConn.open) try { pConn.send({ t: "cfg", thr: +$("pThr").value }); } catch (e) {} }
+let pTopic = null;
+async function refreshTopic() {
+  const c = cleanCode($("pCode").value);
+  pTopic = c.length === 8 ? await topicFor(c) : null;
+  $("pTopic").textContent = pTopic || "Tape d'abord le code de l'AYN";
+}
+$("pCode").addEventListener("input", refreshTopic);
+$("pCopyTopic").addEventListener("click", async () => {
+  if (!pTopic) return;
+  try { await navigator.clipboard.writeText(pTopic); $("pCopyTopic").textContent = "✅ Copié"; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents($("pTopic")); getSelection().removeAllRanges(); getSelection().addRange(r); $("pCopyTopic").textContent = "Sélectionné : copie-le"; }
+  setTimeout(() => ($("pCopyTopic").textContent = "📋 Copier le nom"), 2500);
+});
+$("pTestNotif").addEventListener("click", async () => {
+  if (!pTopic) return alert("Tape d'abord le code de l'AYN.");
+  const b = $("pTestNotif"); b.textContent = "Envoi…";
+  const ok = await ntfySend(pTopic, "👶 Test BabyPhone", "Si tu vois ceci, les alertes de bruit arriveront sur ce téléphone.", 4, "baby").catch(() => false);
+  b.textContent = ok ? "✅ Envoyée — vérifie l'appli ntfy" : "⚠️ Échec (Internet ?)";
+  setTimeout(() => (b.textContent = "Envoyer une notification test"), 4000);
+});
 $("pThr").addEventListener("input", (e) => setThr(+e.target.value));
 
 function setP(txt, cls) { $("pState").textContent = txt; $("pDot").className = "dot " + (cls || ""); }
@@ -434,7 +500,7 @@ function connectToBaby() {
   try { pConn && pConn.close(); } catch (e) {}
   pConn = pPeer.connect(babyId(pCode), { reliable: true });
   pConn.on("data", onBabyData);
-  pConn.on("open", () => setP("Connecté", "ok"));
+  pConn.on("open", () => { setP("Connecté", "ok"); sendCfg(); });
 }
 function reconnectParent() {
   if (!pPeer || pPeer.destroyed) { startParentPeer(); return; }

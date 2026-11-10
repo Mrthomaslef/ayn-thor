@@ -1,5 +1,5 @@
 // Network-first : dernière version en ligne, cache en secours hors-ligne
-const CACHE = "babyphone-v2";
+const CACHE = "babyphone-v3";
 const SHELL = ["./", "index.html", "icon.svg", "icon.png", "manifest.json", "vendor/peerjs.min.js"];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
