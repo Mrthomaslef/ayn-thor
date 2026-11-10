@@ -1,5 +1,5 @@
 {
-  "generatedAt": "09/11/2026 22:55:38",
+  "generatedAt": "10/11/2026 03:01:01",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -15,18 +15,12 @@
     "idProduct": 0,
     "usbMode": "disconnected",
     "usbModeLabel": "Non branchée",
-    "adbReady": true,
-    "adbDevices": [
-      {
-        "id": "192.168.1.192:5555",
-        "state": "device",
-        "raw": "192.168.1.192:5555     device product:kalama model:AYN_Thor device:kalama transport_id:1"
-      }
-    ]
+    "adbReady": false,
+    "adbDevices": []
   },
   "summary": {
     "saveFoldersCount": 25,
-    "saveFilesCount": 52565,
+    "saveFilesCount": 52566,
     "saveTotalMB": 10184.6,
     "romSystemsCount": 20,
     "romGamesCount": 152,
@@ -334,9 +328,9 @@
       "icon": "👾",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/RetroArch_Saves",
       "androidPath": "/sdcard/RetroArch",
-      "fileCount": 21,
-      "sizeBytes": 2519840,
-      "sizeMB": 2.4,
+      "fileCount": 22,
+      "sizeBytes": 2552656,
+      "sizeMB": 2.43,
       "sampleFiles": [
         "saves/FORESTIA.pure.zip",
         "saves/melonDS DS/Mario Kart DS (Europe) (En,Fr,De,Es,It).sav",
@@ -345,7 +339,7 @@
         "saves/Gambatte/Legend of Zelda, The - Link's Awakening (France).srm",
         "saves/Gambatte/Pokemon - Crystal Version (USA, Europe) (Rev 1).rtc"
       ],
-      "updatedAt": "05/11/2026 21:28"
+      "updatedAt": "07/11/2026 20:20"
     },
     {
       "id": "RetroArch_States",

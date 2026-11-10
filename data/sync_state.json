@@ -1,11 +1,11 @@
 {
-  "timestamp": "09/11/2026 03:00:30",
+  "timestamp": "10/11/2026 03:00:59",
   "mode": "smart",
   "thorConnected": false,
   "serial": "",
-  "totalFilesChecked": 318,
+  "totalFilesChecked": 319,
   "updatedOnMacCount": 0,
-  "updatedOnThorCount": 0,
+  "updatedOnThorCount": 1,
   "profiles": [
     {
       "id": "switch_ryujinx_eden",
@@ -104,10 +104,12 @@
       "icon": "👾",
       "mode": "smart",
       "thorConnected": false,
-      "totalFiles": 21,
+      "totalFiles": 22,
       "identical": 21,
       "updatedOnMac": [],
-      "updatedOnThor": [],
+      "updatedOnThor": [
+        "mGBA/Pokemon - Crystal Version (USA, Europe) (Rev 1).sav"
+      ],
       "details": [],
       "status": "offline_mac_ssd_only"
     },

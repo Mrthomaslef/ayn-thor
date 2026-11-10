@@ -228,7 +228,7 @@ def main():
     payload = {
         "generatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "hardware": {
-            "ayn": "AYN Thor — Snapdragon 8 Gen 2 · Adreno 740 · Android (Turnip)",
+            "ayn": "AYN Thor — Snapdragon 8 Gen 2 · Adreno 740 · Android (Turnip V39 · Vulkan 1.4.367)",
             "m4": "Mac mini M4 — Apple Silicon ARM64 · Metal",
         },
         "systemLabels": {s: SYSTEM_LABELS.get(s, s.upper()) for s in systems},
