@@ -222,6 +222,70 @@ function ntfySend(topic, title, msg, prio, tags) {
   return fetch(NTFY + topic + "?" + q, { method: "POST", body: msg }).then((r) => r.ok);
 }
 
+/* ---------- Relais Mac mini (quand la liaison directe échoue : 4G / CGNAT) ---------- */
+const FORCE_RELAY = new URLSearchParams(location.search).get("relay") === "1";
+async function roomFor(code) {
+  const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("babyphone-relay:" + code));
+  return [...new Uint8Array(h)].slice(0, 16).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+async function relayUrl() {
+  const o = new URLSearchParams(location.search).get("relayUrl");
+  if (o) return o;
+  const r = await fetch("relay.json?ts=" + Date.now(), { cache: "no-store" });
+  return (await r.json()).url;
+}
+// Audio relais : mono 16 kHz, μ-law 8 bits (16 ko/s), silences non transmis
+const RELAY_SR = 16000;
+function muEnc(x) {
+  let s = Math.max(-1, Math.min(1, x)) * 32635, sign = s < 0 ? 0x80 : 0; if (sign) s = -s;
+  s += 132; let e = 7; for (let m = 0x4000; (s & m) === 0 && e > 0; m >>= 1) e--;
+  return ~(sign | (e << 4) | ((s >> (e + 3)) & 0x0f)) & 0xff;
+}
+const MU_DEC = new Float32Array(256).map((_, i) => {
+  const u = ~i & 0xff, e = (u >> 4) & 7; let s = (((u & 0x0f) << 3) + 132) << e; s -= 132;
+  return ((u & 0x80) ? -s : s) / 32635;
+});
+function encodeChunk(f32, sr) {
+  const r = sr / RELAY_SR, n = Math.floor(f32.length / r), out = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    const a = Math.floor(i * r), b = Math.max(a + 1, Math.floor((i + 1) * r));
+    let acc = 0; for (let j = a; j < b; j++) acc += f32[j]; out[i] = muEnc(acc / (b - a));
+  }
+  return out;
+}
+function makePlayer(ctx) {
+  const gain = ctx.createGain(); gain.connect(ctx.destination);
+  let next = 0;
+  return {
+    gain,
+    push(u8) {
+      const sr = ctx.sampleRate, r = sr / RELAY_SR, n = Math.floor(u8.length * r);
+      const buf = ctx.createBuffer(1, n, sr), d = buf.getChannelData(0);
+      for (let i = 0; i < n; i++) {
+        const x = i / r, k = Math.floor(x), f = x - k;
+        const a = MU_DEC[u8[k]], b = MU_DEC[u8[Math.min(k + 1, u8.length - 1)]];
+        d[i] = a + (b - a) * f;
+      }
+      const src = ctx.createBufferSource(); src.buffer = buf; src.connect(gain);
+      const now = ctx.currentTime;
+      if (next < now + 0.05 || next > now + 1.2) next = now + 0.3; // tampon anti-saccades
+      src.start(next); next += buf.duration;
+    },
+  };
+}
+// Capture micro → paquets μ-law (callback), via ScriptProcessor (Chrome Android + Safari iOS)
+function startCapture(ctx, stream, onChunk) {
+  const src = ctx.createMediaStreamSource(stream), sp = ctx.createScriptProcessor(4096, 1, 1);
+  sp.onaudioprocess = (e) => {
+    const f = e.inputBuffer.getChannelData(0);
+    let s = 0; for (let i = 0; i < f.length; i += 4) s += f[i] * f[i];
+    const db = 20 * Math.log10(Math.sqrt(s / (f.length / 4)) + 1e-9);
+    if (db > -58) onChunk(encodeChunk(f, ctx.sampleRate)); // silence absolu : rien n'est envoyé
+  };
+  src.connect(sp); sp.connect(ctx.destination);
+  return () => { try { sp.disconnect(); src.disconnect(); } catch (e) {} };
+}
+
 /* ---------- Wake Lock (écran toujours allumé) ---------- */
 let wakeLock = null;
 async function keepAwake() {
@@ -246,6 +310,7 @@ $("back").addEventListener("click", () => show("home"));
 let bPeer, bStream, bCtx, bAnalyser, bTimer, bPeak = 0, bRetry;
 const bParents = new Map(); // peerId -> {conn, call}
 let bBattery = null, bVeil = false;
+let bWs = null, bRelayParents = 0, bRelayRetry, bTalkPlayer = null, bTalkHide;
 let bTopic = null, bThr = +(localStorage.getItem("bp_baby_thr") || 50), bHist = [], bLastNotif = 0, bLowBatSent = false;
 const NOTIF_COOLDOWN = 2 * 60 * 1000; // pas plus d'une notification toutes les 2 min
 function babyNotify(title, msg, prio, tags) {
@@ -284,6 +349,9 @@ $("bStart").addEventListener("click", async () => {
   $("bSetup").classList.add("hidden"); $("bLive").classList.remove("hidden"); $("back").classList.add("hidden");
   $("bNewCode").classList.add("hidden");
   startBabyPeer();
+  startBabyRelay();
+  bTalkPlayer = makePlayer(bCtx);
+  startCapture(bCtx, bStream, (u8) => { if (bRelayParents && bWs && bWs.readyState === 1 && bWs.bufferedAmount < 64000) bWs.send(u8); });
   const buf = new Float32Array(bAnalyser.fftSize);
   // mesure ~20 fois/s, envoi aux parents 4 fois/s
   let n = 0;
@@ -298,6 +366,7 @@ $("bStart").addEventListener("click", async () => {
       $("nightDot").style.background = bPeak > 55 ? "#5a1a24" : "#1a3a2a";
       const msg = { t: "lvl", v: Math.round(bPeak), bat: bBattery ? Math.round(bBattery.level * 100) : null, chg: bBattery ? bBattery.charging : null, veil: bVeil };
       for (const p of bParents.values()) if (p.conn && p.conn.open) { try { p.conn.send(msg); } catch (e) {} }
+      if (bRelayParents && bWs && bWs.readyState === 1) bWs.send(JSON.stringify(msg));
       // détection d'un bruit significatif : ≥3 pics au-dessus du seuil sur 2 s
       bHist.push(bPeak >= bThr ? 1 : 0); if (bHist.length > 8) bHist.shift();
       if (bHist.reduce((a, b) => a + b, 0) >= 3 && Date.now() - bLastNotif > NOTIF_COOLDOWN) {
@@ -314,8 +383,31 @@ $("bStart").addEventListener("click", async () => {
 });
 
 function setBabyState(txt, cls) { $("bState").textContent = txt; $("bDot").className = "dot " + (cls || ""); }
-function updParents() { const n = [...bParents.values()].filter((p) => p.conn && p.conn.open).length; $("bParents").textContent = n + (n > 1 ? " parents" : " parent"); setBabyState(n ? "Parent à l'écoute" : "En attente d'un parent", n ? "ok" : "warn"); }
+function updParents() { const n = [...bParents.values()].filter((p) => p.conn && p.conn.open).length + bRelayParents; $("bParents").textContent = n + (n > 1 ? " parents" : " parent"); setBabyState(n ? "Parent à l'écoute" : "En attente d'un parent", n ? "ok" : "warn"); }
 
+function babyCmd(d) {
+  if (d && d.t === "cfg" && d.thr) { bThr = +d.thr; localStorage.setItem("bp_baby_thr", bThr); }
+  if (d && d.t === "veil") { bVeil = !!d.on; $("night").classList.toggle("veil", bVeil); if (bVeil) enterNight(); else exitNight(); }
+}
+async function startBabyRelay() {
+  clearTimeout(bRelayRetry);
+  if (!sessionActive) return;
+  try {
+    const url = await relayUrl(), room = await roomFor(localStorage.getItem("bp_baby_code"));
+    const ws = new WebSocket(url + "/?role=baby&room=" + room); ws.binaryType = "arraybuffer"; bWs = ws;
+    ws.onmessage = (e) => {
+      if (typeof e.data !== "string") { // voix du parent (maintenir pour parler, via relais)
+        bTalkPlayer && bTalkPlayer.push(new Uint8Array(e.data));
+        $("remoteTalk").classList.remove("hidden"); clearTimeout(bTalkHide);
+        bTalkHide = setTimeout(() => $("remoteTalk").classList.add("hidden"), 1200);
+        return;
+      }
+      const d = JSON.parse(e.data);
+      if (d.t === "relay") { bRelayParents = d.parents; updParents(); } else babyCmd(d);
+    };
+    ws.onclose = () => { if (bWs === ws) { bWs = null; bRelayParents = 0; updParents(); bRelayRetry = setTimeout(startBabyRelay, 5000); } };
+  } catch (e) { bRelayRetry = setTimeout(startBabyRelay, 10000); }
+}
 function startBabyPeer() {
   clearTimeout(bRetry);
   if (!sessionActive) return;
@@ -330,10 +422,7 @@ function startBabyPeer() {
       bParents.set(conn.peer, { conn, call });
       updParents();
     });
-    conn.on("data", (d) => {
-      if (d && d.t === "cfg" && d.thr) { bThr = +d.thr; localStorage.setItem("bp_baby_thr", bThr); }
-      if (d && d.t === "veil") { bVeil = !!d.on; $("night").classList.toggle("veil", bVeil); if (bVeil) enterNight(); else exitNight(); }
-    });
+    conn.on("data", babyCmd);
     const drop = () => { const p = bParents.get(conn.peer); if (p && p.conn === conn) { try { p.call && p.call.close(); } catch (e) {} bParents.delete(conn.peer); } updParents(); };
     conn.on("close", drop); conn.on("error", drop);
   });
@@ -355,7 +444,8 @@ function startBabyPeer() {
 }
 
 $("bStop").addEventListener("click", () => {
-  sessionActive = false; clearInterval(bTimer); clearTimeout(bRetry);
+  sessionActive = false; clearInterval(bTimer); clearTimeout(bRetry); clearTimeout(bRelayRetry);
+  try { const w = bWs; bWs = null; w && w.close(); } catch (e) {} bRelayParents = 0;
   for (const p of bParents.values()) { try { p.call && p.call.close(); p.conn && p.conn.close(); } catch (e) {} }
   bParents.clear();
   try { bPeer && bPeer.destroy(); } catch (e) {}
@@ -394,6 +484,38 @@ $("bNight").addEventListener("click", enterNight);
    ===================================================================== */
 let pPeer, pConn, pCode, pCtx, pLast = 0, pWatch, pOver = 0, pAlertOn = false, pMuted = false, pLostNotified = false;
 let pTalkCall, pTalkStream, pLastAlert = 0, pHist = [], pVeilOn = false;
+let pMode = "direct", pWs = null, pWsRetry, pPlayer = null, pTalkStop = null;
+function sendBaby(obj) {
+  if (pMode === "relay") { if (pWs && pWs.readyState === 1) pWs.send(JSON.stringify(obj)); }
+  else if (pConn && pConn.open) try { pConn.send(obj); } catch (e) {}
+}
+// Bascule sur le relais du Mac mini (4G, réseau qui bloque le direct)
+function useRelay(why) {
+  if (pMode === "relay" || !sessionActive) return;
+  pMode = "relay"; log("📡 Passage par le relais (" + why + ")");
+  try { pConn && pConn.close(); pPeer && pPeer.destroy(); } catch (e) {}
+  pPeer = pConn = null; $("pAudio").srcObject = null; $("pVideo").srcObject = null; $("pVideo").classList.add("hidden");
+  pPlayer = pPlayer || makePlayer(pCtx); pPlayer.gain.gain.value = pMuted ? 0 : 1;
+  pLast = 0; pStartAt = Date.now();
+  startParentRelay();
+}
+async function startParentRelay() {
+  clearTimeout(pWsRetry);
+  if (!sessionActive || pMode !== "relay") return;
+  setP("Connexion au relais…", "warn");
+  try {
+    const url = await relayUrl(), room = await roomFor(pCode);
+    const ws = new WebSocket(url + "/?role=parent&room=" + room); ws.binaryType = "arraybuffer"; pWs = ws;
+    ws.onopen = () => sendCfg();
+    ws.onmessage = (e) => {
+      if (typeof e.data !== "string") { pPlayer.push(new Uint8Array(e.data)); return; }
+      const d = JSON.parse(e.data);
+      if (d.t === "relay") { if (!d.baby) setP("AYN pas joignable — surveillance lancée ?", "bad"); }
+      else onBabyData(d);
+    };
+    ws.onclose = () => { if (pWs === ws) { pWs = null; pWsRetry = setTimeout(startParentRelay, 3000); } };
+  } catch (e) { setP("Relais injoignable — nouvel essai…", "bad"); pWsRetry = setTimeout(startParentRelay, 5000); }
+}
 
 function initParent() {
   const fromUrl = cleanCode(new URLSearchParams(location.search).get("code"));
@@ -405,7 +527,7 @@ function initParent() {
 }
 $("pCode").addEventListener("input", (e) => { const c = cleanCode(e.target.value); e.target.value = c.length > 4 ? fmtCode(c) : c; });
 function setThr(v) { $("pThrVal").textContent = v; $("pThrMark").style.left = v + "%"; localStorage.setItem("bp_thr", v); sendCfg(); }
-function sendCfg() { if (pConn && pConn.open) try { pConn.send({ t: "cfg", thr: +$("pThr").value }); } catch (e) {} }
+function sendCfg() { sendBaby({ t: "cfg", thr: +$("pThr").value }); }
 let pTopic = null;
 async function refreshTopic() {
   const c = cleanCode($("pCode").value);
@@ -458,16 +580,19 @@ $("pStart").addEventListener("click", async () => {
   sessionActive = true; keepAwake();
   $("pSetup").classList.add("hidden"); $("pLive").classList.remove("hidden"); $("back").classList.add("hidden");
   log("Début de l'écoute");
-  startParentPeer();
+  pMode = "direct";
+  if (FORCE_RELAY) { pStartAt = Date.now(); useRelay("forcé"); } else startParentPeer();
   pWatch = setInterval(() => {
     if (!sessionActive) return;
     const silent = Date.now() - pLast;
+    // liaison directe impossible (4G…) → relais automatique
+    if (pMode === "direct" && ((!pLast && Date.now() - pStartAt > 9000) || (pLast && silent > 6000))) { useRelay(pLast ? "liaison directe perdue" : "liaison directe impossible"); return; }
     if (pLast && silent > 7000) {
       setP("Connexion perdue — reconnexion…", "bad"); $("pFace").textContent = "📵";
       if (!pLostNotified) { pLostNotified = true; beep("lost"); log("⚠️ Connexion perdue avec l'AYN"); }
-      if (silent > 7000 && silent % 6000 < 1000) reconnectParent();
-    } else if (!pLast && Date.now() - pStartAt > 12000 && (Date.now() - pStartAt) % 6000 < 1000) {
-      setP("AYN introuvable — vérifie qu'il surveille", "bad"); reconnectParent();
+      if (pMode === "direct" && silent % 6000 < 1000) reconnectParent();
+    } else if (pMode === "relay" && !pLast && Date.now() - pStartAt > 12000) {
+      setP("AYN introuvable — vérifie qu'il surveille", "bad");
     }
   }, 1000);
 });
@@ -500,7 +625,7 @@ function connectToBaby() {
   try { pConn && pConn.close(); } catch (e) {}
   pConn = pPeer.connect(babyId(pCode), { reliable: true });
   pConn.on("data", onBabyData);
-  pConn.on("open", () => { setP("Connecté", "ok"); sendCfg(); });
+  pConn.on("open", () => sendCfg());
 }
 function reconnectParent() {
   if (!pPeer || pPeer.destroyed) { startParentPeer(); return; }
@@ -512,7 +637,7 @@ function onBabyData(d) {
   if (pLostNotified) { pLostNotified = false; log("✅ Connexion rétablie"); }
   if (!pLast) log("✅ Relié à l'AYN Thor");
   pLast = Date.now();
-  setP("Connecté", "ok");
+  setP(pMode === "relay" ? "Connecté (via relais)" : "Connecté", "ok");
   $("pMeter").style.width = d.v + "%";
   if (d.bat != null) $("pBat").textContent = (d.chg ? "⚡" : "🔋") + " AYN " + d.bat + "%";
   pVeilOn = !!d.veil; $("pVeil").textContent = pVeilOn ? "💡 Éteindre la veilleuse" : "💡 Veilleuse";
@@ -536,29 +661,30 @@ $("pUnmute").addEventListener("click", () => {
 });
 $("pMute").addEventListener("click", () => {
   pMuted = !pMuted;
-  $("pAudio").muted = pMuted; $("pVideo").muted = pMuted;
+  $("pAudio").muted = pMuted; $("pVideo").muted = pMuted; if (pPlayer) pPlayer.gain.gain.value = pMuted ? 0 : 1;
   $("pMute").textContent = pMuted ? "🔇 Son : coupé (alertes seules)" : "🔈 Son : activé";
 });
 $("pVeil").addEventListener("click", () => {
-  const on = !pVeilOn;
-  if (pConn && pConn.open) pConn.send({ t: "veil", on });
+  sendBaby({ t: "veil", on: !pVeilOn });
 });
 
 /* Maintenir pour parler (push-to-talk vers l'AYN) */
 async function talkStart(e) {
   e.preventDefault();
-  if (pTalkCall || !pPeer || !pPeer.open) return;
+  if (pTalkCall || pTalkStop) return;
+  if (pMode === "direct" && (!pPeer || !pPeer.open)) return;
   $("pTalk").classList.add("on"); $("pTalk").textContent = "🎤 Je parle… (relâcher)";
   try {
     pTalkStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
     if (!$("pTalk").classList.contains("on")) { pTalkStream.getTracks().forEach((t) => t.stop()); pTalkStream = null; return; }
-    pTalkCall = pPeer.call(babyId(pCode), pTalkStream, { metadata: { kind: "talk" } });
+    if (pMode === "relay") pTalkStop = startCapture(pCtx, pTalkStream, (u8) => { if (pWs && pWs.readyState === 1) pWs.send(u8); });
+    else pTalkCall = pPeer.call(babyId(pCode), pTalkStream, { metadata: { kind: "talk" } });
   } catch (err) { talkEnd(); alert("Micro de l'iPhone refusé."); }
 }
 function talkEnd() {
   $("pTalk").classList.remove("on"); $("pTalk").textContent = "🎤 Maintenir pour parler";
   try { pTalkCall && pTalkCall.close(); } catch (e) {}
-  pTalkCall = null;
+  pTalkCall = null; if (pTalkStop) { pTalkStop(); pTalkStop = null; }
   pTalkStream && pTalkStream.getTracks().forEach((t) => t.stop()); pTalkStream = null;
   // iOS : relance la lecture après libération du micro
   setTimeout(() => { for (const el of [$("pAudio"), $("pVideo")]) if (el.srcObject) el.play().catch(() => {}); }, 300);
@@ -568,7 +694,8 @@ for (const ev of ["pointerup", "pointercancel", "pointerleave"]) $("pTalk").addE
 $("pTalk").addEventListener("contextmenu", (e) => e.preventDefault());
 
 $("pStop").addEventListener("click", () => {
-  sessionActive = false; clearInterval(pWatch); talkEnd();
+  sessionActive = false; clearInterval(pWatch); clearTimeout(pWsRetry); talkEnd();
+  try { const w = pWs; pWs = null; w && w.close(); } catch (e) {} pMode = "direct";
   try { pConn && pConn.close(); pPeer && pPeer.destroy(); } catch (e) {}
   pPeer = pConn = null; pLast = 0; pHist = []; pLostNotified = false; pAlertOn = false; document.body.classList.remove("alert");
   $("pAudio").srcObject = null; $("pVideo").srcObject = null;
