@@ -178,7 +178,7 @@
   <button class="btn sec hidden" id="back">↩︎ Changer de rôle</button>
 </div>
 
-<div id="night" class="hidden"><div id="nightDot"></div><div class="hint">Appui long pour quitter</div></div>
+<div id="night" class="hidden"><div id="nightDot"></div><div class="hint">Touche l’écran ou un bouton pour quitter</div></div>
 <div id="remoteTalk" class="hidden">🗣️ Papa/Maman parle…</div>
 <audio id="bTalkAudio" playsinline autoplay></audio>
 
@@ -287,7 +287,7 @@ function startBabyPeer() {
       updParents();
     });
     conn.on("data", (d) => {
-      if (d && d.t === "veil") { bVeil = !!d.on; $("night").classList.toggle("veil", bVeil); if (bVeil) enterNight(); }
+      if (d && d.t === "veil") { bVeil = !!d.on; $("night").classList.toggle("veil", bVeil); if (bVeil) enterNight(); else exitNight(); }
     });
     const drop = () => { const p = bParents.get(conn.peer); if (p && p.conn === conn) { try { p.call && p.call.close(); } catch (e) {} bParents.delete(conn.peer); } updParents(); };
     conn.on("close", drop); conn.on("error", drop);
@@ -320,22 +320,35 @@ $("bStop").addEventListener("click", () => {
   $("bLive").classList.add("hidden"); $("bSetup").classList.remove("hidden"); $("bNewCode").classList.remove("hidden"); $("back").classList.remove("hidden");
 });
 
-/* Mode nuit : écran noir, appui long 1 s pour sortir */
+/* Mode nuit : écran noir. Sortie = un toucher, n'importe quel bouton de la manette, ou veilleuse éteinte depuis l'iPhone */
 function enterNight() { $("night").classList.remove("hidden"); try { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {} }
+function exitNight() {
+  if ($("night").classList.contains("hidden")) return;
+  $("night").classList.add("hidden");
+  try { document.fullscreenElement && document.exitFullscreen(); } catch (e) {}
+}
 $("bNight").addEventListener("click", enterNight);
 (() => {
-  let t;
   const n = $("night");
-  const down = () => { t = setTimeout(() => { n.classList.add("hidden"); try { document.fullscreenElement && document.exitFullscreen(); } catch (e) {} }, 1000); };
-  const up = () => clearTimeout(t);
-  n.addEventListener("pointerdown", down); n.addEventListener("pointerup", up); n.addEventListener("pointerleave", up); n.addEventListener("pointercancel", up);
+  let armedAt = 0; // évite qu'un toucher en cours au moment de l'entrée ne ressorte aussitôt
+  new MutationObserver(() => { if (!n.classList.contains("hidden")) armedAt = Date.now() + 600; }).observe(n, { attributes: true });
+  const tryExit = (e) => { if (e) e.preventDefault(); if (Date.now() > armedAt) exitNight(); };
+  n.addEventListener("click", tryExit);
+  n.addEventListener("touchend", tryExit, { passive: false });
+  n.addEventListener("contextmenu", (e) => e.preventDefault());
+  // boutons physiques de l'AYN (clavier / manette)
+  addEventListener("keydown", (e) => { if (!n.classList.contains("hidden")) { e.preventDefault(); tryExit(); } });
+  setInterval(() => {
+    if (n.classList.contains("hidden") || !navigator.getGamepads) return;
+    for (const g of navigator.getGamepads()) if (g && g.buttons.some((b) => b.pressed)) { tryExit(); break; }
+  }, 200);
 })();
 
 /* =====================================================================
    CÔTÉ PARENT (iPhone) : écoute + alerte + parler
    ===================================================================== */
 let pPeer, pConn, pCode, pCtx, pLast = 0, pWatch, pOver = 0, pAlertOn = false, pMuted = false, pLostNotified = false;
-let pTalkCall, pTalkStream, pLastAlert = 0, pHist = [];
+let pTalkCall, pTalkStream, pLastAlert = 0, pHist = [], pVeilOn = false;
 
 function initParent() {
   const fromUrl = cleanCode(new URLSearchParams(location.search).get("code"));
@@ -436,7 +449,7 @@ function onBabyData(d) {
   setP("Connecté", "ok");
   $("pMeter").style.width = d.v + "%";
   if (d.bat != null) $("pBat").textContent = (d.chg ? "⚡" : "🔋") + " AYN " + d.bat + "%";
-  $("pVeil").textContent = d.veil ? "💡 Veilleuse : on" : "💡 Veilleuse";
+  pVeilOn = !!d.veil; $("pVeil").textContent = pVeilOn ? "💡 Éteindre la veilleuse" : "💡 Veilleuse";
   const thr = +$("pThr").value;
   pHist.push(d.v >= thr ? 1 : 0); if (pHist.length > 8) pHist.shift();
   pOver = pHist.reduce((a, b) => a + b, 0); // nb de pics sur les 2 dernières secondes
@@ -461,7 +474,7 @@ $("pMute").addEventListener("click", () => {
   $("pMute").textContent = pMuted ? "🔇 Son : coupé (alertes seules)" : "🔈 Son : activé";
 });
 $("pVeil").addEventListener("click", () => {
-  const on = !$("pVeil").textContent.includes(": on");
+  const on = !pVeilOn;
   if (pConn && pConn.open) pConn.send({ t: "veil", on });
 });
 
