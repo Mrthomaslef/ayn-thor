@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1024">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BabyPhone">
+<title>BabyPhone — AYN Thor ↔ iPhone</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+  :root{
+    --bg:#0d1024;--card:#171b38;--card2:#1f2550;--txt:#eef0ff;--mut:#9aa0c8;
+    --acc:#8b7bff;--ok:#3ddc97;--warn:#ffb547;--bad:#ff5c7a;--moon:#ffe6a3;
+    --safe-b:max(env(safe-area-inset-bottom),0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text",Roboto,system-ui,sans-serif;
+    overflow-x:hidden;overscroll-behavior-y:contain;touch-action:manipulation}
+  body{min-height:100dvh;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(var(--safe-b) + 34px)}
+  button,input,select{font:inherit;touch-action:manipulation}
+  .wrap{max-width:560px;margin:0 auto}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  header img{width:46px;height:46px;border-radius:12px}
+  header h1{font-size:21px;margin:0}
+  header p{margin:0;color:var(--mut);font-size:13px}
+  .hidden{display:none!important}
+  .tiles{display:grid;gap:14px}
+  .tile{display:flex;align-items:center;gap:16px;width:100%;text-align:left;border:0;border-radius:22px;
+    padding:22px 20px;background:linear-gradient(135deg,var(--card2),var(--card));color:var(--txt);cursor:pointer}
+  .tile .ico{font-size:44px}
+  .tile b{display:block;font-size:19px}
+  .tile span{color:var(--mut);font-size:14px}
+  .card{background:var(--card);border-radius:20px;padding:18px;margin-bottom:14px}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .between{justify-content:space-between}
+  .code{font:700 34px/1.1 ui-monospace,Menlo,monospace;letter-spacing:3px;text-align:center;margin:6px 0 2px}
+  .mut{color:var(--mut);font-size:13px}
+  .btn{border:0;border-radius:16px;padding:15px 18px;font-weight:650;cursor:pointer;color:#fff;background:var(--acc);width:100%}
+  .btn.sec{background:var(--card2)}
+  .btn.bad{background:var(--bad)}
+  .btn.small{width:auto;padding:10px 14px;font-size:14px;border-radius:12px}
+  input[type=text]{width:100%;background:var(--card2);border:2px solid transparent;color:var(--txt);border-radius:14px;
+    padding:14px;font:700 24px ui-monospace,Menlo,monospace;letter-spacing:3px;text-align:center;text-transform:uppercase}
+  input[type=text]:focus{outline:none;border-color:var(--acc)}
+  input[type=range]{width:100%;accent-color:var(--acc)}
+  label.chk{display:flex;align-items:center;gap:10px;font-size:15px}
+  label.chk input{width:22px;height:22px;accent-color:var(--acc)}
+  .status{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+  .dot{width:11px;height:11px;border-radius:50%;background:var(--mut)}
+  .dot.ok{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+  .dot.warn{background:var(--warn)}
+  .dot.bad{background:var(--bad)}
+  .meter{position:relative;height:26px;border-radius:13px;background:var(--card2);overflow:hidden;margin:10px 0 4px}
+  .meter i{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .2s}
+  .meter em{position:absolute;top:0;bottom:0;width:3px;background:#fff;opacity:.85}
+  .big{font-size:44px;text-align:center;margin:4px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .stat{background:var(--card2);border-radius:14px;padding:12px;text-align:center}
+  .stat b{display:block;font-size:20px}
+  .log{max-height:180px;overflow:auto;font-size:14px;margin:0;padding:0;list-style:none}
+  .log li{padding:6px 0;border-bottom:1px solid #ffffff10}
+  video{width:100%;border-radius:16px;background:#000;max-height:46vh;object-fit:contain}
+  .talk{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;padding:22px;font-size:18px;background:#2a3170}
+  .talk.on{background:var(--ok);color:#06231a}
+  body.alert .pcard{animation:flash 0.6s infinite alternate}
+  @keyframes flash{from{background:var(--card)}to{background:#5a1630}}
+  /* Mode nuit (écran AMOLED quasi éteint) */
+  #night{position:fixed;inset:0;background:#000;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    color:#333;font-size:13px;user-select:none;-webkit-user-select:none;transition:background 1s}
+  #night.veil{background:radial-gradient(circle at 50% 45%,#5a3a10 0,#2a1a06 45%,#000 80%)}
+  #nightDot{width:14px;height:14px;border-radius:50%;background:#1a3a2a;margin-bottom:10px;transition:background .2s}
+  #night .hint{opacity:.55}
+  #remoteTalk{position:fixed;top:calc(env(safe-area-inset-top) + 10px);left:50%;transform:translateX(-50%);z-index:60;
+    background:var(--ok);color:#06231a;padding:8px 16px;border-radius:20px;font-weight:700}
+  /* Pull-to-refresh : seulement une flèche circulaire */
+  #ptr{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:50%;width:34px;height:34px;margin-left:-17px;z-index:40;
+    opacity:0;pointer-events:none;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 14px #0007}
+  #ptr svg{width:20px;height:20px}
+  #ptr.spin svg{animation:rot .8s linear infinite}
+  @keyframes rot{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="ptr"><svg viewBox="0 0 24 24" fill="none" stroke="#c9c3ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></div>
+
+<div class="wrap">
+  <header>
+    <img src="icon.svg" alt="">
+    <div><h1>BabyPhone</h1><p>AYN Thor 👶 ↔ 📱 iPhone</p></div>
+  </header>
+
+  <!-- ACCUEIL -->
+  <section id="home">
+    <div class="tiles">
+      <button class="tile" data-role="baby"><div class="ico">👶</div><div><b>Côté bébé</b><span>À lancer sur l'AYN Thor, posé près d'Émile</span></div></button>
+      <button class="tile" data-role="parent"><div class="ico">📱</div><div><b>Côté parent</b><span>À lancer sur l'iPhone pour écouter</span></div></button>
+    </div>
+    <p class="mut" style="margin-top:16px">Les deux appareils se relient directement (WebRTC chiffré), en Wi-Fi ou en 4G/5G. Plusieurs iPhones (Thomas + Marie) peuvent écouter en même temps.</p>
+  </section>
+
+  <!-- BÉBÉ -->
+  <section id="baby" class="hidden">
+    <div class="card">
+      <div class="mut" style="text-align:center">Code d'appairage à saisir sur l'iPhone</div>
+      <div class="code" id="bCode">····-····</div>
+      <div class="row" style="justify-content:center;margin-top:8px">
+        <button class="btn sec small" id="bNewCode">Nouveau code</button>
+      </div>
+    </div>
+    <div class="card" id="bSetup">
+      <label class="chk"><input type="checkbox" id="bVideo"> Envoyer aussi la caméra (si l'appareil en a une)</label>
+      <div style="height:12px"></div>
+      <button class="btn" id="bStart">🎙️ Démarrer la surveillance</button>
+    </div>
+    <div id="bLive" class="hidden">
+      <div class="card">
+        <div class="row between">
+          <span class="status"><span class="dot" id="bDot"></span><span id="bState">Connexion…</span></span>
+          <span class="mut" id="bParents">0 parent</span>
+        </div>
+        <div class="meter"><i id="bMeter"></i></div>
+        <div class="mut">Niveau sonore dans la chambre</div>
+      </div>
+      <button class="btn" id="bNight">🌙 Mode nuit (écran noir)</button>
+      <div style="height:10px"></div>
+      <button class="btn bad" id="bStop">Arrêter</button>
+    </div>
+  </section>
+
+  <!-- PARENT -->
+  <section id="parent" class="hidden">
+    <div class="card" id="pSetup">
+      <div class="mut" style="margin-bottom:8px">Code affiché sur l'AYN Thor</div>
+      <input type="text" id="pCode" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX">
+      <div style="height:12px"></div>
+      <button class="btn" id="pStart">🎧 Écouter Émile</button>
+    </div>
+    <div id="pLive" class="hidden">
+      <div class="card pcard">
+        <div class="row between">
+          <span class="status"><span class="dot" id="pDot"></span><span id="pState">Connexion…</span></span>
+          <span class="mut" id="pBat">🔋 —</span>
+        </div>
+        <div class="big" id="pFace">😴</div>
+        <div class="meter"><i id="pMeter"></i><em id="pThrMark"></em></div>
+        <div class="row between mut"><span>Calme</span><span>Pleurs</span></div>
+        <video id="pVideo" playsinline autoplay class="hidden"></video>
+        <audio id="pAudio" playsinline autoplay></audio>
+      </div>
+      <button class="btn hidden" id="pUnmute">🔊 Toucher pour activer le son</button>
+      <div class="grid2" style="margin-bottom:14px">
+        <button class="btn sec" id="pMute">🔈 Son : activé</button>
+        <button class="btn sec" id="pVeil">💡 Veilleuse</button>
+      </div>
+      <button class="btn talk" id="pTalk">🎤 Maintenir pour parler</button>
+      <div style="height:14px"></div>
+      <div class="card">
+        <div class="row between"><b>Sensibilité de l'alerte</b><span class="mut" id="pThrVal"></span></div>
+        <input type="range" id="pThr" min="10" max="95" step="1">
+        <div class="mut">Alerte sonore + flash quand le bruit dépasse le trait blanc.</div>
+      </div>
+      <div class="card">
+        <div class="row between"><b>Journal de la nuit</b><button class="btn sec small" id="pClear">Effacer</button></div>
+        <ul class="log" id="pLog"></ul>
+      </div>
+      <button class="btn bad" id="pStop">Arrêter l'écoute</button>
+    </div>
+  </section>
+
+  <div style="height:14px"></div>
+  <button class="btn sec hidden" id="back">↩︎ Changer de rôle</button>
+</div>
+
+<div id="night" class="hidden"><div id="nightDot"></div><div class="hint">Appui long pour quitter</div></div>
+<div id="remoteTalk" class="hidden">🗣️ Papa/Maman parle…</div>
+<audio id="bTalkAudio" playsinline autoplay></audio>
+
+<script src="vendor/peerjs.min.js"></script>
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const PREFIX = "aynbabyphone-v1-";
+const ALPHA = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+const PEER_OPTS = { debug: 1, config: { iceServers: [
+  { urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }, { urls: "stun:stun.cloudflare.com:3478" }
+] } };
+const fmtCode = (c) => c ? c.slice(0, 4) + "-" + c.slice(4) : "";
+const cleanCode = (s) => (s || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+const babyId = (c) => PREFIX + c.toLowerCase();
+const hhmm = () => new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+let sessionActive = false;
+
+/* ---------- Wake Lock (écran toujours allumé) ---------- */
+let wakeLock = null;
+async function keepAwake() {
+  try { if ("wakeLock" in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release", () => (wakeLock = null)); } } catch (e) {}
+}
+document.addEventListener("visibilitychange", () => { if (sessionActive && document.visibilityState === "visible") keepAwake(); });
+
+/* ---------- Navigation rôles ---------- */
+function show(role) {
+  for (const s of ["home", "baby", "parent"]) $(s).classList.toggle("hidden", s !== role);
+  $("back").classList.toggle("hidden", role === "home" || sessionActive);
+  if (role !== "home") localStorage.setItem("bp_role", role); else localStorage.removeItem("bp_role");
+  if (role === "baby") initBaby();
+  if (role === "parent") initParent();
+}
+document.querySelectorAll(".tile").forEach((t) => t.addEventListener("click", () => show(t.dataset.role)));
+$("back").addEventListener("click", () => show("home"));
+
+/* =====================================================================
+   CÔTÉ BÉBÉ (AYN Thor) : micro → tous les parents connectés
+   ===================================================================== */
+let bPeer, bStream, bCtx, bAnalyser, bTimer, bPeak = 0, bRetry;
+const bParents = new Map(); // peerId -> {conn, call}
+let bBattery = null, bVeil = false;
+
+function newCode() { let c = ""; const r = crypto.getRandomValues(new Uint8Array(8)); for (const x of r) c += ALPHA[x % ALPHA.length]; return c; }
+function initBaby() {
+  let c = localStorage.getItem("bp_baby_code");
+  if (!c) { c = newCode(); localStorage.setItem("bp_baby_code", c); }
+  $("bCode").textContent = fmtCode(c);
+}
+$("bNewCode").addEventListener("click", () => {
+  if (sessionActive) return;
+  localStorage.setItem("bp_baby_code", newCode()); initBaby();
+});
+
+$("bStart").addEventListener("click", async () => {
+  const wantVideo = $("bVideo").checked;
+  const audio = { echoCancellation: false, noiseSuppression: false, autoGainControl: true };
+  try {
+    bStream = await navigator.mediaDevices.getUserMedia({ audio, video: wantVideo ? { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } } : false });
+  } catch (e) {
+    try { bStream = await navigator.mediaDevices.getUserMedia({ audio }); if (wantVideo) alert("Pas de caméra disponible : son uniquement."); }
+    catch (e2) { alert("Micro refusé : autorise le micro pour ce site dans Chrome."); return; }
+  }
+  bCtx = new (window.AudioContext || window.webkitAudioContext)(); await bCtx.resume();
+  bAnalyser = bCtx.createAnalyser(); bAnalyser.fftSize = 1024;
+  bCtx.createMediaStreamSource(bStream).connect(bAnalyser);
+  try { const b = await navigator.getBattery(); bBattery = b; } catch (e) {}
+  sessionActive = true; keepAwake();
+  $("bSetup").classList.add("hidden"); $("bLive").classList.remove("hidden"); $("back").classList.add("hidden");
+  $("bNewCode").classList.add("hidden");
+  startBabyPeer();
+  const buf = new Float32Array(bAnalyser.fftSize);
+  // mesure ~20 fois/s, envoi aux parents 4 fois/s
+  let n = 0;
+  bTimer = setInterval(() => {
+    bAnalyser.getFloatTimeDomainData(buf);
+    let s = 0; for (let i = 0; i < buf.length; i++) s += buf[i] * buf[i];
+    const db = 20 * Math.log10(Math.sqrt(s / buf.length) + 1e-9);
+    const lvl = Math.max(0, Math.min(100, ((db + 62) / 52) * 100));
+    bPeak = Math.max(bPeak, lvl);
+    if (++n % 5 === 0) {
+      $("bMeter").style.width = bPeak + "%";
+      $("nightDot").style.background = bPeak > 55 ? "#5a1a24" : "#1a3a2a";
+      const msg = { t: "lvl", v: Math.round(bPeak), bat: bBattery ? Math.round(bBattery.level * 100) : null, chg: bBattery ? bBattery.charging : null, veil: bVeil };
+      for (const p of bParents.values()) if (p.conn && p.conn.open) { try { p.conn.send(msg); } catch (e) {} }
+      bPeak = 0;
+    }
+  }, 50);
+});
+
+function setBabyState(txt, cls) { $("bState").textContent = txt; $("bDot").className = "dot " + (cls || ""); }
+function updParents() { const n = [...bParents.values()].filter((p) => p.conn && p.conn.open).length; $("bParents").textContent = n + (n > 1 ? " parents" : " parent"); setBabyState(n ? "Parent à l'écoute" : "En attente d'un parent", n ? "ok" : "warn"); }
+
+function startBabyPeer() {
+  clearTimeout(bRetry);
+  if (!sessionActive) return;
+  const code = localStorage.getItem("bp_baby_code");
+  setBabyState("Connexion au relais…", "warn");
+  bPeer = new Peer(babyId(code), PEER_OPTS);
+  bPeer.on("open", () => updParents());
+  bPeer.on("connection", (conn) => {
+    conn.on("open", () => {
+      const old = bParents.get(conn.peer); if (old) { try { old.call && old.call.close(); old.conn && old.conn !== conn && old.conn.close(); } catch (e) {} }
+      const call = bPeer.call(conn.peer, bStream, { metadata: { kind: "listen" } });
+      bParents.set(conn.peer, { conn, call });
+      updParents();
+    });
+    conn.on("data", (d) => {
+      if (d && d.t === "veil") { bVeil = !!d.on; $("night").classList.toggle("veil", bVeil); if (bVeil) enterNight(); }
+    });
+    const drop = () => { const p = bParents.get(conn.peer); if (p && p.conn === conn) { try { p.call && p.call.close(); } catch (e) {} bParents.delete(conn.peer); } updParents(); };
+    conn.on("close", drop); conn.on("error", drop);
+  });
+  // Push-to-talk : le parent appelle le bébé avec son micro
+  bPeer.on("call", (call) => {
+    call.answer();
+    call.on("stream", (s) => { const a = $("bTalkAudio"); a.srcObject = s; a.play().catch(() => {}); $("remoteTalk").classList.remove("hidden"); });
+    const end = () => { $("remoteTalk").classList.add("hidden"); $("bTalkAudio").srcObject = null; };
+    call.on("close", end); call.on("error", end);
+  });
+  bPeer.on("disconnected", () => { setBabyState("Reconnexion…", "warn"); setTimeout(() => { if (bPeer && !bPeer.destroyed) bPeer.reconnect(); }, 2000); });
+  bPeer.on("error", (e) => {
+    if (["unavailable-id", "network", "server-error", "socket-error", "socket-closed"].includes(e.type)) {
+      setBabyState(e.type === "unavailable-id" ? "Code encore occupé, nouvel essai…" : "Réseau indisponible, nouvel essai…", "bad");
+      try { bPeer.destroy(); } catch (x) {}
+      bRetry = setTimeout(startBabyPeer, 5000);
+    }
+  });
+}
+
+$("bStop").addEventListener("click", () => {
+  sessionActive = false; clearInterval(bTimer); clearTimeout(bRetry);
+  for (const p of bParents.values()) { try { p.call && p.call.close(); p.conn && p.conn.close(); } catch (e) {} }
+  bParents.clear();
+  try { bPeer && bPeer.destroy(); } catch (e) {}
+  bStream && bStream.getTracks().forEach((t) => t.stop());
+  try { bCtx && bCtx.close(); } catch (e) {}
+  wakeLock && wakeLock.release().catch(() => {});
+  $("bLive").classList.add("hidden"); $("bSetup").classList.remove("hidden"); $("bNewCode").classList.remove("hidden"); $("back").classList.remove("hidden");
+});
+
+/* Mode nuit : écran noir, appui long 1 s pour sortir */
+function enterNight() { $("night").classList.remove("hidden"); try { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {} }
+$("bNight").addEventListener("click", enterNight);
+(() => {
+  let t;
+  const n = $("night");
+  const down = () => { t = setTimeout(() => { n.classList.add("hidden"); try { document.fullscreenElement && document.exitFullscreen(); } catch (e) {} }, 1000); };
+  const up = () => clearTimeout(t);
+  n.addEventListener("pointerdown", down); n.addEventListener("pointerup", up); n.addEventListener("pointerleave", up); n.addEventListener("pointercancel", up);
+})();
+
+/* =====================================================================
+   CÔTÉ PARENT (iPhone) : écoute + alerte + parler
+   ===================================================================== */
+let pPeer, pConn, pCode, pCtx, pLast = 0, pWatch, pOver = 0, pAlertOn = false, pMuted = false, pLostNotified = false;
+let pTalkCall, pTalkStream, pLastAlert = 0, pHist = [];
+
+function initParent() {
+  const fromUrl = cleanCode(new URLSearchParams(location.search).get("code"));
+  const saved = localStorage.getItem("bp_parent_code") || "";
+  $("pCode").value = fmtCode(fromUrl || saved);
+  const thr = +(localStorage.getItem("bp_thr") || 50);
+  $("pThr").value = thr; setThr(thr);
+  renderLog();
+}
+$("pCode").addEventListener("input", (e) => { const c = cleanCode(e.target.value); e.target.value = c.length > 4 ? fmtCode(c) : c; });
+function setThr(v) { $("pThrVal").textContent = v; $("pThrMark").style.left = v + "%"; localStorage.setItem("bp_thr", v); }
+$("pThr").addEventListener("input", (e) => setThr(+e.target.value));
+
+function setP(txt, cls) { $("pState").textContent = txt; $("pDot").className = "dot " + (cls || ""); }
+function log(msg) {
+  const L = JSON.parse(localStorage.getItem("bp_log") || "[]");
+  L.unshift(hhmm() + " · " + msg); localStorage.setItem("bp_log", JSON.stringify(L.slice(0, 80))); renderLog();
+}
+function renderLog() { const L = JSON.parse(localStorage.getItem("bp_log") || "[]"); $("pLog").innerHTML = L.length ? L.map((x) => "<li>" + x.replace(/</g, "&lt;") + "</li>").join("") : '<li class="mut">Rien pour l\'instant</li>'; }
+$("pClear").addEventListener("click", () => { localStorage.removeItem("bp_log"); renderLog(); });
+
+function beep(kind) {
+  if (!pCtx) return;
+  const now = pCtx.currentTime, notes = kind === "lost" ? [440, 330] : [880, 1175, 880];
+  notes.forEach((f, i) => {
+    const o = pCtx.createOscillator(), g = pCtx.createGain();
+    o.frequency.value = f; o.type = "sine";
+    g.gain.setValueAtTime(0.0001, now + i * 0.22); g.gain.exponentialRampToValueAtTime(0.5, now + i * 0.22 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.22 + 0.2);
+    o.connect(g).connect(pCtx.destination); o.start(now + i * 0.22); o.stop(now + i * 0.22 + 0.21);
+  });
+  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+}
+
+$("pStart").addEventListener("click", async () => {
+  const c = cleanCode($("pCode").value);
+  if (c.length !== 8) { $("pCode").focus(); alert("Le code fait 8 caractères (affiché sur l'AYN Thor)."); return; }
+  pCode = c; localStorage.setItem("bp_parent_code", c);
+  // déverrouille l'audio iOS pendant le geste
+  pCtx = pCtx || new (window.AudioContext || window.webkitAudioContext)(); pCtx.resume();
+  const a = $("pAudio"); a.muted = false; a.play().catch(() => {});
+  sessionActive = true; keepAwake();
+  $("pSetup").classList.add("hidden"); $("pLive").classList.remove("hidden"); $("back").classList.add("hidden");
+  log("Début de l'écoute");
+  startParentPeer();
+  pWatch = setInterval(() => {
+    if (!sessionActive) return;
+    const silent = Date.now() - pLast;
+    if (pLast && silent > 7000) {
+      setP("Connexion perdue — reconnexion…", "bad"); $("pFace").textContent = "📵";
+      if (!pLostNotified) { pLostNotified = true; beep("lost"); log("⚠️ Connexion perdue avec l'AYN"); }
+      if (silent > 7000 && silent % 6000 < 1000) reconnectParent();
+    } else if (!pLast && Date.now() - pStartAt > 12000 && (Date.now() - pStartAt) % 6000 < 1000) {
+      setP("AYN introuvable — vérifie qu'il surveille", "bad"); reconnectParent();
+    }
+  }, 1000);
+});
+let pStartAt = 0;
+
+function startParentPeer() {
+  pStartAt = Date.now();
+  setP("Connexion…", "warn");
+  pPeer = new Peer(undefined, PEER_OPTS);
+  pPeer.on("open", () => connectToBaby());
+  pPeer.on("call", (call) => {
+    call.answer();
+    call.on("stream", (s) => {
+      const hasVideo = s.getVideoTracks().length > 0;
+      const el = hasVideo ? $("pVideo") : $("pAudio");
+      $("pVideo").classList.toggle("hidden", !hasVideo);
+      if (hasVideo) $("pAudio").srcObject = null;
+      el.srcObject = s; el.muted = pMuted;
+      el.play().then(() => $("pUnmute").classList.add("hidden")).catch(() => $("pUnmute").classList.remove("hidden"));
+    });
+  });
+  pPeer.on("disconnected", () => setTimeout(() => { if (pPeer && !pPeer.destroyed) pPeer.reconnect(); }, 2000));
+  pPeer.on("error", (e) => {
+    if (e.type === "peer-unavailable") setP("AYN introuvable — lance « Côté bébé »", "bad");
+    else if (["network", "server-error", "socket-error", "socket-closed"].includes(e.type)) { setP("Réseau indisponible…", "bad"); }
+  });
+}
+function connectToBaby() {
+  if (!pPeer || pPeer.destroyed || !pPeer.open) return;
+  try { pConn && pConn.close(); } catch (e) {}
+  pConn = pPeer.connect(babyId(pCode), { reliable: true });
+  pConn.on("data", onBabyData);
+  pConn.on("open", () => setP("Connecté", "ok"));
+}
+function reconnectParent() {
+  if (!pPeer || pPeer.destroyed) { startParentPeer(); return; }
+  if (pPeer.disconnected) { pPeer.reconnect(); return; }
+  connectToBaby();
+}
+function onBabyData(d) {
+  if (!d || d.t !== "lvl") return;
+  if (pLostNotified) { pLostNotified = false; log("✅ Connexion rétablie"); }
+  if (!pLast) log("✅ Relié à l'AYN Thor");
+  pLast = Date.now();
+  setP("Connecté", "ok");
+  $("pMeter").style.width = d.v + "%";
+  if (d.bat != null) $("pBat").textContent = (d.chg ? "⚡" : "🔋") + " AYN " + d.bat + "%";
+  $("pVeil").textContent = d.veil ? "💡 Veilleuse : on" : "💡 Veilleuse";
+  const thr = +$("pThr").value;
+  pHist.push(d.v >= thr ? 1 : 0); if (pHist.length > 8) pHist.shift();
+  pOver = pHist.reduce((a, b) => a + b, 0); // nb de pics sur les 2 dernières secondes
+  $("pFace").textContent = d.v >= thr ? "😭" : d.v >= thr * 0.6 ? "😕" : "😴";
+  if (pOver >= 3 && !pAlertOn) {
+    pAlertOn = true; document.body.classList.add("alert");
+    if (Date.now() - pLastAlert > 20000) { beep("cry"); log("😭 Émile fait du bruit (niveau " + d.v + ")"); }
+    pLastAlert = Date.now();
+  }
+  if (pAlertOn && pOver === 0) { pAlertOn = false; document.body.classList.remove("alert"); }
+  if (d.bat != null && d.bat <= 15 && !d.chg && !onBabyData.lowBat) { onBabyData.lowBat = true; beep("lost"); log("🔋 Batterie AYN faible (" + d.bat + "%) — branche-le"); }
+}
+
+$("pUnmute").addEventListener("click", () => {
+  pCtx && pCtx.resume();
+  for (const el of [$("pAudio"), $("pVideo")]) if (el.srcObject) el.play().catch(() => {});
+  $("pUnmute").classList.add("hidden");
+});
+$("pMute").addEventListener("click", () => {
+  pMuted = !pMuted;
+  $("pAudio").muted = pMuted; $("pVideo").muted = pMuted;
+  $("pMute").textContent = pMuted ? "🔇 Son : coupé (alertes seules)" : "🔈 Son : activé";
+});
+$("pVeil").addEventListener("click", () => {
+  const on = !$("pVeil").textContent.includes(": on");
+  if (pConn && pConn.open) pConn.send({ t: "veil", on });
+});
+
+/* Maintenir pour parler (push-to-talk vers l'AYN) */
+async function talkStart(e) {
+  e.preventDefault();
+  if (pTalkCall || !pPeer || !pPeer.open) return;
+  $("pTalk").classList.add("on"); $("pTalk").textContent = "🎤 Je parle… (relâcher)";
+  try {
+    pTalkStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    if (!$("pTalk").classList.contains("on")) { pTalkStream.getTracks().forEach((t) => t.stop()); pTalkStream = null; return; }
+    pTalkCall = pPeer.call(babyId(pCode), pTalkStream, { metadata: { kind: "talk" } });
+  } catch (err) { talkEnd(); alert("Micro de l'iPhone refusé."); }
+}
+function talkEnd() {
+  $("pTalk").classList.remove("on"); $("pTalk").textContent = "🎤 Maintenir pour parler";
+  try { pTalkCall && pTalkCall.close(); } catch (e) {}
+  pTalkCall = null;
+  pTalkStream && pTalkStream.getTracks().forEach((t) => t.stop()); pTalkStream = null;
+  // iOS : relance la lecture après libération du micro
+  setTimeout(() => { for (const el of [$("pAudio"), $("pVideo")]) if (el.srcObject) el.play().catch(() => {}); }, 300);
+}
+$("pTalk").addEventListener("pointerdown", talkStart);
+for (const ev of ["pointerup", "pointercancel", "pointerleave"]) $("pTalk").addEventListener(ev, () => { if ($("pTalk").classList.contains("on")) talkEnd(); });
+$("pTalk").addEventListener("contextmenu", (e) => e.preventDefault());
+
+$("pStop").addEventListener("click", () => {
+  sessionActive = false; clearInterval(pWatch); talkEnd();
+  try { pConn && pConn.close(); pPeer && pPeer.destroy(); } catch (e) {}
+  pPeer = pConn = null; pLast = 0; pHist = []; pLostNotified = false; pAlertOn = false; document.body.classList.remove("alert");
+  $("pAudio").srcObject = null; $("pVideo").srcObject = null;
+  wakeLock && wakeLock.release().catch(() => {});
+  log("Fin de l'écoute");
+  $("pLive").classList.add("hidden"); $("pSetup").classList.remove("hidden"); $("back").classList.remove("hidden");
+});
+
+/* ---------- Pull-to-refresh (flèche circulaire seule) ---------- */
+(() => {
+  const el = $("ptr"), svg = el.querySelector("svg"), MAX = 90;
+  let y0 = null, dy = 0;
+  const can = () => !sessionActive && window.scrollY <= 0 && $("night").classList.contains("hidden");
+  const start = (y) => { if (can()) { y0 = y; dy = 0; } };
+  const move = (y) => {
+    if (y0 == null) return; dy = Math.max(0, y - y0);
+    const p = Math.min(1, dy / MAX);
+    el.style.opacity = p; el.style.transform = `translateY(${p * 40}px)`; svg.style.transform = `rotate(${p * 300}deg)`;
+  };
+  const end = () => {
+    if (y0 == null) return; y0 = null;
+    if (dy >= MAX) { el.classList.add("spin"); svg.style.transform = ""; try { navigator.vibrate && navigator.vibrate(15); } catch (e) {} setTimeout(() => location.reload(), 350); }
+    else { el.style.opacity = 0; el.style.transform = ""; }
+  };
+  addEventListener("touchstart", (e) => start(e.touches[0].clientY), { passive: true });
+  addEventListener("touchmove", (e) => move(e.touches[0].clientY), { passive: true });
+  addEventListener("touchend", end);
+  addEventListener("mousedown", (e) => { if (e.target.closest("button,input,label")) return; start(e.clientY); });
+  addEventListener("mousemove", (e) => { if (e.buttons) move(e.clientY); });
+  addEventListener("mouseup", end);
+})();
+
+/* ---------- Démarrage ---------- */
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+const qsRole = new URLSearchParams(location.search).get("role") || (new URLSearchParams(location.search).get("code") ? "parent" : null);
+show(qsRole === "baby" || qsRole === "parent" ? qsRole : (localStorage.getItem("bp_role") || "home"));
+</script>
+</body>
+</html>
