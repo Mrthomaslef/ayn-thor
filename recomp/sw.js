@@ -1,5 +1,5 @@
 // Network-first : toujours la dernière version en ligne, cache en secours hors-ligne
-const CACHE = "recomp-check-v5";
+const CACHE = "recomp-check-v6";
 const SHELL = ["./", "index.html", "icon.svg", "manifest.json", "data/embedded_data.js", "data/recomp.json",
                "updates.html", "data/updates_embedded.js", "data/updates.json"];
 

@@ -115,7 +115,10 @@ NOISE = re.compile(r"(translat|crowdin|typo|readme|\bci\b|workflow|github action
                    r"full changelog|submodule|\bchore\b|\blint|clang-format|copyright|\.gitignore|new contributors|made their first)", re.I)
 TAGS = {
     "security": r"security|vulnerab|arbitrary code|\bghsa\b|\bcve-",
-    "perf": r"perform|faster|speed ?up|\bfps\b|stutter|optimi[sz]|shader cache|frame ?pacing|latency|smoother",
+    # « perf » strict : seulement des gains/régressions de vitesse annoncés explicitement
+    "perf": r"\bfps\b|frame ?rate|frame ?time|ms (of [a-z ]+)?per frame|stutter|hitch|faster|speed ?up|"
+            r"perform(ance|ant)|optimi[sz]\w* (to |of |the |for )*(gpu|cpu|render|shader|jit|pipeline|memory|texture|draw)|"
+            r"shader (compil|cache)|low latency|smoother|frame ?pacing|recompil\w* (speed|time)",
     "fix": r"\bcrash|\bfix|freez|\bhang|regression|black screen|softlock|broken",
     "compat": r"compatib|now boots|playable|support for|supports? |new game|dlc",
     "mac": r"mac ?os|\bmac\b|metal|moltenvk|apple|m[1-4]\b|darwin",
@@ -281,15 +284,33 @@ def clean_md(line):
     line = re.sub(r"https?://\S+", "", line)
     line = re.sub(r"[*_`#>]+", "", line)
     line = re.sub(r":[a-z0-9_+-]+:", "", line)  # émojis Forgejo :ryubing:
-    line = re.sub(r"\s*\|\s*@.*$", "", line)  # « | @auteur 1234 » (Azahar)
+    line = re.sub(r"\s*\|\s*@.*$", "", line)
+    line = re.sub(r"\s+by @[\w-]+.*$", "", line)  # « by @auteur in <url> » (notes auto GitHub)
+    line = re.sub(r"\s+in\s*$", "", line)  # « | @auteur 1234 » (Azahar)
     return re.sub(r"\s+", " ", line).strip(" -–•:")
 
 
-def tags_of(text):
-    return [k for k, rx in TAGS.items() if re.search(rx, text, re.I)]
+# « performance » hors jeu (interface, téléchargements, logs…) : pas un gain en jeu
+PERF_FALSE = re.compile(r"help text|tooltip|typo|translation|\blogs?\b|logging|documentation|mod manager|download|"
+                        r"\bhud\b|\bmenu|\boption\b|\bbytes\b|game ?list|library|file (browser|picker)|scann", re.I)
+OTHER_OS = re.compile(r"\b(windows|linux|ios|ipad|iphone|quest|x86|x64|direct ?3d|d3d1[12]|steam deck|flatpak|appimage)\b", re.I)
 
 
-def highlights(body, limit=8):
+def tags_of(text, device=None):
+    tg = [k for k, rx in TAGS.items() if re.search(rx, text, re.I)]
+    if "perf" in tg:
+        own = "mac" if device == "mac" else "android"
+        # gain de perf qui ne concerne pas ton appareil (Windows, iOS, Quest…) → pas compté
+        if PERF_FALSE.search(text) or (device and OTHER_OS.search(text) and own not in tg):
+            tg.remove("perf")
+    return tg
+
+
+def rank(h):
+    return ("perf" not in h["tags"], "focus" not in h["tags"], -len(h["tags"]))
+
+
+def highlights(body, device=None, limit=8):
     """Extrait les puces réelles des notes de version (verbatim, nettoyées), les plus pertinentes d'abord."""
     lines = body.replace("\r", "").split("\n")
     bullets = [clean_md(l) for l in lines if re.match(r"^\s*([-*•+]|\d+[.)])\s+", l)]
@@ -301,12 +322,13 @@ def highlights(body, limit=8):
         if len(b) < 8 or NOISE.search(b) or b.lower() in seen:
             continue
         seen.add(b.lower())
-        out.append({"text": b[:200] + ("…" if len(b) > 200 else ""), "tags": tags_of(b)})
-    out.sort(key=lambda h: -len(h["tags"]))  # tri stable : pertinents d'abord, ordre d'origine sinon
-    return out[:limit], len(out)
+        out.append({"text": b[:200] + ("…" if len(b) > 200 else ""), "tags": tags_of(b, device)})
+    out.sort(key=rank)  # tri stable : perfs, puis pertinents, ordre d'origine sinon
+    perf = [h["text"] for h in out if "perf" in h["tags"]]
+    return out[:limit], len(out), perf
 
 
-def compare_commits(repo, branch, inst, focus=None, strict=False):
+def compare_commits(repo, branch, inst, focus=None, strict=False, device=None):
     data = get_json(f"https://api.github.com/repos/{repo}/compare/{inst['version']}...{branch}")
     commits = data.get("commits", [])[::-1]
     items, seen = [], set()
@@ -315,13 +337,15 @@ def compare_commits(repo, branch, inst, focus=None, strict=False):
         if NOISE.search(msg) or msg.lower() in seen or msg.lower().startswith("merge"):
             continue
         seen.add(msg.lower())
-        tg = tags_of(msg)
+        tg = tags_of(msg, device)
         if focus and re.search(focus, msg, re.I):
             tg.insert(0, "focus")
+        elif focus and "perf" in tg and re.search(r"\b(plays|runs|holds|boots)\b", msg[:140], re.I):
+            tg.remove("perf")  # « <autre jeu> plays at 60 fps » : gain propre à un autre jeu
         elif focus and strict:
             continue
         items.append({"text": msg[:200] + ("…" if len(msg) > 200 else ""), "tags": tg})
-    items.sort(key=lambda h: ("focus" not in h["tags"], -len(h["tags"])))
+    items.sort(key=rank)
     latest = commits[0] if commits else None
     return {
         "aheadBy": len(items) if strict else data.get("ahead_by", 0),
@@ -331,6 +355,7 @@ def compare_commits(repo, branch, inst, focus=None, strict=False):
         "url": data.get("html_url") or f"https://github.com/{repo}/commits/{branch}",
         "items": items[:10],
         "count": len(items),
+        "perf": [h["text"] for h in items if "perf" in h["tags"]],
     }
 
 
@@ -385,7 +410,7 @@ def main():
 
             if tool["source"][0] == "gh_commits":
                 try:
-                    c = compare_commits(tool["source"][1], tool["source"][2], inst, tool.get("focus"), tool.get("focusStrict"))
+                    c = compare_commits(tool["source"][1], tool["source"][2], inst, tool.get("focus"), tool.get("focusStrict"), t["device"])
                 except Exception as e:
                     errors.append(f"{tool['name']}: {e}")
                     continue
@@ -393,6 +418,7 @@ def main():
                             "releases": [{"tag": f"{c['aheadBy']} commits", "name": "Nouveaux commits sur main", "date": c["latestDate"],
                                           "pre": False, "url": c["url"], "highlights": c["items"], "more": max(0, c["count"] - len(c["items"]))}]
                             if c["aheadBy"] else []})
+                row["perf"] = {"score": len(c["perf"]), "top": c["perf"][:3]}
                 row["status"], row["reason"] = decide(tool, t["device"], row["releases"])
                 if not c["aheadBy"] and c["totalAhead"]:
                     row["reason"] = f"{c['totalAhead']} commits, aucun ne concerne ton jeu."
@@ -415,11 +441,14 @@ def main():
                 newer = [r for r in pool if (r["date"] or "") > cut]
                 newer_pre = next((r for r in rels if r["pre"] and not allow_pre and (r["date"] or "") > cut), None)
             latest = pool[0] if pool else None
-            rel_out = []
-            for r in newer[:6]:
-                h, total = highlights(r["body"])
-                rel_out.append({"tag": r["tag"], "name": r["name"], "date": r["date"], "pre": r["pre"], "url": r["url"],
-                                "highlights": h, "more": max(0, total - len(h))})
+            rel_out, perf_all = [], []
+            for i, r in enumerate(newer):
+                h, total, perf = highlights(r["body"], t["device"])
+                perf_all += [(p, r["tag"]) for p in perf]
+                if i < 6:
+                    rel_out.append({"tag": r["tag"], "name": r["name"], "date": r["date"], "pre": r["pre"], "url": r["url"],
+                                    "highlights": h, "more": max(0, total - len(h))})
+            row["perf"] = {"score": len(perf_all), "top": [p for p, _ in perf_all[:3]]}
             row.update({"latest": latest["tag"] if latest else None, "latestDate": latest["date"] if latest else None,
                         "basis": basis, "releases": rel_out, "olderHidden": max(0, len(newer) - 6),
                         "newerPre": {"tag": newer_pre["tag"], "date": newer_pre["date"], "url": newer_pre["url"]} if newer_pre else None})
@@ -434,7 +463,8 @@ def main():
                               "notesUrl": tool.get("notesUrl"), "rebuild": bool(tool.get("rebuild")), "targets": targets})
 
     order = {"recommended": 0, "optional": 1, "uptodate": 2}
-    tools_out.sort(key=lambda t: (min(order[x["status"]] for x in t["targets"]), t["name"].lower()))
+    tools_out.sort(key=lambda t: (min(order[x["status"]] for x in t["targets"]),
+                                  -max(x.get("perf", {}).get("score", 0) for x in t["targets"]), t["name"].lower()))
     stats = {k: sum(1 for t in tools_out for x in t["targets"] if x["status"] == k) for k in order}
     out = {
         "generatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),

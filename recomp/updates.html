@@ -54,7 +54,7 @@
     .t-head .kind { margin-left: auto; font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
       color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 7px; }
 
-    .tg { border-top: 1px solid var(--line); padding: 9px 0 2px; }
+    .tg { border-top: 1px solid var(--line); padding: 9px 0 2px; scroll-margin-top: calc(env(safe-area-inset-top) + 64px); }
     .tg-row { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; }
     .dev { font-size: .68rem; font-weight: 800; padding: 2px 7px; border-radius: 999px; border: 1px solid; }
     .dev.mac { color: var(--m4); } .dev.ayn { color: var(--ayn); }
@@ -87,6 +87,27 @@
     .chip.perf { background: rgba(52,211,153,.14); color: var(--ok); }
     .rel .more { color: var(--muted); font-size: .72rem; margin-top: 4px; }
 
+    /* Mise en avant : gains de performances */
+    .perfbox { border: 1px solid rgba(52,211,153,.35); background: linear-gradient(180deg, rgba(52,211,153,.10), rgba(52,211,153,.02));
+      border-radius: 16px; padding: 12px; margin-bottom: 14px; }
+    .perfbox h3 { margin: 0 0 2px; font-size: .95rem; color: var(--ok); display: flex; align-items: center; gap: 6px; }
+    .perfbox h3 svg { width: 17px; height: 17px; }
+    .perfbox > p { margin: 0 0 8px; color: var(--muted); font-size: .72rem; }
+    .pr { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: start; width: 100%; text-align: left;
+      background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 9px 10px; margin-top: 7px;
+      color: inherit; font: inherit; cursor: pointer; }
+    .pr .rk { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .8rem;
+      background: rgba(52,211,153,.16); color: var(--ok); }
+    .pr:first-of-type .rk { background: var(--ok); color: #062; }
+    .pr .nm { font-weight: 700; font-size: .86rem; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .pr .q { color: var(--muted); font-size: .74rem; margin-top: 3px; overflow-wrap: anywhere;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .pr .sc { font-size: .7rem; font-weight: 800; color: var(--ok); white-space: nowrap; padding-top: 4px; }
+    .pr .rb { font-size: .66rem; color: var(--warn); font-weight: 600; }
+    .pbadge { font-size: .64rem; font-weight: 800; padding: 3px 7px; border-radius: 999px; background: rgba(52,211,153,.14); color: var(--ok); white-space: nowrap; }
+    .tg-row .right { display: flex; gap: 5px; align-items: center; }
+    .tg.flash { animation: flash 1.4s ease; border-radius: 10px; }
+    @keyframes flash { 0%, 40% { background: rgba(52,211,153,.14); } 100% { background: transparent; } }
     .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
     .untracked { margin-top: 18px; color: var(--muted); font-size: .76rem; }
     .untracked ul { padding-left: 18px; margin: 6px 0; }
@@ -111,6 +132,7 @@
       <button data-f="all" aria-pressed="false">Tout <span id="n-all"></span></button>
     </div>
 
+    <div id="perf"></div>
     <div id="list"></div>
     <div class="untracked" id="untracked"></div>
     <footer id="foot"></footer>
@@ -146,9 +168,11 @@
       if (t.rebuild && x.status !== "uptodate") hints.push("Mise à jour = recompiler le port (long).");
       const preHint = x.newerPre ? `<div class="hint">Préversion dispo : <a href="${esc(x.newerPre.url)}" target="_blank" rel="noopener">${esc(x.newerPre.tag)}</a> (${day(x.newerPre.date)}) — à éviter sauf besoin.</div>` : "";
       const rels = x.releases || [];
-      return `<div class="tg">
+      const ps = x.perf?.score || 0;
+      return `<div class="tg" id="tg-${esc(t.id)}-${x.device}">
         <div class="tg-row"><span class="dev ${x.device}">${esc(x.label || DEV[x.device])}</span>
-          <span class="ver">${esc(x.installed.version)}${latest}</span><span class="st ${x.status}">${ST[x.status]}</span></div>
+          <span class="ver">${esc(x.installed.version)}${latest}</span>
+          <span class="right">${ps && x.status !== "uptodate" ? `<span class="pbadge" title="Gains de performances annoncés">⚡ ${ps}</span>` : ""}<span class="st ${x.status}">${ST[x.status]}</span></span></div>
         <div class="reason">${esc(x.reason)}</div>
         ${hints.map(h => `<div class="hint">${esc(h)}</div>`).join("")}${preHint}
         ${rels.length ? `<details ${state.f !== "all" && x.status === "recommended" && rels.length === 1 ? "open" : ""}>
@@ -157,6 +181,20 @@
           ${t.notesUrl ? `<div class="more"><a href="${esc(t.notesUrl)}" target="_blank" rel="noopener">Notes détaillées sur le site officiel ↗</a></div>` : ""}
         </details>` : ""}
       </div>`;
+    }
+
+    const BOLT = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>';
+    function perfHtml() {
+      const rows = DATA.tools.flatMap(t => t.targets.map(x => [t, x]))
+        .filter(([, x]) => x.status !== "uptodate" && (x.perf?.score || 0) > 0 && (state.f === "todo" || state.f === "all" || x.device === state.f))
+        .sort((a, b) => b[1].perf.score - a[1].perf.score);
+      if (!rows.length) return "";
+      return `<div class="perfbox"><h3>${BOLT}Le plus susceptible d'améliorer les perfs</h3>
+        <p>Classement par nombre de gains de performances annoncés dans les notes officielles (fps, saccades, temps de frame, optimisations GPU/CPU) qui concernent ton appareil.</p>
+        ${rows.map(([t, x], i) => `<button class="pr" data-go="tg-${esc(t.id)}-${x.device}"><span class="rk">${i + 1}</span>
+          <span><span class="nm">${esc(t.name)}<span class="dev ${x.device}">${esc(x.label || DEV[x.device])}</span>${t.rebuild ? '<span class="rb">recompilation</span>' : ""}</span>
+          <span class="q">« ${esc(x.perf.top[0] || "")} »</span></span>
+          <span class="sc">⚡ ${x.perf.score} gain${x.perf.score > 1 ? "s" : ""}</span></button>`).join("")}</div>`;
     }
 
     function render() {
@@ -172,6 +210,7 @@
           <a class="kind" href="${esc(t.repo)}" target="_blank" rel="noopener">${KIND[t.kind] || ""} ↗</a></div>
           ${xs.map(x => targetHtml(t, x)).join("")}</section>`;
       }).join("");
+      $("perf").innerHTML = perfHtml();
       $("list").innerHTML = html || `<div class="empty">✓ Tout est à jour.</div>`;
       $("untracked").innerHTML = state.f === "all" && DATA.untracked?.length
         ? `Installés mais non suivis (pas de source officielle fiable, donc rien d'affiché pour ne rien inventer) :<ul>${
@@ -186,6 +225,14 @@
       state.f = b.dataset.f;
       document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b));
       render();
+    });
+
+    $("perf").addEventListener("click", e => {
+      const b = e.target.closest(".pr"); if (!b) return;
+      const el = document.getElementById(b.dataset.go); if (!el) return;
+      const d = el.querySelector("details"); if (d) d.open = true;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
     });
 
     async function refresh() {
