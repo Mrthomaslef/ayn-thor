@@ -1,5 +1,5 @@
 window.AYN_THOR_DATA = {
-  "generatedAt": "10/11/2026 03:01:01",
+  "generatedAt": "11/11/2026 03:00:51",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -7,16 +7,27 @@ window.AYN_THOR_DATA = {
     "gamingSsdMounted": true
   },
   "device": {
-    "connected": false,
+    "connected": true,
     "vendor": "AYN",
-    "productName": "",
+    "productName": "QCS_KALAMAP-HDK_CID:0437_SN:6320BBAD",
     "serial": "",
-    "idVendor": 0,
-    "idProduct": 0,
-    "usbMode": "disconnected",
-    "usbModeLabel": "Non branchée",
-    "adbReady": false,
-    "adbDevices": []
+    "idVendor": 6353,
+    "idProduct": 19985,
+    "usbMode": "usb_0x4e11",
+    "usbModeLabel": "Branchée USB (0x4e11)",
+    "adbReady": true,
+    "adbDevices": [
+      {
+        "id": "ef1ee24",
+        "state": "device",
+        "raw": "ef1ee24                device usb:17825792X product:kalama model:AYN_Thor device:kalama transport_id:7"
+      },
+      {
+        "id": "192.168.1.192:5555",
+        "state": "device",
+        "raw": "192.168.1.192:5555     device product:kalama model:AYN_Thor device:kalama transport_id:6"
+      }
+    ]
   },
   "summary": {
     "saveFoldersCount": 25,
