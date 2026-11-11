@@ -187,7 +187,7 @@ def get_live_status(force=False):
     return dict(status)
 
 
-def start_transfer_job(title, cmd_args):
+def start_transfer_job(title, cmd_args, post_cmd=None):
     job_id = f"job-{int(time.time() * 1000)}"
     job = {
         "id": job_id,
@@ -201,6 +201,9 @@ def start_transfer_job(title, cmd_args):
 
     def worker():
         rc, out, err = run_cmd(cmd_args, timeout=600)
+        if rc == 0 and post_cmd:
+            # ex: rendre les saves poussées par adb (propriétaire shell) modifiables par l'émulateur Android
+            run_cmd(post_cmd, timeout=30)
         with JOBS_LOCK:
             job["status"] = "done" if rc == 0 else "error"
             job["output"] = (out + "\n" + err).strip()
@@ -815,6 +818,7 @@ class AynThorHandler(http.server.BaseHTTPRequestHandler):
                 job = start_transfer_job(
                     f"Push Save {save_id} -> {android_path}",
                     [ADB_BIN, "push", f"{local_path}/.", android_path],
+                    post_cmd=[ADB_BIN, "shell", f"chmod -R a+rwX '{android_path}'"],
                 )
             else:
                 os.makedirs(local_path, exist_ok=True)
