@@ -1,5 +1,5 @@
 #!/bin/bash
-# Mise à jour quotidienne (9h) de Recomp Check + page Mises à jour : régénère recomp/data et pousse sur GitHub Pages.
+# Mise à jour hebdomadaire (dimanche 9h) de Recomp Check + page Mises à jour : régénère recomp/data et pousse sur GitHub Pages.
 # Ne committe QUE recomp/data (les autres modifs locales en cours ne sont pas touchées).
 set -euo pipefail
 cd /Users/thomaslefevre/.t3/projects/ayn-thor
@@ -25,7 +25,7 @@ if same recomp/data/recomp.json && same recomp/data/updates.json; then
   exit 0
 fi
 
-git commit -m "chore(recomp): mise à jour quotidienne Recomp Check + Mises à jour ($(date +%d/%m/%Y))" -- recomp/data
+git commit -m "chore(recomp): mise à jour hebdomadaire Recomp Check + Mises à jour ($(date +%d/%m/%Y))" -- recomp/data
 git pull --rebase --autostash -q origin main
 git push -q origin main
 echo "Publié : https://mrthomaslef.github.io/ayn-thor/recomp/"
