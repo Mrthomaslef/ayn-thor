@@ -334,6 +334,16 @@ def push_local_dir_to_thor(serial: str, local_dir: str, remote_dir: str) -> bool
         return False
     run_adb(["-s", serial, "shell", f"mkdir -p \"{remote_dir}\""], timeout=6)
     rc, _, _ = run_adb(["-s", serial, "push", f"{local_dir}/.", remote_dir], timeout=180)
+    if rc != 0:
+        stage_dir = "/data/local/tmp/aynthor_push_stage_dir"
+        run_adb(["-s", serial, "shell", f"rm -rf \"{stage_dir}\" && mkdir -p \"{stage_dir}\""], timeout=6)
+        rc2, _, _ = run_adb(["-s", serial, "push", f"{local_dir}/.", stage_dir], timeout=180)
+        if rc2 == 0:
+            rc3, _, _ = run_adb(
+                ["-s", serial, "shell", f"cp -rf \"{stage_dir}/.\" \"{remote_dir}/\" && rm -rf \"{stage_dir}\""],
+                timeout=60,
+            )
+            rc = rc3
     run_adb(["-s", serial, "shell", f"chmod -R 777 \"{remote_dir}\""], timeout=6)
     return rc == 0
 
@@ -342,6 +352,15 @@ def push_single_file_to_thor(serial: str, local_file: str, remote_file: str) -> 
     parent = os.path.dirname(remote_file)
     run_adb(["-s", serial, "shell", f"mkdir -p \"{parent}\""], timeout=6)
     rc, _, _ = run_adb(["-s", serial, "push", local_file, remote_file], timeout=60)
+    if rc != 0:
+        stage_file = "/data/local/tmp/aynthor_push_stage_file"
+        rc2, _, _ = run_adb(["-s", serial, "push", local_file, stage_file], timeout=60)
+        if rc2 == 0:
+            rc3, _, _ = run_adb(
+                ["-s", serial, "shell", f"cp -f \"{stage_file}\" \"{remote_file}\" && rm -f \"{stage_file}\""],
+                timeout=20,
+            )
+            rc = rc3
     run_adb(["-s", serial, "shell", f"chmod -R 777 \"{parent}\""], timeout=6)
     return rc == 0
 

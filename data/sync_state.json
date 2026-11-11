@@ -1,11 +1,11 @@
 {
-  "timestamp": "11/11/2026 03:00:38",
+  "timestamp": "11/11/2026 03:02:07",
   "mode": "smart",
   "thorConnected": true,
   "serial": "ef1ee24",
   "totalFilesChecked": 350,
   "updatedOnMacCount": 0,
-  "updatedOnThorCount": 1,
+  "updatedOnThorCount": 0,
   "profiles": [
     {
       "id": "switch_ryujinx_eden",
@@ -170,11 +170,9 @@
       "mode": "smart",
       "thorConnected": true,
       "totalFiles": 20,
-      "identical": 19,
+      "identical": 20,
       "updatedOnMac": [],
-      "updatedOnThor": [
-        "option.sav"
-      ],
+      "updatedOnThor": [],
       "details": [],
       "status": "ok"
     },
