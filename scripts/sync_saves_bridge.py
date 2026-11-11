@@ -37,6 +37,7 @@ SWITCH_TITLES = {
     "0100152000022000": "Mario Kart 8 Deluxe",
     "0100000000010000": "Super Mario Odyssey",
     "0100187003A36000": "Pokémon Let's Go, Eevee!",
+    "010003F003A34000": "Pokémon Let's Go, Pikachu!",
     "010018E011D92000": "Pokémon Shining Pearl",
     "010049900F546000": "Super Mario 3D All-Stars (Menu)",
     "010049900F546002": "Super Mario Sunshine (3D All-Stars)",
@@ -52,6 +53,14 @@ SWITCH_TITLES = {
 EDEN_PROFILE_UID = "4C15D5EBEE6E47F9BFD9C5157A408208"
 EDEN_SAVE_BASE = f"/sdcard/Android/data/dev.eden.eden_emulator/files/nand/user/save/0000000000000000/{EDEN_PROFILE_UID}"
 SSD_EDEN_SAVE_BASE = os.path.join(GAMING_SSD_SAVES, "Switch_Eden", "save", "0000000000000000", EDEN_PROFILE_UID)
+
+# Jeux lancés sur Mac par un AUTRE Ryujinx que Nextendo (cf. ~/ES-DE/scripts/ryujinx_launch.sh) :
+# leur vraie sauvegarde vit dans ce dossier de données séparé, pas dans ~/Library/Application Support/Ryujinx.
+# Pokémon Let's Go plante sous Nextendo 1.10.1 → Ryubing 1.3.3 avec -r /Volumes/GamingSSD/Games/Ryubing-LetsGo-data.
+ALT_RYUJINX_SAVE_ROOTS = {
+    "0100187003A36000": "/Volumes/GamingSSD/Games/Ryubing-LetsGo-data/bis/user/save",
+    "010003F003A34000": "/Volumes/GamingSSD/Games/Ryubing-LetsGo-data/bis/user/save",
+}
 
 # Définition des profils de synchronisation directe (Dossiers miroirs Mac <-> GamingSSD <-> AYN Thor)
 SYNC_PROFILES = [
@@ -320,6 +329,22 @@ def get_ryujinx_save_map(ryu_save_root: str) -> Dict[str, str]:
     return mapping
 
 
+def get_switch_mac_save_map(ryu_save_root: str) -> Dict[str, str]:
+    """Mapping Ryujinx Nextendo, avec override pour les jeux lancés via un Ryujinx séparé (ALT_RYUJINX_SAVE_ROOTS)."""
+    mapping = get_ryujinx_save_map(ryu_save_root)
+    alt_maps: Dict[str, Dict[str, str]] = {}
+    for tid, alt_root in ALT_RYUJINX_SAVE_ROOTS.items():
+        if alt_root not in alt_maps:
+            alt_maps[alt_root] = get_ryujinx_save_map(alt_root)
+        slot = alt_maps[alt_root].get(tid)
+        if slot:
+            mapping[tid] = slot
+        else:
+            # Pas encore de save dans le Ryujinx séparé : ne pas synchroniser l'ancienne save Nextendo inutilisée
+            mapping.pop(tid, None)
+    return mapping
+
+
 def pull_thor_dir_to_temp(serial: str, remote_dir: str, temp_dest: str) -> bool:
     os.makedirs(temp_dest, exist_ok=True)
     rc, _, _ = run_adb(["-s", serial, "shell", f"[ -d \"{remote_dir}\" ] && echo OK"], timeout=6)
@@ -501,7 +526,7 @@ def sync_profile(profile: Dict, serial: Optional[str], mode: str = "smart") -> D
         if not is_ssd_mounted():
             return result
         if ptype == "switch_bridge":
-            ryu_map = get_ryujinx_save_map(profile["macPath"])
+            ryu_map = get_switch_mac_save_map(profile["macPath"])
             all_tids = sorted(set(ryu_map.keys()) | set(os.listdir(SSD_EDEN_SAVE_BASE) if os.path.isdir(SSD_EDEN_SAVE_BASE) else []))
             for tid in all_tids:
                 if not tid or tid.startswith("."):
@@ -554,7 +579,7 @@ def sync_profile(profile: Dict, serial: Optional[str], mode: str = "smart") -> D
             pull_thor_dir_to_temp(serial, EDEN_SAVE_BASE, thor_eden_tmp)
 
             # 2. Mapper les dossiers Ryujinx (Mac) par TitleID
-            ryu_map = get_ryujinx_save_map(profile["macPath"])
+            ryu_map = get_switch_mac_save_map(profile["macPath"])
             all_tids = sorted(set(ryu_map.keys()) | set(os.listdir(thor_eden_tmp) if os.path.isdir(thor_eden_tmp) else []))
 
             for tid in all_tids:
