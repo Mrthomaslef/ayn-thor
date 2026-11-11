@@ -212,6 +212,33 @@ SYNC_PROFILES = [
         ],
     },
     {
+        "id": "oot_native_mac",
+        "name": "Zelda: Ocarina of Time (Switch 2) — port natif nxnative Mac → copie GamingSSD",
+        "icon": "🎵",
+        "type": "directory",
+        "macPath": os.path.join(APP_SUPPORT, "nxnative", "0400486024DEC000", "save"),
+        "ssdPath": os.path.join(GAMING_SSD_SAVES, "Standalone_Saves", "OoT_Native_Mac", "save"),
+        "thorPaths": [],  # pas de port AYN : sauvegarde Mac ↔ SSD uniquement
+    },
+    {
+        "id": "switch2_lichii_mac",
+        "name": "Switch 2 — Lichii (Eden NX2) Mac → copie GamingSSD",
+        "icon": "🟥",
+        "type": "directory",
+        "macPath": os.path.join(HOME, ".local", "share", "eden", "nand", "user", "save"),
+        "ssdPath": os.path.join(GAMING_SSD_SAVES, "Switch2_Lichii_Mac", "save"),
+        "thorPaths": [],
+    },
+    {
+        "id": "ps1_duckstation_memcards",
+        "name": "PlayStation 1 — cartes mémoire (DuckStation Mac ↔ AYN Thor)",
+        "icon": "💾",
+        "type": "directory",
+        "macPath": os.path.join(APP_SUPPORT, "DuckStation", "memcards"),
+        "ssdPath": os.path.join(GAMING_SSD_SAVES, "PS1_DuckStation_Memcards", "memcards"),
+        "thorPaths": ["/sdcard/Android/data/com.github.stenzek.duckstation/files/memcards"],
+    },
+    {
         "id": "standalone_ports",
         "name": "Portages & Decomps (PokéEmerald DualScreen, PokéRogue, Minish Cap, Zelda 3, Red Recomp, Wind Waker HD)",
         "icon": "💎",
@@ -520,8 +547,8 @@ def sync_profile(profile: Dict, serial: Optional[str], mode: str = "smart") -> D
         "status": "ok",
     }
 
-    if not serial:
-        # Si l'AYN Thor n'est pas branchée, on synchronise au moins Mac <-> Hub GamingSSD
+    if not serial or (ptype == "directory" and not profile.get("thorPaths")):
+        # Si l'AYN Thor n'est pas branchée (ou profil Mac ↔ SSD sans équivalent AYN), on synchronise au moins Mac <-> Hub GamingSSD
         result["status"] = "offline_mac_ssd_only"
         if not is_ssd_mounted():
             return result
