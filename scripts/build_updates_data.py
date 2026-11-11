@@ -72,7 +72,7 @@ TOOLS = [
     {"id": "dusklight", "name": "Dusklight", "kind": "recomp", "sys": "Zelda Twilight Princess", "source": ("gh", "TwilitRealm/dusklight"),
      "targets": [{"device": "mac", "app": str(HOME / "Applications/Dusklight.app")}, {"device": "ayn", "pkg": "dev.twilitrealm.dusk"}]},
     {"id": "wwhd", "name": "Wind Waker HD Recomp", "kind": "recomp", "sys": "Zelda Wind Waker HD", "source": ("gh", "ZeldaWWHDRecomp/ZeldaWWHDRecomp"),
-     "targets": [{"device": "mac", "app": str(SSD / "WindWakerHD_Mac/WindWakerHD-v0.5.0-macos-arm64/Wind Waker HD.app")},
+     "targets": [{"device": "mac", "app": str(HOME / "Applications/Wind Waker HD.app")},
                  {"device": "ayn", "pkg": "org.wwhdrecomp.wwhd"}]},
     {"id": "botw-android", "name": "BotW Recomp Android", "kind": "recomp", "sys": "Zelda Breath of the Wild",
      "source": ("gh", "mamcjr/BOTWRecompAndroid"), "allowPre": True,
