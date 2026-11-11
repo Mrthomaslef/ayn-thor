@@ -32,6 +32,13 @@
 
     header { display: flex; align-items: center; gap: 10px; margin: 2px 2px 12px; }
     header img { width: 34px; height: 34px; border-radius: 9px; }
+    .upd { margin-left: auto; position: relative; display: flex; align-items: center; gap: 6px; padding: 7px 11px;
+      border-radius: 11px; background: var(--panel); border: 1px solid var(--line); color: var(--text);
+      font-size: .78rem; font-weight: 600; text-decoration: none; touch-action: manipulation; }
+    .upd svg { width: 16px; height: 16px; }
+    .upd .badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--warn); color: #241a00;
+      font-size: .68rem; font-weight: 800; display: none; place-items: center; }
+    .upd .badge.on { display: grid; }
     h1 { font-size: 1.2rem; margin: 0; }
 
     /* Barre collante : filtre + recherche */
@@ -102,7 +109,8 @@
   </div>
 
   <div class="wrap">
-    <header><img src="icon.svg" alt=""><h1>Recomp Check</h1></header>
+    <header><img src="icon.svg" alt=""><h1>Recomp Check</h1>
+      <a class="upd" href="updates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Mises à jour<span class="badge" id="upd-n"></span></a></header>
 
     <div class="bar">
       <div class="seg" role="group" aria-label="Compatibilité">
@@ -121,6 +129,7 @@
   <div id="sheet" aria-hidden="true"><div class="back"></div><div class="box" id="sheet-box"></div></div>
 
   <script src="data/embedded_data.js"></script>
+  <script src="data/updates_embedded.js"></script>
   <script>
     const state = { f: "both", q: "" };
     let DATA = window.RECOMP_DATA || { games: [], stats: {}, systemLabels: {} };
@@ -226,6 +235,13 @@
       addEventListener("mousemove", e => { if (y0 !== null) move(e.clientY); });
       addEventListener("mouseup", end);
     })();
+
+    function updBadge(u) {
+      const n = (u?.tools || []).reduce((a, t) => a + t.targets.filter(x => x.status === "recommended").length, 0);
+      $("upd-n").textContent = n; $("upd-n").classList.toggle("on", n > 0);
+    }
+    updBadge(window.RECOMP_UPDATES);
+    fetch("data/updates.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok && r.json()).then(u => u && updBadge(u)).catch(() => {});
 
     renderAll();
     refresh();

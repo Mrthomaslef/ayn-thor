@@ -1,6 +1,7 @@
 // Network-first : toujours la dernière version en ligne, cache en secours hors-ligne
-const CACHE = "recomp-check-v4";
-const SHELL = ["./", "index.html", "icon.svg", "manifest.json", "data/embedded_data.js", "data/recomp.json"];
+const CACHE = "recomp-check-v5";
+const SHELL = ["./", "index.html", "icon.svg", "manifest.json", "data/embedded_data.js", "data/recomp.json",
+               "updates.html", "data/updates_embedded.js", "data/updates.json"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

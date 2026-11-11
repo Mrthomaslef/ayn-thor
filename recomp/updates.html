@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0f1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Mises à jour — Recomp Check</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    :root { --bg: #0b0f1a; --panel: #131a2a; --panel2: #1a2337; --line: #26324b;
+      --text: #e8edf7; --muted: #8a97b2; --ayn: #ff5a5f; --m4: #5ab0ff; --ok: #34d399; --warn: #fbbf24; --opt: #a78bfa; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
+    body { font: 15px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      overscroll-behavior-y: contain;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left); }
+    a, button, summary, .tool { touch-action: manipulation; }
+    a { color: var(--m4); text-decoration: none; }
+    .wrap { max-width: 860px; margin: 0 auto; padding: 14px 12px calc(env(safe-area-inset-bottom) + 48px); }
+
+    #ptr { position: fixed; top: calc(env(safe-area-inset-top) + 8px); left: 50%; z-index: 60;
+      width: 34px; height: 34px; margin-left: -17px; border-radius: 50%; background: var(--panel2);
+      border: 1px solid var(--line); display: grid; place-items: center; opacity: 0; pointer-events: none;
+      transform: translateY(-40px); }
+    #ptr svg { width: 18px; height: 18px; }
+    #ptr.spin svg { animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    header { display: flex; align-items: center; gap: 10px; margin: 2px 2px 12px; }
+    header .back { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px;
+      background: var(--panel); border: 1px solid var(--line); color: var(--text); flex: none; }
+    header .back svg { width: 18px; height: 18px; }
+    header h1 { font-size: 1.2rem; margin: 0; letter-spacing: -.01em; }
+    header p { margin: 1px 0 0; color: var(--muted); font-size: .75rem; }
+
+    .seg { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--panel); border: 1px solid var(--line);
+      border-radius: 12px; padding: 3px; gap: 3px; margin-bottom: 12px; position: sticky; top: env(safe-area-inset-top); z-index: 5; }
+    .seg button { background: none; border: 0; color: var(--muted); border-radius: 9px; padding: 8px 2px;
+      font: inherit; font-size: .78rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .seg button span { opacity: .7; font-weight: 500; }
+    .seg button[aria-pressed="true"] { background: var(--panel2); color: var(--text); }
+    .seg button[data-f="todo"][aria-pressed="true"] { color: var(--warn); }
+    .seg button[data-f="mac"][aria-pressed="true"] { color: var(--m4); }
+    .seg button[data-f="ayn"][aria-pressed="true"] { color: var(--ayn); }
+
+    .tool { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px 12px 10px; margin-bottom: 10px; }
+    .t-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .t-head h2 { font-size: 1rem; margin: 0; }
+    .t-head .sys { color: var(--muted); font-size: .76rem; }
+    .t-head .kind { margin-left: auto; font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+      color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 7px; }
+
+    .tg { border-top: 1px solid var(--line); padding: 9px 0 2px; }
+    .tg-row { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; }
+    .dev { font-size: .68rem; font-weight: 800; padding: 2px 7px; border-radius: 999px; border: 1px solid; }
+    .dev.mac { color: var(--m4); } .dev.ayn { color: var(--ayn); }
+    .ver { font-size: .82rem; min-width: 0; overflow-wrap: anywhere; }
+    .ver b { font-weight: 700; } .ver .arrow { color: var(--muted); margin: 0 4px; }
+    .st { font-size: .68rem; font-weight: 800; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+    .st.recommended { background: rgba(251,191,36,.15); color: var(--warn); }
+    .st.optional { background: rgba(167,139,250,.15); color: var(--opt); }
+    .st.uptodate { background: rgba(52,211,153,.12); color: var(--ok); }
+    .reason { color: var(--muted); font-size: .76rem; margin: 5px 0 0; }
+    .hint { font-size: .72rem; color: var(--muted); margin-top: 4px; }
+    .hint.warn { color: var(--warn); }
+
+    details { margin-top: 6px; }
+    summary { cursor: pointer; font-size: .78rem; font-weight: 600; color: var(--text); list-style: none; padding: 6px 0; }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: "›"; display: inline-block; width: 14px; transition: transform .15s; color: var(--muted); }
+    details[open] summary::before { transform: rotate(90deg); }
+    .rel { background: var(--panel2); border-radius: 12px; padding: 9px 11px; margin: 6px 0; }
+    .rel-h { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; font-size: .8rem; }
+    .rel-h b { font-weight: 700; } .rel-h .d { color: var(--muted); font-size: .72rem; }
+    .rel-h a { margin-left: auto; font-size: .72rem; }
+    .pre { font-size: .62rem; font-weight: 800; color: var(--opt); border: 1px solid; border-radius: 999px; padding: 0 6px; }
+    .rel ul { margin: 6px 0 0; padding-left: 17px; }
+    .rel li { font-size: .79rem; margin: 3px 0; overflow-wrap: anywhere; }
+    .chip { display: inline-block; font-size: .6rem; font-weight: 700; padding: 0 5px; border-radius: 6px; margin-left: 4px;
+      background: rgba(90,176,255,.12); color: var(--m4); vertical-align: 1px; }
+    .chip.focus { background: rgba(251,191,36,.16); color: var(--warn); }
+    .chip.security { background: rgba(255,90,95,.15); color: var(--ayn); }
+    .chip.perf { background: rgba(52,211,153,.14); color: var(--ok); }
+    .rel .more { color: var(--muted); font-size: .72rem; margin-top: 4px; }
+
+    .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
+    .untracked { margin-top: 18px; color: var(--muted); font-size: .76rem; }
+    .untracked ul { padding-left: 18px; margin: 6px 0; }
+    footer { color: var(--muted); font-size: .7rem; text-align: center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div id="ptr" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <a class="back" href="./" aria-label="Retour à Recomp Check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></a>
+      <div><h1>Mises à jour</h1><p>Émulateurs &amp; recomps installés chez toi · notes officielles</p></div>
+    </header>
+
+    <div class="seg" role="group" aria-label="Filtre">
+      <button data-f="todo" aria-pressed="true">À faire <span id="n-todo"></span></button>
+      <button data-f="mac" aria-pressed="false">Mac <span id="n-mac"></span></button>
+      <button data-f="ayn" aria-pressed="false">AYN <span id="n-ayn"></span></button>
+      <button data-f="all" aria-pressed="false">Tout <span id="n-all"></span></button>
+    </div>
+
+    <div id="list"></div>
+    <div class="untracked" id="untracked"></div>
+    <footer id="foot"></footer>
+  </div>
+
+  <script src="data/updates_embedded.js"></script>
+  <script>
+    let DATA = window.RECOMP_UPDATES || { tools: [], stats: {}, tagLabels: {}, untracked: [] };
+    const state = { f: "todo" };
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const day = (d) => d ? new Date(d).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : "";
+    const DEV = { mac: "Mac", ayn: "AYN" };
+    const ST = { recommended: "À mettre à jour", optional: "Optionnel", uptodate: "À jour" };
+    const KIND = { emu: "Émulateur", recomp: "Recomp", driver: "Pilote" };
+
+    const pass = (x) => state.f === "all" ? true : state.f === "todo" ? x.status !== "uptodate" : x.device === state.f;
+
+    function relHtml(r) {
+      const items = (r.highlights || []).map(h => `<li>${esc(h.text)}${h.tags.slice(0, 3).map(k =>
+        `<span class="chip ${k}">${esc(DATA.tagLabels[k] || k)}</span>`).join("")}</li>`).join("");
+      return `<div class="rel"><div class="rel-h"><b>${esc(r.tag)}</b>${r.pre ? '<span class="pre">PRÉVERSION</span>' : ""}
+          <span class="d">${day(r.date)}</span><a href="${esc(r.url)}" target="_blank" rel="noopener">Notes ↗</a></div>
+        ${items ? `<ul>${items}</ul>` : `<div class="more">Pas de détail publié ici — voir les notes officielles.</div>`}
+        ${r.more ? `<div class="more">+ ${r.more} autre${r.more > 1 ? "s" : ""} changement${r.more > 1 ? "s" : ""} dans les notes</div>` : ""}</div>`;
+    }
+
+    function targetHtml(t, x) {
+      const latest = x.latest && x.status !== "uptodate" ? `<span class="arrow">→</span><b>${esc(x.latest)}</b>` : "";
+      const hints = [];
+      if (x.basis === "date") hints.push(`Version installée absente des releases : comparaison avec ta date d'installation (${day(x.installed.installedAt)}).`);
+      if (!x.live) hints.push(`Appareil non connecté au dernier contrôle : version vue le ${day(x.installed.seenAt)}.`);
+      if (t.rebuild && x.status !== "uptodate") hints.push("Mise à jour = recompiler le port (long).");
+      const preHint = x.newerPre ? `<div class="hint">Préversion dispo : <a href="${esc(x.newerPre.url)}" target="_blank" rel="noopener">${esc(x.newerPre.tag)}</a> (${day(x.newerPre.date)}) — à éviter sauf besoin.</div>` : "";
+      const rels = x.releases || [];
+      return `<div class="tg">
+        <div class="tg-row"><span class="dev ${x.device}">${esc(x.label || DEV[x.device])}</span>
+          <span class="ver">${esc(x.installed.version)}${latest}</span><span class="st ${x.status}">${ST[x.status]}</span></div>
+        <div class="reason">${esc(x.reason)}</div>
+        ${hints.map(h => `<div class="hint">${esc(h)}</div>`).join("")}${preHint}
+        ${rels.length ? `<details ${state.f !== "all" && x.status === "recommended" && rels.length === 1 ? "open" : ""}>
+          <summary>Ce qui change${rels.length > 1 ? ` (${rels.length} versions${x.olderHidden ? ` + ${x.olderHidden} plus anciennes` : ""})` : ""}</summary>
+          ${rels.map(relHtml).join("")}
+          ${t.notesUrl ? `<div class="more"><a href="${esc(t.notesUrl)}" target="_blank" rel="noopener">Notes détaillées sur le site officiel ↗</a></div>` : ""}
+        </details>` : ""}
+      </div>`;
+    }
+
+    function render() {
+      const all = DATA.tools.flatMap(t => t.targets.map(x => [t, x]));
+      $("n-todo").textContent = all.filter(([, x]) => x.status !== "uptodate").length;
+      $("n-mac").textContent = all.filter(([, x]) => x.device === "mac").length;
+      $("n-ayn").textContent = all.filter(([, x]) => x.device === "ayn").length;
+      $("n-all").textContent = all.length;
+      const html = DATA.tools.map(t => {
+        const xs = t.targets.filter(pass);
+        if (!xs.length) return "";
+        return `<section class="tool"><div class="t-head"><h2>${esc(t.name)}</h2><span class="sys">${esc(t.sys)}</span>
+          <a class="kind" href="${esc(t.repo)}" target="_blank" rel="noopener">${KIND[t.kind] || ""} ↗</a></div>
+          ${xs.map(x => targetHtml(t, x)).join("")}</section>`;
+      }).join("");
+      $("list").innerHTML = html || `<div class="empty">✓ Tout est à jour.</div>`;
+      $("untracked").innerHTML = state.f === "all" && DATA.untracked?.length
+        ? `Installés mais non suivis (pas de source officielle fiable, donc rien d'affiché pour ne rien inventer) :<ul>${
+            DATA.untracked.map(u => `<li><b>${esc(u.name)}</b> (${esc(u.device)}) — ${esc(u.why)}</li>`).join("")}</ul>` : "";
+      $("foot").textContent = DATA.generatedAt
+        ? `Vérifié le ${new Date(DATA.generatedAt).toLocaleString("fr-FR", { dateStyle: "long", timeStyle: "short" })} · sources : releases GitHub / Forgejo officielles${DATA.aynConnected ? "" : " · AYN non connectée"}`
+        : "";
+    }
+
+    document.querySelector(".seg").addEventListener("click", e => {
+      const b = e.target.closest("button"); if (!b) return;
+      state.f = b.dataset.f;
+      document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === b));
+      render();
+    });
+
+    async function refresh() {
+      try {
+        const r = await fetch("data/updates.json?t=" + Date.now(), { cache: "no-store" });
+        if (r.ok) { DATA = await r.json(); render(); }
+      } catch (_) { /* hors-ligne : données embarquées */ }
+    }
+
+    // Pull-to-refresh tactile + souris (flèche ↻ seule)
+    (function ptr() {
+      const el = $("ptr"), icon = el.querySelector("svg"), MAX = 90, TRIG = 65;
+      let y0 = null, dy = 0, busy = false;
+      const start = (y) => { if (!busy && window.scrollY <= 0) { y0 = y; dy = 0; } };
+      const move = (y, ev) => {
+        if (y0 === null) return;
+        dy = Math.min(MAX, Math.max(0, (y - y0) * 0.55));
+        if (dy > 0 && ev && ev.cancelable) ev.preventDefault();
+        el.style.opacity = Math.min(1, dy / TRIG);
+        el.style.transform = `translateY(${dy - 40}px)`;
+        icon.style.transform = `rotate(${dy * 4}deg)`;
+      };
+      const end = async () => {
+        if (y0 === null) return; y0 = null;
+        if (dy >= TRIG) {
+          busy = true; if (navigator.vibrate) navigator.vibrate(12);
+          icon.style.transform = ""; el.classList.add("spin");
+          await Promise.all([refresh(), new Promise(r => setTimeout(r, 600))]);
+          el.classList.remove("spin"); busy = false;
+        }
+        el.style.opacity = 0; el.style.transform = "translateY(-40px)";
+      };
+      addEventListener("touchstart", e => start(e.touches[0].clientY), { passive: true });
+      addEventListener("touchmove", e => move(e.touches[0].clientY, e), { passive: false });
+      addEventListener("touchend", end);
+      addEventListener("mousedown", e => { if (e.button === 0 && !e.target.closest("a,button,summary")) start(e.clientY); });
+      addEventListener("mousemove", e => { if (y0 !== null) move(e.clientY); });
+      addEventListener("mouseup", end);
+    })();
+
+    render();
+    refresh();
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) navigator.serviceWorker.register("sw.js");
+  </script>
+</body>
+</html>
