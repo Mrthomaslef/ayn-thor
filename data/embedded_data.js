@@ -1,5 +1,5 @@
 window.AYN_THOR_DATA = {
-  "generatedAt": "11/11/2026 03:02:19",
+  "generatedAt": "12/11/2026 03:00:53",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -30,12 +30,12 @@ window.AYN_THOR_DATA = {
     ]
   },
   "summary": {
-    "saveFoldersCount": 25,
-    "saveFilesCount": 52566,
-    "saveTotalMB": 10184.6,
+    "saveFoldersCount": 26,
+    "saveFilesCount": 52584,
+    "saveTotalMB": 10186.2,
     "romSystemsCount": 20,
-    "romGamesCount": 152,
-    "romTotalGB": 130.83,
+    "romGamesCount": 155,
+    "romTotalGB": 155.3,
     "bonusToolsCount": 17
   },
   "saves": [
@@ -89,8 +89,8 @@ window.AYN_THOR_DATA = {
       "icon": "🎮",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/3DS_n3ds2",
       "androidPath": "/storage/6531-3035/ROMs/n3ds2",
-      "fileCount": 33,
-      "sizeBytes": 81873068,
+      "fileCount": 34,
+      "sizeBytes": 81873084,
       "sizeMB": 78.08,
       "sampleFiles": [
         "sdmc/3ds/dspfirm.cdc",
@@ -100,7 +100,7 @@ window.AYN_THOR_DATA = {
         "sdmc/3ds/emerald3ds/emerald3ds.sav",
         "sdmc/3ds/emerald3ds/plates.bin"
       ],
-      "updatedAt": "05/11/2026 22:19"
+      "updatedAt": "11/11/2026 11:21"
     },
     {
       "id": "BotW_Recomp_Mac",
@@ -111,7 +111,7 @@ window.AYN_THOR_DATA = {
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/BotW_Recomp_Mac",
       "androidPath": "/sdcard/Saves/BotW_Recomp_Mac",
       "fileCount": 312,
-      "sizeBytes": 16673885,
+      "sizeBytes": 16673964,
       "sizeMB": 15.9,
       "sampleFiles": [
         "controller-background.txt",
@@ -121,7 +121,7 @@ window.AYN_THOR_DATA = {
         "game-slot/history.log",
         "game-slot/holder"
       ],
-      "updatedAt": "06/11/2026 07:14"
+      "updatedAt": "11/11/2026 11:27"
     },
     {
       "id": "Dolphin_GC",
@@ -142,7 +142,7 @@ window.AYN_THOR_DATA = {
         "GC/EUR/Card A/01-GZ2P-gczelda2.gci",
         "GC/EUR/Card A/01-GZLP-gczelda.gci"
       ],
-      "updatedAt": "06/08/2026 12:03"
+      "updatedAt": "11/11/2026 11:22"
     },
     {
       "id": "Dolphin_Wii",
@@ -217,7 +217,7 @@ window.AYN_THOR_DATA = {
         "files/saves/New Super Mario Bros. (Europe) (En,Fr,De,Es,It).sav",
         "files/saves/Pokemon - SoulSilver Version (Europe).sav"
       ],
-      "updatedAt": "31/10/2026 18:05"
+      "updatedAt": "11/11/2026 11:28"
     },
     {
       "id": "PS1_DuckStation_States",
@@ -228,12 +228,12 @@ window.AYN_THOR_DATA = {
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/PS1_DuckStation_States",
       "androidPath": "/sdcard/Android/data/com.github.stenzek.duckstation/files",
       "fileCount": 1,
-      "sizeBytes": 0,
-      "sizeMB": 0.0,
+      "sizeBytes": 349440,
+      "sizeMB": 0.33,
       "sampleFiles": [
         "savestates/SCUS-94900_resume.sav"
       ],
-      "updatedAt": "31/10/2026 17:59"
+      "updatedAt": "11/11/2026 11:23"
     },
     {
       "id": "PS2_AetherSX2",
@@ -339,9 +339,9 @@ window.AYN_THOR_DATA = {
       "icon": "👾",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/RetroArch_Saves",
       "androidPath": "/sdcard/RetroArch",
-      "fileCount": 22,
-      "sizeBytes": 2552656,
-      "sizeMB": 2.43,
+      "fileCount": 24,
+      "sizeBytes": 2814800,
+      "sizeMB": 2.68,
       "sampleFiles": [
         "saves/FORESTIA.pure.zip",
         "saves/melonDS DS/Mario Kart DS (Europe) (En,Fr,De,Es,It).sav",
@@ -350,7 +350,7 @@ window.AYN_THOR_DATA = {
         "saves/Gambatte/Legend of Zelda, The - Link's Awakening (France).srm",
         "saves/Gambatte/Pokemon - Crystal Version (USA, Europe) (Rev 1).rtc"
       ],
-      "updatedAt": "07/11/2026 20:20"
+      "updatedAt": "11/11/2026 11:33"
     },
     {
       "id": "RetroArch_States",
@@ -400,9 +400,9 @@ window.AYN_THOR_DATA = {
       "icon": "💎",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Standalone_Saves",
       "androidPath": "/sdcard/Android/data/org.wwhdrecomp.wwhd/files/save",
-      "fileCount": 36998,
-      "sizeBytes": 806390072,
-      "sizeMB": 769.03,
+      "fileCount": 37012,
+      "sizeBytes": 807401765,
+      "sizeMB": 770.0,
       "sampleFiles": [
         "WindWakerHD_Recomp/save/user/cking.sav",
         "WindWakerHD_Recomp/save/user/cking_pic0_0.sav",
@@ -411,7 +411,23 @@ window.AYN_THOR_DATA = {
         "WindWakerHD_Recomp/save/user/cking_pic0_11.sav",
         "WindWakerHD_Recomp/save/user/cking_pic0_2.sav"
       ],
-      "updatedAt": "25/08/2026 10:43"
+      "updatedAt": "11/11/2026 21:13"
+    },
+    {
+      "id": "Switch2_Lichii_Mac",
+      "label": "Switch2 Lichii Mac",
+      "emulator": "Android Emulator",
+      "category": "Autres",
+      "icon": "💾",
+      "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Switch2_Lichii_Mac",
+      "androidPath": "/sdcard/Saves/Switch2_Lichii_Mac",
+      "fileCount": 1,
+      "sizeBytes": 320,
+      "sizeMB": 0.0,
+      "sampleFiles": [
+        "save/0000000000000000/464F3C0A91B3C809D7732C2619C4564B/0400486024DEC000/account.sav"
+      ],
+      "updatedAt": "07/11/2026 21:24"
     },
     {
       "id": "Switch_Eden",
@@ -432,7 +448,7 @@ window.AYN_THOR_DATA = {
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100152000022000/rp001011530330000abec00000.dat",
         "save/0000000000000000/4C15D5EBEE6E47F9BFD9C5157A408208/0100152000022000/rp012d11510300001d21000000.dat"
       ],
-      "updatedAt": "06/11/2026 07:14"
+      "updatedAt": "11/11/2026 11:19"
     },
     {
       "id": "Switch_Eden_System",
@@ -511,7 +527,7 @@ window.AYN_THOR_DATA = {
         "save/00050000/10145d00/meta/iconTex.tga",
         "save/00050000/10145d00/meta/meta.xml"
       ],
-      "updatedAt": "24/08/2026 10:22"
+      "updatedAt": "11/11/2026 11:29"
     }
   ],
   "roms": [
@@ -702,6 +718,87 @@ window.AYN_THOR_DATA = {
       ]
     },
     {
+      "id": "Switch",
+      "label": "Nintendo Switch",
+      "emulator": "Eden / Citron (Turnip T29)",
+      "icon": "🔴",
+      "localPath": "/Volumes/GamingSSD/Games/ROMs/Switch",
+      "androidPath": "/sdcard/ROMs/switch",
+      "gameCount": 17,
+      "totalSizeGB": 119.79,
+      "totalSizeMB": 122669.0,
+      "games": [
+        {
+          "name": "Celeste [01002B30028F6000][v0][Base].nsp",
+          "sizeMB": 1123.6
+        },
+        {
+          "name": "Donkey Kong Country Tropical Freeze [0100C1F0051B6000][v0].nsp",
+          "sizeMB": 6802.4
+        },
+        {
+          "name": "Hollow Knight Silksong [010013C00E930000][v0].nsp",
+          "sizeMB": 2377.0
+        },
+        {
+          "name": "Mario Kart 8 Deluxe [0100152000022000][v0].nsp",
+          "sizeMB": 6931.8
+        },
+        {
+          "name": "Pokemon Lets Go Eevee.xci",
+          "sizeMB": 7616.0
+        },
+        {
+          "name": "Pokemon Shining Pearl v0 - xcinspdotcom.nsp",
+          "sizeMB": 4398.1
+        },
+        {
+          "name": "Pokemon Sword.xci",
+          "sizeMB": 15232.0
+        },
+        {
+          "name": "Pokémon Legends Z-A [0100F43008C44000][v1.0.0][US][Base][eShop].nsp",
+          "sizeMB": 4125.6
+        },
+        {
+          "name": "Super Mario Odyssey [0100000000010000][v0].nsp",
+          "sizeMB": 5351.1
+        },
+        {
+          "name": "The Legend of Zelda Breath of the Wild [01007EF00011E000][v0](eShop).nsp",
+          "sizeMB": 13805.6
+        },
+        {
+          "name": "The Legend of Zelda Link’s Awakening switch [01006BB00C6F0000][v0].nsp",
+          "sizeMB": 5984.1
+        },
+        {
+          "name": "The Legend of Zelda Ocarina of TIme [04004860224DEC000].nup",
+          "sizeMB": 23861.6
+        },
+        {
+          "name": "The Legend of Zelda Tears of the Kingdom [0100F2C0115B6000][v0].nsp",
+          "sizeMB": 8704.0
+        },
+        {
+          "name": "The Legend of Zelda Tears of the Kingdom [0100F2C0115B6000][v0].part1.rar",
+          "sizeMB": 8704.0
+        },
+        {
+          "name": "The Legend of Zelda Tears of the Kingdom [0100F2C0115B6000][v0].part2.rar",
+          "sizeMB": 7652.2
+        },
+        {
+          "name": "Updates",
+          "sizeMB": 0.0
+        },
+        {
+          "name": "metadata.pegasus.txt",
+          "sizeMB": 0.0
+        }
+      ]
+    },
+    {
       "id": "PS1",
       "label": "PlayStation 1",
       "emulator": "DuckStation",
@@ -766,75 +863,6 @@ window.AYN_THOR_DATA = {
         },
         {
           "name": "Grand Theft Auto (Europe) (En,Fr,De,It).cue",
-          "sizeMB": 0.0
-        },
-        {
-          "name": "metadata.pegasus.txt",
-          "sizeMB": 0.0
-        }
-      ]
-    },
-    {
-      "id": "Switch",
-      "label": "Nintendo Switch",
-      "emulator": "Eden / Citron (Turnip T29)",
-      "icon": "🔴",
-      "localPath": "/Volumes/GamingSSD/Games/ROMs/Switch",
-      "androidPath": "/sdcard/ROMs/switch",
-      "gameCount": 14,
-      "totalSizeGB": 95.32,
-      "totalSizeMB": 97608.9,
-      "games": [
-        {
-          "name": "Celeste [01002B30028F6000][v0][Base].nsp",
-          "sizeMB": 1123.6
-        },
-        {
-          "name": "Donkey Kong Country Tropical Freeze [0100C1F0051B6000][v0].nsp",
-          "sizeMB": 6802.4
-        },
-        {
-          "name": "Hollow Knight Silksong [010013C00E930000][v0].nsp",
-          "sizeMB": 2377.0
-        },
-        {
-          "name": "Mario Kart 8 Deluxe [0100152000022000][v0].nsp",
-          "sizeMB": 6931.8
-        },
-        {
-          "name": "Pokemon Lets Go Eevee.xci",
-          "sizeMB": 7616.0
-        },
-        {
-          "name": "Pokemon Shining Pearl v0 - xcinspdotcom.nsp",
-          "sizeMB": 4398.1
-        },
-        {
-          "name": "Pokemon Sword.xci",
-          "sizeMB": 15232.0
-        },
-        {
-          "name": "Pokémon Legends Z-A [0100F43008C44000][v1.0.0][US][Base][eShop].nsp",
-          "sizeMB": 4125.6
-        },
-        {
-          "name": "Super Mario Odyssey [0100000000010000][v0].nsp",
-          "sizeMB": 5351.1
-        },
-        {
-          "name": "The Legend of Zelda Breath of the Wild [01007EF00011E000][v0](eShop).nsp",
-          "sizeMB": 13805.6
-        },
-        {
-          "name": "The Legend of Zelda Link’s Awakening switch [01006BB00C6F0000][v0].nsp",
-          "sizeMB": 5984.1
-        },
-        {
-          "name": "The Legend of Zelda Ocarina of TIme [04004860224DEC000].nup",
-          "sizeMB": 23861.6
-        },
-        {
-          "name": "Updates",
           "sizeMB": 0.0
         },
         {

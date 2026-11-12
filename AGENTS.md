@@ -37,7 +37,7 @@ Vous êtes connecté à l'**Écosystème Global & Second Brain** de Thomas Lefè
 ### ⚡ 4. Instincts Atomiques Appris des Inputs de Thomas (`t3-instincts` — Ne jamais répéter ces erreurs) :
 Ces règles sont extraites chaque nuit des inputs et corrections de Thomas. **Appliquez-les systématiquement sans qu'il ait besoin de le redemander** :
 ```text
-# Active Instincts (12/29 | project=ayn-thor)
+# Active Instincts (12/32 | project=ayn-thor)
 - [0.98][GLOBAL][ui-pwa] fullscreen-launch-and-controller-verify: WHEN Lors de la création ou configuration d'un lanceur de jeu (Recomp, Pegasus, Moonlight), d'un lecteur vidéo (Stremio/Film) ou d'un bouton 'Jouer direct' -> Toujours forcer l'ouverture en plein écran d'emblée (sans modale ni pop-up bloquante), vérifier le mapping manette (8BitDo) et la présence des sauvegardes avant d'annoncer que c'est terminé.
 - [0.98][GLOBAL][workflow] mobile-first-no-overflow-no-zoom: WHEN Lors de la création d'interfaces web, de tableaux cliniques ou de boutons interactifs consultés sur iPhone / mobile -> Empêcher le zoom au double-clic UI (touch-action: manipulation), garantir zéro débordement horizontal, protéger le bas de l'écran iOS (env(safe-area-inset-bottom) + marge de garde) pour que les contrôles/cartes en bas ne déclenchent jamais le swipe Home Indicator d'iOS, adapter l'échelle aux écrans iPad et permettre le zoom/déplacement sur les planches d'imagerie/anatomie/PDF.
 - [0.98][GLOBAL][workflow] pull-to-refresh-systematic: WHEN Lors de la création ou modification d'une application web ou PWA mobile/desktop -> Implanter systématiquement le Pull-to-Refresh tactile + souris (overscroll-behavior-y: contain, vibration haptique) avec pour SEUL indicateur une petite flèche circulaire tournante (icône ↻ SVG, sans aucun texte type « Tirer/Relâcher pour rafraîchir »), invisible au repos (opacity 0), qui apparaît et tourne progressivement pendant le tirage puis tourne en continu au relâchement.
@@ -49,11 +49,13 @@ Ces règles sont extraites chaque nuit des inputs et corrections de Thomas. **Ap
 - [0.92][GLOBAL][architecture] offline-embedded-bundle-pwa: WHEN Lors de la construction d'une PWA statique hébergée sur GitHub Pages avec données JSON -> Générer un fichier data/embedded_data.js (window.*_DATA) en plus des fichiers .json afin que l'application fonctionne à 100 % hors-ligne et en file:// sans erreur CORS.
 - [0.92][GLOBAL][workflow] superpowers-verify-before-completion: WHEN Avant d'affirmer qu'une tâche, un script ou un déploiement est terminé -> Exécuter une vérification réelle (test, build_data.py, sync_projects.py, git status/diff) et citer le résultat observé. Pas de sous-agent par micro-tâche pour les petits correctifs afin de préserver les quotas 5h.
 - [0.85][GLOBAL][cochin-ri] cochin-no-invented-doctor-first-names: WHEN Lors de l'affichage de médecins, seniors, PH ou internes de Cochin à partir d'initiales ou de noms de famille -> Ne jamais inventer ni extrapoler un prénom de médecin/interne ou un numéro de poste/DECT à Cochin : garder uniquement le nom vérifié (ex: Dr Sisi YANG, Dr RUBINI) et les numéros issus des sources officielles.
-- [0.85][GLOBAL][git-deploy] git-push-systematic-verification: WHEN À la fin de toute modification de code, d'application web ou de configuration -> Vérifier systématiquement avec git status et git push que tous les dépôts modifiés (ainsi que Tapp Store / Mapp Store) sont poussés et à jour sur GitHub.
+- [0.85][GLOBAL][workflow] emulator-switch-migrate-everything: WHEN Quand on change l'émulateur, la version ou le dossier de données utilisé pour lancer un jeu (ex: Nextendo → Ryubing -r <dir>) -> Avant tout changement d'émulateur, de version ou de dossier de données (ex: Nextendo -> Ryubing -r <dir>), migrer systématiquement la sauvegarde la plus récente, les réglages (plein écran, langue, mode Docked requis pour Pro Controller comme dans Pokémon Let's Go), le mapping manette 8BitDo, et ajouter le chemin à sync_saves_bridge.py avant de vérifier en conditions réelles.
 ```
 - Dès que Thomas exprime une préférence récurrente ou corrige un comportement en session, enregistrez l'instinct immédiatement :
   `/Users/thomaslefevre/.t3/bin/t3-instincts learn --id "<slug>" --trigger "<quand>" --action "<action>" --project "$PWD"`
 <!-- SUPER_AGENT_ROUTER_END -->
+
+
 
 
 

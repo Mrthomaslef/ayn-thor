@@ -1,11 +1,11 @@
 {
-  "timestamp": "11/11/2026 03:02:07",
+  "timestamp": "12/11/2026 03:00:40",
   "mode": "smart",
   "thorConnected": true,
   "serial": "ef1ee24",
-  "totalFilesChecked": 350,
-  "updatedOnMacCount": 0,
-  "updatedOnThorCount": 0,
+  "totalFilesChecked": 368,
+  "updatedOnMacCount": 3,
+  "updatedOnThorCount": 13,
   "profiles": [
     {
       "id": "switch_ryujinx_eden",
@@ -26,8 +26,8 @@
       "icon": "🕹️",
       "mode": "smart",
       "thorConnected": true,
-      "totalFiles": 20,
-      "identical": 20,
+      "totalFiles": 21,
+      "identical": 21,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
@@ -66,8 +66,10 @@
       "mode": "smart",
       "thorConnected": true,
       "totalFiles": 55,
-      "identical": 55,
-      "updatedOnMac": [],
+      "identical": 54,
+      "updatedOnMac": [
+        "system/pdm/80000001/PlayStats.dat"
+      ],
       "updatedOnThor": [],
       "details": [],
       "status": "ok"
@@ -104,9 +106,11 @@
       "icon": "👾",
       "mode": "smart",
       "thorConnected": true,
-      "totalFiles": 22,
-      "identical": 22,
-      "updatedOnMac": [],
+      "totalFiles": 24,
+      "identical": 23,
+      "updatedOnMac": [
+        "mGBA/Metroid Fusion (Europe) (En,Fr,De,Es,It).srm"
+      ],
       "updatedOnThor": [],
       "details": [],
       "status": "ok"
@@ -131,8 +135,10 @@
       "mode": "smart",
       "thorConnected": true,
       "totalFiles": 3,
-      "identical": 3,
-      "updatedOnMac": [],
+      "identical": 2,
+      "updatedOnMac": [
+        "Mario Kart DS (Europe) (En,Fr,De,Es,It).sav"
+      ],
       "updatedOnThor": [],
       "details": [],
       "status": "ok"
@@ -184,6 +190,59 @@
       "thorConnected": true,
       "totalFiles": 10,
       "identical": 10,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "ok"
+    },
+    {
+      "id": "oot_native_mac",
+      "name": "Zelda: Ocarina of Time (Switch 2) — port natif nxnative Mac → copie GamingSSD",
+      "icon": "🎵",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 14,
+      "identical": 1,
+      "updatedOnMac": [],
+      "updatedOnThor": [
+        "option.sav",
+        "slot_00/caption.sav",
+        "slot_00/progress.sav",
+        "slot_01/caption.sav",
+        "slot_01/progress.sav",
+        "slot_02/caption.sav",
+        "slot_02/progress.sav",
+        "slot_03/caption.sav",
+        "slot_03/progress.sav",
+        "slot_04/caption.sav",
+        "slot_04/progress.sav",
+        "slot_05/caption.sav",
+        "slot_05/progress.sav"
+      ],
+      "details": [],
+      "status": "offline_mac_ssd_only"
+    },
+    {
+      "id": "switch2_lichii_mac",
+      "name": "Switch 2 — Lichii (Eden NX2) Mac → copie GamingSSD",
+      "icon": "🟥",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 1,
+      "identical": 1,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "offline_mac_ssd_only"
+    },
+    {
+      "id": "ps1_duckstation_memcards",
+      "name": "PlayStation 1 — cartes mémoire (DuckStation Mac ↔ AYN Thor)",
+      "icon": "💾",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 0,
+      "identical": 0,
       "updatedOnMac": [],
       "updatedOnThor": [],
       "details": [],
