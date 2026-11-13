@@ -1,5 +1,5 @@
 window.AYN_THOR_DATA = {
-  "generatedAt": "12/11/2026 03:01:52",
+  "generatedAt": "13/11/2026 03:00:49",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
