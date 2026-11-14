@@ -398,7 +398,10 @@ def main():
             continue
         targets = []
         for t in tool["targets"]:
-            inst = installed(t)
+            try:
+                inst = installed(t)
+            except PermissionError:  # launchd sans accès au GamingSSD → on garde la dernière version connue
+                inst = None
             live = inst is not None
             if not live:
                 inst = prev.get((tool["id"], t["device"]))

@@ -37,7 +37,7 @@ Vous êtes connecté à l'**Écosystème Global & Second Brain** de Thomas Lefè
 ### ⚡ 4. Instincts Atomiques Appris des Inputs de Thomas (`t3-instincts` — Ne jamais répéter ces erreurs) :
 Ces règles sont extraites chaque nuit des inputs et corrections de Thomas. **Appliquez-les systématiquement sans qu'il ait besoin de le redemander** :
 ```text
-# Active Instincts (12/37 | project=ayn-thor)
+# Active Instincts (12/38 | project=ayn-thor)
 - [0.98][GLOBAL][ui-pwa] fullscreen-launch-and-controller-verify: WHEN Lors de la création ou configuration d'un lanceur de jeu (Recomp, Pegasus, Moonlight), d'un lecteur vidéo (Stremio/Film) ou d'un bouton 'Jouer direct' -> Toujours forcer l'ouverture en plein écran d'emblée (sans modale ni pop-up bloquante), vérifier le mapping manette (8BitDo) et la présence des sauvegardes avant d'annoncer que c'est terminé.
 - [0.98][GLOBAL][workflow] mobile-first-no-overflow-no-zoom: WHEN Lors de la création d'interfaces web, de tableaux cliniques ou de boutons interactifs consultés sur iPhone / mobile -> Empêcher le zoom au double-clic UI (touch-action: manipulation), garantir zéro débordement horizontal, protéger le bas de l'écran iOS (env(safe-area-inset-bottom) + marge de garde) pour que les contrôles/cartes en bas ne déclenchent jamais le swipe Home Indicator d'iOS, adapter l'échelle aux écrans iPad et permettre le zoom/déplacement sur les planches d'imagerie/anatomie/PDF.
 - [0.98][GLOBAL][workflow] pull-to-refresh-systematic: WHEN Lors de la création ou modification d'une application web ou PWA mobile/desktop -> Implanter le Pull-to-Refresh avec pour SEUL indicateur une petite flèche circulaire tournante (icône ↻ SVG, sans aucun texte, opacity 0 au repos) ET encadrer strictement overscroll-behavior(-y): contain dans @media (hover: none) and (pointer: coarse) (jamais sur html/body desktop, ni overflow-y: auto sur body) pour que le scroll trackpad 2 doigts sur Mac fonctionne toujours sur tous les sites.
@@ -54,6 +54,7 @@ Ces règles sont extraites chaque nuit des inputs et corrections de Thomas. **Ap
 - Dès que Thomas exprime une préférence récurrente ou corrige un comportement en session, enregistrez l'instinct immédiatement :
   `/Users/thomaslefevre/.t3/bin/t3-instincts learn --id "<slug>" --trigger "<quand>" --action "<action>" --project "$PWD"`
 <!-- SUPER_AGENT_ROUTER_END -->
+
 
 
 
@@ -95,4 +96,4 @@ Quand Thomas demande **« quels recomp… », « est-ce qu'il y a un recomp/port
   cd /Users/thomaslefevre/.t3/projects/ayn-thor && python3 scripts/build_recomp_data.py && git commit -m "chore(recomp): …" -- recomp/data scripts && git push
   ```
 - **Installer un recomp** : passer par le daemon/portail ayn-thor (`scripts/switch_installer.py recomp <TitleID>`, bouton « ⚡ Mettre le Recomp sur mon AYN Thor » de l'app principale).
-- **Mise à jour automatique** : launchd `com.thomas.recompcheck.weekly` (dimanche 9h) → `scripts/weekly_recomp_update.sh` (rebuild + push uniquement si la compatibilité a changé ; log `/tmp/recomp_check_weekly.log`).
+- **Mise à jour automatique** : launchd `com.thomas.recompcheck` (déclenché chaque jour à 9h + au démarrage, ne travaille que si la dernière réussite date de ≥ 3 jours ; horodatage `~/.local/state/recompcheck/last_success`, `--force` pour forcer) → `scripts/weekly_recomp_update.sh` (rebuild + push à chaque passage ; date « Mis à jour le … » affichée en haut des deux pages ; log `~/Library/Logs/recomp_check.log`).

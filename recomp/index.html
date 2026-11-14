@@ -40,6 +40,7 @@
       font-size: .68rem; font-weight: 800; display: none; place-items: center; }
     .upd .badge.on { display: grid; }
     h1 { font-size: 1.2rem; margin: 0; }
+    .stamp { margin: 1px 0 0; color: var(--muted); font-size: .72rem; }
 
     /* Barre collante : filtre + recherche */
     .bar > * { max-width: 620px; }
@@ -109,7 +110,7 @@
   </div>
 
   <div class="wrap">
-    <header><img src="icon.svg" alt=""><h1>Recomp Check</h1>
+    <header><img src="icon.svg" alt=""><div><h1>Recomp Check</h1><p class="stamp" id="stamp"></p></div>
       <a class="upd" href="updates.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Mises à jour<span class="badge" id="upd-n"></span></a></header>
 
     <div class="bar">
@@ -161,11 +162,19 @@
         </button>`).join("") : `<div class="empty">Aucun jeu trouvé.</div>`;
     }
 
+    function stamp(iso) {  // « Mis à jour le 14 nov. 2026 à 20:21 · prochaine vérif. ~17 nov. »
+      if (!iso) return "";
+      const d = new Date(iso), n = new Date(d.getTime() + 3 * 864e5);
+      const day = (x, y) => x.toLocaleDateString("fr-FR", { day: "numeric", month: "short", ...(y ? { year: "numeric" } : {}) });
+      return `Mis à jour le ${day(d, 1)} à ${d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} · prochaine vérif. ~${day(n)}`;
+    }
+
     function renderAll() {
       const s = DATA.stats || {};
       $("n-both").textContent = s.both ?? ""; $("n-ayn").textContent = s.ayn ?? "";
       $("n-m4").textContent = s.m4 ?? ""; $("n-all").textContent = s.total ?? "";
-      if (DATA.generatedAt) $("foot").textContent = "Mis à jour le " + new Date(DATA.generatedAt).toLocaleDateString("fr-FR", { dateStyle: "long" }) + " · touche une jaquette pour le détail";
+      $("stamp").textContent = stamp(DATA.generatedAt);
+      $("foot").textContent = "Touche une jaquette pour le détail";
       render();
     }
 
