@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-11T10:47:39+00:00",
+ "generatedAt": "2026-11-14T19:21:06+00:00",
  "aynConnected": true,
  "stats": {
   "recommended": 7,
@@ -20,131 +20,6 @@
  },
  "tools": [
   {
-   "id": "nxnative",
-   "name": "nxnative (OoT natif Mac)",
-   "kind": "recomp",
-   "sys": "Zelda Ocarina of Time (Switch 2)",
-   "repo": "https://github.com/seedds/nxnative",
-   "notesUrl": null,
-   "rebuild": true,
-   "targets": [
-    {
-     "device": "mac",
-     "label": null,
-     "installed": {
-      "version": "a00f03b",
-      "installedAt": "2026-11-08T14:21:34+08:00",
-      "seenAt": "2026-11-11T10:47:35+00:00"
-     },
-     "live": true,
-     "latest": "8fb5ffe",
-     "latestDate": "2026-11-11T09:56:24Z",
-     "basis": "commit",
-     "newerPre": null,
-     "releases": [
-      {
-       "tag": "149 commits",
-       "name": "Nouveaux commits sur main",
-       "date": "2026-11-11T09:56:24Z",
-       "pre": false,
-       "url": "https://github.com/seedds/nxnative/compare/a00f03b...main",
-       "highlights": [
-        {
-         "text": "Fullscreen on a ProMotion screen holds 60 fps: a variable-refresh screen in fullscreen switches to a fixed-rate mode at a multiple of the game's rate (120 -> 60 Hz), where the 60 Hz display link at fr…",
-         "tags": [
-          "focus",
-          "perf",
-          "fix"
-         ]
-        },
-        {
-         "text": "Extended products leave spirv-cross's optnone helper: scalar uint and int calls of spvMulExtended reach inline overloads that take the halves of the 64-bit product, so the compiler folds Switch 2's co…",
-         "tags": [
-          "focus",
-          "perf",
-          "mac"
-         ]
-        },
-        {
-         "text": "Textures that dynamic resolution resizes take their memory from the recycled heaps instead of new Metal memory each time: every GPU-only texture the churn makes (render targets, with or without COMPRE…",
-         "tags": [
-          "perf",
-          "mac",
-          "graphics"
-         ]
-        },
-        {
-         "text": "Short sleeps are polls: a SleepThread from 20 µs up to the yield back-off's longest sleep (250 µs; DM_YIELD_BACKOFF sets both) continues the run of yields as a short timed wait does, and once the run …",
-         "tags": [
-          "perf",
-          "mac"
-         ]
-        },
-        {
-         "text": "The Mac host builds at -O2, as the other native code here: Donkey Kong Bananza's heaviest close-ups go from 55.6 to 58.6 fps (PR #556)",
-         "tags": [
-          "perf",
-          "mac"
-         ]
-        },
-        {
-         "text": "Fire Emblem Engage and Pokémon Brilliant Diamond lose their build-bound patches: their SDK rows give way to the SDK-wide rules (node area and 2 MB alignment), Engage's vSyncCount cut to the host's wri…",
-         "tags": [
-          "perf",
-          "fix"
-         ]
-        },
-        {
-         "text": "Guest files: S2Arm's GPU hang from F_PUNCHHOLE while rendering is recorded as an open risk; not reproduced on an M4 Pro with 85 GB punched while Ocarina of Time rendered",
-         "tags": [
-          "focus",
-          "fix",
-          "mac",
-          "graphics"
-         ]
-        },
-        {
-         "text": "A uniform slot is bounded at its bound size rounded up to 256 bytes, the size the console's driver gives the GPU, not at the exact size: nvnCommandBufferBindUniformBuffer writes (size + 0xff) & ~0xff …",
-         "tags": [
-          "focus",
-          "fix",
-          "mac"
-         ]
-        },
-        {
-         "text": "Mac: a raw HID pad is a player from its first button press, so a keyboard receiver that declares a gamepad no longer takes player 1: a Keychron Link receiver (3434:d030) declares a Generic Desktop Gam…",
-         "tags": [
-          "focus",
-          "mac",
-          "controller"
-         ]
-        },
-        {
-         "text": "A NaN or infinite colour under a zero source blend weight adds nothing, as on the console: NVN's driver sets the float blender's \"zero times anything is zero\" option (the command word for SET_BLEND_FL…",
-         "tags": [
-          "focus",
-          "mac",
-          "graphics"
-         ]
-        }
-       ],
-       "more": 117
-      }
-     ],
-     "perf": {
-      "score": 6,
-      "top": [
-       "Fullscreen on a ProMotion screen holds 60 fps: a variable-refresh screen in fullscreen switches to a fixed-rate mode at a multiple of the game's rate (120 -> 60 Hz), where the 60 Hz display link at fr…",
-       "Extended products leave spirv-cross's optnone helper: scalar uint and int calls of spvMulExtended reach inline overloads that take the halves of the 64-bit product, so the compiler folds Switch 2's co…",
-       "Textures that dynamic resolution resizes take their memory from the recycled heaps instead of new Metal memory each time: every GPU-only texture the churn makes (render targets, with or without COMPRE…"
-      ]
-     },
-     "status": "recommended",
-     "reason": "149 commits depuis ta compilation · spécifique Mac, Performances, Correctifs, Graphismes"
-    }
-   ]
-  },
-  {
    "id": "dusklight",
    "name": "Dusklight",
    "kind": "recomp",
@@ -159,7 +34,7 @@
      "installed": {
       "version": "2.0.3",
       "installedAt": "2026-11-06T05:36:58+00:00",
-      "seenAt": "2026-11-11T10:47:31+00:00"
+      "seenAt": "2026-11-14T19:20:56+00:00"
      },
      "live": true,
      "perf": {
@@ -181,7 +56,7 @@
      "installed": {
       "version": "0.1.0",
       "installedAt": "2026-07-28T07:05:23+00:00",
-      "seenAt": "2026-11-11T10:47:31+00:00"
+      "seenAt": "2026-11-14T19:20:56+00:00"
      },
      "live": true,
      "perf": {
@@ -456,134 +331,122 @@
    ]
   },
   {
-   "id": "wwhd",
-   "name": "Wind Waker HD Recomp",
+   "id": "nxnative",
+   "name": "nxnative (OoT natif Mac)",
    "kind": "recomp",
-   "sys": "Zelda Wind Waker HD",
-   "repo": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp",
+   "sys": "Zelda Ocarina of Time (Switch 2)",
+   "repo": "https://github.com/seedds/nxnative",
    "notesUrl": null,
-   "rebuild": false,
+   "rebuild": true,
    "targets": [
     {
      "device": "mac",
      "label": null,
      "installed": {
-      "version": "0.5.1",
-      "installedAt": "2026-11-11T10:39:01+00:00",
-      "seenAt": "2026-11-11T10:47:32+00:00"
+      "version": "a00f03b",
+      "installedAt": "2026-11-08T14:21:34+08:00",
+      "seenAt": "2026-11-11T10:47:35+00:00"
      },
-     "live": true,
-     "perf": {
-      "score": 0,
-      "top": []
-     },
-     "latest": "v0.5.1",
-     "latestDate": "2026-11-06T14:33:31Z",
-     "basis": "version",
-     "releases": [],
-     "olderHidden": 0,
-     "newerPre": {
-      "tag": "devel-build",
-      "date": "2026-11-11T10:37:28Z",
-      "url": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp/releases/tag/devel-build"
-     },
-     "status": "uptodate",
-     "reason": "Tu as la dernière version."
-    },
-    {
-     "device": "ayn",
-     "label": null,
-     "installed": {
-      "version": "0.5.0",
-      "installedAt": "2026-11-05T16:42:04+00:00",
-      "seenAt": "2026-11-11T10:47:32+00:00"
-     },
-     "live": true,
-     "perf": {
-      "score": 3,
-      "top": [
-       "60 fps (generated), experimental (425, from the GreenNaugahyde and Nycolazs Android forks, thanks",
-       "60 fps frame interpolation plays exactly like 30 fps (436). Before, some characters behaved differently at",
-       "True 60 is retired (407). The experimental \"True 60\" frame rate (Link and the camera at 60 game steps a"
-      ]
-     },
-     "latest": "v0.5.1",
-     "latestDate": "2026-11-06T14:33:31Z",
-     "basis": "version",
+     "live": false,
+     "latest": "bee218d",
+     "latestDate": "2026-11-14T19:03:43Z",
+     "basis": "commit",
+     "newerPre": null,
      "releases": [
       {
-       "tag": "v0.5.1",
-       "name": "v0.5.1",
-       "date": "2026-11-06T14:33:31Z",
+       "tag": "383 commits",
+       "name": "Nouveaux commits sur main",
+       "date": "2026-11-14T19:03:43Z",
        "pre": false,
-       "url": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp/releases/tag/v0.5.1",
+       "url": "https://github.com/seedds/nxnative/compare/a00f03b...main",
        "highlights": [
         {
-         "text": "60 fps (generated), experimental (425, from the GreenNaugahyde and Nycolazs Android forks, thanks",
+         "text": "Each nn::codec video decoder decodes on a thread of its own, and dav1d on 4 threads with 3 frames at once, so movies no longer stutter at a steady 60 fps (PR #2240): a submission queues its packet and…",
          "tags": [
+          "focus",
           "perf",
-          "android"
-         ]
-        },
-        {
-         "text": "60 fps frame interpolation plays exactly like 30 fps (436). Before, some characters behaved differently at",
-         "tags": [
-          "perf"
-         ]
-        },
-        {
-         "text": "True 60 is retired (407). The experimental \"True 60\" frame rate (Link and the camera at 60 game steps a",
-         "tags": [
-          "perf"
-         ]
-        },
-        {
-         "text": "Android (arm64, Android 13+, Vulkan 1.3): install the android-arm64.apk (android-x8664 is for",
-         "tags": [
-          "android",
-          "graphics"
-         ]
-        },
-        {
-         "text": "@GenissonEmilio: Android touch on the title screen, file select and name entry (340), safer save import (339),",
-         "tags": [
-          "android",
-          "save"
-         ]
-        },
-        {
-         "text": "@davidsgullick: controller rumble (347) and Steam Controllers (348) on macOS",
-         "tags": [
           "mac",
           "controller"
          ]
         },
         {
-         "text": "@mkopec: HDR metadata (337) and the Mali (panvk) sky fix (317)",
+         "text": "Textures that dynamic resolution resizes take their memory from the recycled heaps instead of new Metal memory each time: every GPU-only texture the churn makes (render targets, with or without COMPRE…",
          "tags": [
-          "fix",
+          "perf",
+          "mac",
           "graphics"
          ]
         },
         {
-         "text": "@DaniXK-96: a Vulkan colour-target fix (399)",
+         "text": "nvn/pso: an archive's libraries are read ahead of Metal's open, so a cold bundled archive opens 3-6x faster (PR #2657)",
          "tags": [
-          "fix",
+          "perf",
+          "mac"
+         ]
+        },
+        {
+         "text": "Isolate and bound per-game regression shader caches",
+         "tags": [
+          "perf",
+          "fix"
+         ]
+        },
+        {
+         "text": "nvn/present: no frames left queued after a hitch (PR #2467, #2578)",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "draw_barriers game works again while images share memory, and a fragment-only game barrier no longer forces the full one: since c484b13c the relaxed draw-pass barriers were off whenever an image famil…",
+         "tags": [
+          "focus",
+          "mac",
           "graphics"
+         ]
+        },
+        {
+         "text": "A uniform slot is bounded at its bound size rounded up to 256 bytes, the size the console's driver gives the GPU, not at the exact size: nvnCommandBufferBindUniformBuffer writes (size + 0xff) & ~0xff …",
+         "tags": [
+          "focus",
+          "fix",
+          "mac"
+         ]
+        },
+        {
+         "text": "Unused border corrections are compiled out of pipelines that bind no sampler with a twin: every pixel shader with border-colour corrections declares the function constant dm_border_off (DMSH_BORDER_FC…",
+         "tags": [
+          "focus",
+          "mac"
+         ]
+        },
+        {
+         "text": "The prediction makes no pulling stand-in for a proposed pipeline key whose base is made: after a submission's first pipeline miss, pso_predict_rest_ proposes each remaining draw's key and that key wit…",
+         "tags": [
+          "focus",
+          "mac"
+         ]
+        },
+        {
+         "text": "game: Ocarina of Time documents the #2226 ordering check",
+         "tags": [
+          "focus"
          ]
         }
        ],
-       "more": 85
+       "more": 181
       }
      ],
-     "olderHidden": 0,
-     "newerPre": {
-      "tag": "devel-build",
-      "date": "2026-11-11T10:37:28Z",
-      "url": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp/releases/tag/devel-build"
+     "perf": {
+      "score": 5,
+      "top": [
+       "Each nn::codec video decoder decodes on a thread of its own, and dav1d on 4 threads with 3 frames at once, so movies no longer stutter at a steady 60 fps (PR #2240): a submission queues its packet and…",
+       "Textures that dynamic resolution resizes take their memory from the recycled heaps instead of new Metal memory each time: every GPU-only texture the churn makes (render targets, with or without COMPRE…",
+       "nvn/pso: an archive's libraries are read ahead of Metal's open, so a cold bundled archive opens 3-6x faster (PR #2657)"
+      ]
      },
      "status": "recommended",
-     "reason": "1 nouvelle version · spécifique Android, Performances, Correctifs, Graphismes"
+     "reason": "383 commits depuis ta compilation · spécifique Mac, Performances, Correctifs, Graphismes"
     }
    ]
   },
@@ -602,17 +465,82 @@
      "installed": {
       "version": "0.3.1-beta",
       "installedAt": "2026-11-05T22:32:00+00:00",
-      "seenAt": "2026-11-11T10:47:33+00:00"
+      "seenAt": "2026-11-14T19:20:58+00:00"
      },
      "live": true,
      "perf": {
-      "score": 0,
-      "top": []
+      "score": 4,
+      "top": [
+       "Modo compacto numa linha: FPS (o do jogo e o mostrado, com LSFG), ms, RAM e temperaturas. Um toque duplo alterna para o detalhado.",
+       "O modo detalhado tem gráficos de FPS, ms e RAM, além de tempo de GPU, limite das CPUs, bateria e estado térmico.",
+       "A compact one-line mode: FPS (the game's and the shown one, with LSFG), ms, RAM and temperatures. A double tap switches to the detailed mode."
+      ]
      },
-     "latest": "v0.3.4-beta",
-     "latestDate": "2026-11-09T00:58:13Z",
+     "latest": "v0.4.0-beta",
+     "latestDate": "2026-11-13T18:01:37Z",
      "basis": "version",
      "releases": [
+      {
+       "tag": "v0.4.0-beta",
+       "name": "BOTWRecompAndroid 0.4.0 (beta 32): frame generation, new overlay, less memory on Xclipse",
+       "date": "2026-11-13T18:01:37Z",
+       "pre": true,
+       "url": "https://github.com/mamcjr/BOTWRecompAndroid/releases/tag/v0.4.0-beta",
+       "highlights": [
+        {
+         "text": "Modo compacto numa linha: FPS (o do jogo e o mostrado, com LSFG), ms, RAM e temperaturas. Um toque duplo alterna para o detalhado.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "O modo detalhado tem gráficos de FPS, ms e RAM, além de tempo de GPU, limite das CPUs, bateria e estado térmico.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "A compact one-line mode: FPS (the game's and the shown one, with LSFG), ms, RAM and temperatures. A double tap switches to the detailed mode.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "The detailed mode has FPS, ms and RAM charts, plus GPU time, CPU caps, battery and thermal state.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "Controller gyro with swapped axes (338): to try another axis order without a new APK, in Settings Driver compatibility Driver variables: LARECOMPPADGYRO=z,y,x.",
+         "tags": [
+          "compat",
+          "android",
+          "controller"
+         ]
+        },
+        {
+         "text": "Giroscópio de controle com eixos trocados (338): para testar outra ordem dos eixos sem um novo APK, em Configurações Compatibilidade do driver Variáveis do driver: LARECOMPPADGYRO=z,y,x.",
+         "tags": [
+          "compat",
+          "android"
+         ]
+        },
+        {
+         "text": "Geração de quadros (LSFG), opcional: usa a geração de quadros do Lossless Scaling com o seu próprio Lossless.dll (do Lossless Scaling para Windows, que não vem com o app). Coloque o arquivo em Downloa…",
+         "tags": [
+          "android"
+         ]
+        },
+        {
+         "text": "Xclipse (Samsung) e outras GPUs que não são Adreno: o limite de 1.500 pipelines, que já valia na Mali, agora vale para qualquer GPU que não seja Adreno (327, 345). No Xclipse, o app guardava 8.000 pip…",
+         "tags": [
+          "android"
+         ]
+        }
+       ],
+       "more": 40
+      },
       {
        "tag": "v0.3.4-beta",
        "name": "BOTWRecompAndroid 0.3.4 (beta 31): 6 GB RAM compatibility hotfix",
@@ -747,7 +675,248 @@
      "olderHidden": 0,
      "newerPre": null,
      "status": "recommended",
-     "reason": "3 nouvelles versions · spécifique Android, Correctifs, Compatibilité, Graphismes"
+     "reason": "4 nouvelles versions · spécifique Android, Performances, Correctifs, Compatibilité"
+    }
+   ]
+  },
+  {
+   "id": "wwhd",
+   "name": "Wind Waker HD Recomp",
+   "kind": "recomp",
+   "sys": "Zelda Wind Waker HD",
+   "repo": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp",
+   "notesUrl": null,
+   "rebuild": false,
+   "targets": [
+    {
+     "device": "mac",
+     "label": null,
+     "installed": {
+      "version": "0.5.1",
+      "installedAt": "2026-11-11T10:39:01+00:00",
+      "seenAt": "2026-11-14T19:20:56+00:00"
+     },
+     "live": true,
+     "perf": {
+      "score": 0,
+      "top": []
+     },
+     "latest": "v0.5.1",
+     "latestDate": "2026-11-06T14:33:31Z",
+     "basis": "version",
+     "releases": [],
+     "olderHidden": 0,
+     "newerPre": {
+      "tag": "devel-build",
+      "date": "2026-11-14T10:19:16Z",
+      "url": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp/releases/tag/devel-build"
+     },
+     "status": "uptodate",
+     "reason": "Tu as la dernière version."
+    },
+    {
+     "device": "ayn",
+     "label": null,
+     "installed": {
+      "version": "0.5.0",
+      "installedAt": "2026-11-05T16:42:04+00:00",
+      "seenAt": "2026-11-14T19:20:57+00:00"
+     },
+     "live": true,
+     "perf": {
+      "score": 3,
+      "top": [
+       "60 fps (generated), experimental (425, from the GreenNaugahyde and Nycolazs Android forks, thanks",
+       "60 fps frame interpolation plays exactly like 30 fps (436). Before, some characters behaved differently at",
+       "True 60 is retired (407). The experimental \"True 60\" frame rate (Link and the camera at 60 game steps a"
+      ]
+     },
+     "latest": "v0.5.1",
+     "latestDate": "2026-11-06T14:33:31Z",
+     "basis": "version",
+     "releases": [
+      {
+       "tag": "v0.5.1",
+       "name": "v0.5.1",
+       "date": "2026-11-06T14:33:31Z",
+       "pre": false,
+       "url": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp/releases/tag/v0.5.1",
+       "highlights": [
+        {
+         "text": "60 fps (generated), experimental (425, from the GreenNaugahyde and Nycolazs Android forks, thanks",
+         "tags": [
+          "perf",
+          "android"
+         ]
+        },
+        {
+         "text": "60 fps frame interpolation plays exactly like 30 fps (436). Before, some characters behaved differently at",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "True 60 is retired (407). The experimental \"True 60\" frame rate (Link and the camera at 60 game steps a",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "Android (arm64, Android 13+, Vulkan 1.3): install the android-arm64.apk (android-x8664 is for",
+         "tags": [
+          "android",
+          "graphics"
+         ]
+        },
+        {
+         "text": "@GenissonEmilio: Android touch on the title screen, file select and name entry (340), safer save import (339),",
+         "tags": [
+          "android",
+          "save"
+         ]
+        },
+        {
+         "text": "@davidsgullick: controller rumble (347) and Steam Controllers (348) on macOS",
+         "tags": [
+          "mac",
+          "controller"
+         ]
+        },
+        {
+         "text": "@mkopec: HDR metadata (337) and the Mali (panvk) sky fix (317)",
+         "tags": [
+          "fix",
+          "graphics"
+         ]
+        },
+        {
+         "text": "@DaniXK-96: a Vulkan colour-target fix (399)",
+         "tags": [
+          "fix",
+          "graphics"
+         ]
+        }
+       ],
+       "more": 85
+      }
+     ],
+     "olderHidden": 0,
+     "newerPre": {
+      "tag": "devel-build",
+      "date": "2026-11-14T10:19:16Z",
+      "url": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp/releases/tag/devel-build"
+     },
+     "status": "recommended",
+     "reason": "1 nouvelle version · spécifique Android, Performances, Correctifs, Graphismes"
+    }
+   ]
+  },
+  {
+   "id": "macnativegames",
+   "name": "MacNativeGames (BotW Mac)",
+   "kind": "recomp",
+   "sys": "Zelda Breath of the Wild",
+   "repo": "https://github.com/ly05010419/MacNativeGames",
+   "notesUrl": null,
+   "rebuild": true,
+   "targets": [
+    {
+     "device": "mac",
+     "label": null,
+     "installed": {
+      "version": "5843ee5",
+      "installedAt": "2026-11-04T22:50:36+01:00",
+      "seenAt": "2026-11-11T10:47:33+00:00"
+     },
+     "live": false,
+     "latest": "3edfb0b",
+     "latestDate": "2026-11-14T12:07:12Z",
+     "basis": "commit",
+     "newerPre": null,
+     "releases": [
+      {
+       "tag": "9 commits",
+       "name": "Nouveaux commits sur main",
+       "date": "2026-11-14T12:07:12Z",
+       "pre": false,
+       "url": "https://github.com/ly05010419/MacNativeGames/compare/5843ee5...main",
+       "highlights": [
+        {
+         "text": "fix(botw): moving platforms keep their small turns above 30 fps, so Link no longer hops on a tilting Vah Medoh",
+         "tags": [
+          "focus",
+          "perf",
+          "fix"
+         ]
+        },
+        {
+         "text": "fix(botw): a saved native 2K + MetalFX keeps MetalFX after the first present (#1806)",
+         "tags": [
+          "focus",
+          "fix",
+          "mac"
+         ]
+        },
+        {
+         "text": "fix: merge Breath of the Wild moving-platform rotation (PR #2157)",
+         "tags": [
+          "focus",
+          "fix"
+         ]
+        },
+        {
+         "text": "docs: the UI texture pack section of docs/mods.md (English and Chinese) describes the MNG_UI_PACK variables, the uv build with --screen-height, the shape method, its quality gate and the manifest, for…",
+         "tags": [
+          "focus",
+          "graphics"
+         ]
+        },
+        {
+         "text": "feat: games/botw/assets/ui_pack_keys.tsv lists the 47 Breath of the Wild UI textures with their measured draw scale and per-key options for tools/ui_pack, and the AI builder botw_texpack.py and its te…",
+         "tags": [
+          "focus",
+          "graphics"
+         ]
+        },
+        {
+         "text": "fix: the express update of Tears of the Kingdom and Breath of the Wild starts again",
+         "tags": [
+          "focus",
+          "fix"
+         ]
+        },
+        {
+         "text": "feat: 截图分享 for TotK, BotW and OoT on Mac: every screenshot shared anonymously while the switch is on",
+         "tags": [
+          "focus",
+          "mac"
+         ]
+        },
+        {
+         "text": "fix: shader issues are checked for the bind states of every game's pipelines, not only TotK's and BotW's",
+         "tags": [
+          "focus",
+          "fix"
+         ]
+        },
+        {
+         "text": "perf: Breath of the Wild, Ocarina of Time and the Switch 2 games take the verified game data instead of extracting it again",
+         "tags": [
+          "focus"
+         ]
+        }
+       ],
+       "more": 0
+      }
+     ],
+     "perf": {
+      "score": 1,
+      "top": [
+       "fix(botw): moving platforms keep their small turns above 30 fps, so Link no longer hops on a tilting Vah Medoh"
+      ]
+     },
+     "status": "recommended",
+     "reason": "9 commits sur ton jeu depuis ta compilation · spécifique Mac, Performances, Correctifs, Graphismes"
     }
    ]
   },
@@ -766,7 +935,7 @@
      "installed": {
       "version": "0.1-12442-gdd4a0eb77",
       "installedAt": "2026-10-25T01:51:16+00:00",
-      "seenAt": "2026-11-11T10:47:27+00:00"
+      "seenAt": "2026-11-14T19:20:51+00:00"
      },
      "live": true,
      "perf": {
@@ -848,7 +1017,7 @@
      "olderHidden": 0,
      "newerPre": {
       "tag": "preview",
-      "date": "2026-11-11T10:17:27Z",
+      "date": "2026-11-14T14:55:59Z",
       "url": "https://github.com/stenzek/duckstation/releases/tag/preview"
      },
      "status": "recommended",
@@ -871,7 +1040,7 @@
      "installed": {
       "version": "1.3.4",
       "installedAt": "2026-11-05T22:32:10+00:00",
-      "seenAt": "2026-11-11T10:47:21+00:00"
+      "seenAt": "2026-11-14T19:20:45+00:00"
      },
      "live": true,
      "perf": {
@@ -952,63 +1121,6 @@
    ]
   },
   {
-   "id": "macnativegames",
-   "name": "MacNativeGames (BotW Mac)",
-   "kind": "recomp",
-   "sys": "Zelda Breath of the Wild",
-   "repo": "https://github.com/ly05010419/MacNativeGames",
-   "notesUrl": null,
-   "rebuild": true,
-   "targets": [
-    {
-     "device": "mac",
-     "label": null,
-     "installed": {
-      "version": "5843ee5",
-      "installedAt": "2026-11-04T22:50:36+01:00",
-      "seenAt": "2026-11-11T10:47:33+00:00"
-     },
-     "live": true,
-     "latest": "f41d182",
-     "latestDate": "2026-11-11T10:38:57Z",
-     "basis": "commit",
-     "newerPre": null,
-     "releases": [
-      {
-       "tag": "2 commits",
-       "name": "Nouveaux commits sur main",
-       "date": "2026-11-11T10:38:57Z",
-       "pre": false,
-       "url": "https://github.com/ly05010419/MacNativeGames/compare/5843ee5...main",
-       "highlights": [
-        {
-         "text": "fix: shader issues are checked for the bind states of every game's pipelines, not only TotK's and BotW's",
-         "tags": [
-          "focus",
-          "fix"
-         ]
-        },
-        {
-         "text": "fix: detect BotW handheld scene completion for frame interpolation",
-         "tags": [
-          "focus",
-          "fix"
-         ]
-        }
-       ],
-       "more": 0
-      }
-     ],
-     "perf": {
-      "score": 0,
-      "top": []
-     },
-     "status": "recommended",
-     "reason": "2 commits sur ton jeu depuis ta compilation · Correctifs"
-    }
-   ]
-  },
-  {
    "id": "aps3e",
    "name": "aPS3e",
    "kind": "emu",
@@ -1023,7 +1135,7 @@
      "installed": {
       "version": "2.41",
       "installedAt": "2026-08-06T05:58:30+00:00",
-      "seenAt": "2026-11-11T10:47:25+00:00"
+      "seenAt": "2026-11-14T19:20:48+00:00"
      },
      "live": true,
      "perf": {
@@ -1075,7 +1187,7 @@
      "installed": {
       "version": "2609a",
       "installedAt": "2026-10-08T01:08:05+00:00",
-      "seenAt": "2026-11-11T10:47:19+00:00"
+      "seenAt": "2026-11-14T19:20:42+00:00"
      },
      "live": true,
      "perf": {
@@ -1107,7 +1219,7 @@
      "installed": {
       "version": "2606",
       "installedAt": "2026-06-25T15:35:59+00:00",
-      "seenAt": "2026-11-11T10:47:19+00:00"
+      "seenAt": "2026-11-14T19:20:42+00:00"
      },
      "live": true,
      "perf": {
@@ -1177,7 +1289,7 @@
      "installed": {
       "version": "2126.2",
       "installedAt": "2026-10-08T21:50:54+00:00",
-      "seenAt": "2026-11-11T10:47:15+00:00"
+      "seenAt": "2026-11-14T19:20:38+00:00"
      },
      "live": true,
      "perf": {
@@ -1190,9 +1302,9 @@
      "releases": [],
      "olderHidden": 0,
      "newerPre": {
-      "tag": "2127.0-rc2",
-      "date": "2026-11-06T20:19:23Z",
-      "url": "https://github.com/azahar-emu/azahar/releases/tag/2127.0-rc2"
+      "tag": "2127.0-rc3",
+      "date": "2026-11-12T22:19:52Z",
+      "url": "https://github.com/azahar-emu/azahar/releases/tag/2127.0-rc3"
      },
      "status": "uptodate",
      "reason": "Tu as la dernière version."
@@ -1203,7 +1315,7 @@
      "installed": {
       "version": "2126.2-vanilla",
       "installedAt": "2026-11-11T10:38:13+00:00",
-      "seenAt": "2026-11-11T10:47:15+00:00"
+      "seenAt": "2026-11-14T19:20:38+00:00"
      },
      "live": true,
      "perf": {
@@ -1216,9 +1328,9 @@
      "releases": [],
      "olderHidden": 0,
      "newerPre": {
-      "tag": "2127.0-rc2",
-      "date": "2026-11-06T20:19:23Z",
-      "url": "https://github.com/azahar-emu/azahar/releases/tag/2127.0-rc2"
+      "tag": "2127.0-rc3",
+      "date": "2026-11-12T22:19:52Z",
+      "url": "https://github.com/azahar-emu/azahar/releases/tag/2127.0-rc3"
      },
      "status": "uptodate",
      "reason": "Tu as la dernière version."
@@ -1240,7 +1352,7 @@
      "installed": {
       "version": "2.6.0",
       "installedAt": "2025-02-06T12:03:46+00:00",
-      "seenAt": "2026-11-11T10:47:20+00:00"
+      "seenAt": "2026-11-14T19:20:43+00:00"
      },
      "live": true,
      "perf": {
@@ -1273,7 +1385,7 @@
      "installed": {
       "version": "1f6734c",
       "installedAt": "2026-06-23T09:48:51+00:00",
-      "seenAt": "2026-11-11T10:47:21+00:00"
+      "seenAt": "2026-11-14T19:20:44+00:00"
      },
      "live": true,
      "perf": {
@@ -1306,7 +1418,7 @@
      "installed": {
       "version": "1.4.0",
       "installedAt": "2026-11-11T10:38:35+00:00",
-      "seenAt": "2026-11-11T10:47:30+00:00"
+      "seenAt": "2026-11-14T19:20:55+00:00"
      },
      "live": true,
      "perf": {
@@ -1341,7 +1453,7 @@
       "installedAt": "2026-11-05T07:18:57+00:00",
       "seenAt": "2026-11-11T10:47:37+00:00"
      },
-     "live": true,
+     "live": false,
      "perf": {
       "score": 0,
       "top": []
@@ -1372,7 +1484,7 @@
      "installed": {
       "version": "2.4.1",
       "installedAt": "2023-12-30T00:16:26+00:00",
-      "seenAt": "2026-11-11T10:47:29+00:00"
+      "seenAt": "2026-11-14T19:20:54+00:00"
      },
      "live": true,
      "perf": {
@@ -1405,7 +1517,7 @@
      "installed": {
       "version": "v2.8.2",
       "installedAt": "2026-09-04T16:20:46+00:00",
-      "seenAt": "2026-11-11T10:47:23+00:00"
+      "seenAt": "2026-11-14T19:20:47+00:00"
      },
      "live": true,
      "perf": {
@@ -1418,9 +1530,9 @@
      "releases": [],
      "olderHidden": 0,
      "newerPre": {
-      "tag": "v2.9.172",
-      "date": "2026-11-10T15:58:00Z",
-      "url": "https://github.com/PCSX2/pcsx2/releases/tag/v2.9.172"
+      "tag": "v2.9.179",
+      "date": "2026-11-13T18:50:39Z",
+      "url": "https://github.com/PCSX2/pcsx2/releases/tag/v2.9.179"
      },
      "status": "uptodate",
      "reason": "Tu as la dernière version."
@@ -1444,7 +1556,7 @@
       "installedAt": "2026-11-09T21:40:19+00:00",
       "seenAt": "2026-11-11T10:47:39+00:00"
      },
-     "live": true,
+     "live": false,
      "perf": {
       "score": 0,
       "top": []
@@ -1475,7 +1587,7 @@
      "installed": {
       "version": "1.20.4",
       "installedAt": "2026-05-16T12:44:42+00:00",
-      "seenAt": "2026-11-11T10:47:28+00:00"
+      "seenAt": "2026-11-14T19:20:52+00:00"
      },
      "live": true,
      "perf": {
@@ -1497,7 +1609,7 @@
      "installed": {
       "version": "v1.20.4",
       "installedAt": "2026-06-23T09:50:03+00:00",
-      "seenAt": "2026-11-11T10:47:28+00:00"
+      "seenAt": "2026-11-14T19:20:52+00:00"
      },
      "live": true,
      "perf": {
@@ -1530,7 +1642,7 @@
      "installed": {
       "version": "1.22.2",
       "installedAt": "2025-11-20T02:38:16+00:00",
-      "seenAt": "2026-11-11T10:47:29+00:00"
+      "seenAt": "2026-11-14T19:20:53+00:00"
      },
      "live": true,
      "perf": {
@@ -1552,7 +1664,7 @@
      "installed": {
       "version": "1.22.2_GIT",
       "installedAt": "2026-06-23T09:50:39+00:00",
-      "seenAt": "2026-11-11T10:47:29+00:00"
+      "seenAt": "2026-11-14T19:20:53+00:00"
      },
      "live": true,
      "perf": {
@@ -1585,7 +1697,7 @@
      "installed": {
       "version": "0.0.43",
       "installedAt": "2026-10-30T13:26:30+00:00",
-      "seenAt": "2026-11-11T10:47:24+00:00"
+      "seenAt": "2026-11-14T19:20:48+00:00"
      },
      "live": true,
      "perf": {
@@ -1618,7 +1730,7 @@
      "installed": {
       "version": "20250425",
       "installedAt": "2026-06-23T09:50:15+00:00",
-      "seenAt": "2026-11-11T10:47:25+00:00"
+      "seenAt": "2026-11-14T19:20:49+00:00"
      },
      "live": true,
      "perf": {
@@ -1653,7 +1765,7 @@
       "installedAt": "2025-10-11T07:19:21+00:00",
       "seenAt": "2026-11-11T10:47:20+00:00"
      },
-     "live": true,
+     "live": false,
      "perf": {
       "score": 0,
       "top": []
@@ -1684,7 +1796,7 @@
      "installed": {
       "version": "2.0.2",
       "installedAt": "2026-11-05T22:41:43+00:00",
-      "seenAt": "2026-11-11T10:47:38+00:00"
+      "seenAt": "2026-11-14T19:21:04+00:00"
      },
      "live": true,
      "perf": {
@@ -1717,7 +1829,7 @@
      "installed": {
       "version": "2.1.0",
       "installedAt": "2026-11-05T22:18:36+00:00",
-      "seenAt": "2026-11-11T10:47:38+00:00"
+      "seenAt": "2026-11-14T19:21:05+00:00"
      },
      "live": true,
      "perf": {
@@ -1750,7 +1862,7 @@
      "installed": {
       "version": "0b11201",
       "installedAt": "2026-08-27T07:15:30+00:00",
-      "seenAt": "2026-11-11T10:47:26+00:00"
+      "seenAt": "2026-11-14T19:20:50+00:00"
      },
      "live": true,
      "perf": {
