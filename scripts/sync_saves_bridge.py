@@ -221,6 +221,18 @@ SYNC_PROFILES = [
         "thorPaths": [],  # pas de port AYN : sauvegarde Mac ↔ SSD uniquement
     },
     {
+        "id": "pokopia_native",
+        "name": "Pokémon Pokopia (Switch 2) — nxnative Mac ↔ AYN Thor Banana Native",
+        "icon": "🌱",
+        "type": "directory",
+        "macPath": os.path.join(APP_SUPPORT, "nxnative", "0400A3A01EE4C000", "save"),
+        "ssdPath": os.path.join(GAMING_SSD_SAVES, "Standalone_Saves", "Pokopia_Native", "save"),
+        "thorPaths": [
+            "/sdcard/Android/data/dev.bananative.android/files/saves/0400A3A01EE4C000",
+            "/sdcard/Android/data/dev.bananative.android/files/saves/0400A3A01EE4C000.work",
+        ],
+    },
+    {
         "id": "switch2_lichii_mac",
         "name": "Switch 2 — Lichii (Eden NX2) Mac → copie GamingSSD",
         "icon": "🟥",
