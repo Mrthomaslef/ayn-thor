@@ -1,5 +1,5 @@
 {
-  "generatedAt": "16/11/2026 03:01:33",
+  "generatedAt": "17/11/2026 03:01:52",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -26,11 +26,11 @@
   },
   "summary": {
     "saveFoldersCount": 26,
-    "saveFilesCount": 52584,
-    "saveTotalMB": 10186.2,
+    "saveFilesCount": 52591,
+    "saveTotalMB": 10194.1,
     "romSystemsCount": 20,
-    "romGamesCount": 155,
-    "romTotalGB": 155.3,
+    "romGamesCount": 156,
+    "romTotalGB": 161.84,
     "bonusToolsCount": 17
   },
   "saves": [
@@ -395,9 +395,9 @@
       "icon": "💎",
       "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/Standalone_Saves",
       "androidPath": "/sdcard/Android/data/org.wwhdrecomp.wwhd/files/save",
-      "fileCount": 37012,
-      "sizeBytes": 807401765,
-      "sizeMB": 770.0,
+      "fileCount": 37019,
+      "sizeBytes": 815709530,
+      "sizeMB": 777.92,
       "sampleFiles": [
         "WindWakerHD_Recomp/save/user/cking.sav",
         "WindWakerHD_Recomp/save/user/cking_pic0_0.sav",
@@ -406,7 +406,7 @@
         "WindWakerHD_Recomp/save/user/cking_pic0_11.sav",
         "WindWakerHD_Recomp/save/user/cking_pic0_2.sav"
       ],
-      "updatedAt": "11/11/2026 21:13"
+      "updatedAt": "15/11/2026 22:57"
     },
     {
       "id": "Switch2_Lichii_Mac",
@@ -719,9 +719,9 @@
       "icon": "🔴",
       "localPath": "/Volumes/GamingSSD/Games/ROMs/Switch",
       "androidPath": "/sdcard/ROMs/switch",
-      "gameCount": 17,
-      "totalSizeGB": 119.79,
-      "totalSizeMB": 122669.0,
+      "gameCount": 18,
+      "totalSizeGB": 126.33,
+      "totalSizeMB": 129365.0,
       "games": [
         {
           "name": "Celeste [01002B30028F6000][v0][Base].nsp",
@@ -742,6 +742,10 @@
         {
           "name": "Pokemon Lets Go Eevee.xci",
           "sizeMB": 7616.0
+        },
+        {
+          "name": "Pokemon Pokopia [0400A3A01EE4C000].nup",
+          "sizeMB": 6695.9
         },
         {
           "name": "Pokemon Shining Pearl v0 - xcinspdotcom.nsp",

@@ -1,9 +1,9 @@
 {
-  "timestamp": "16/11/2026 03:01:11",
+  "timestamp": "17/11/2026 03:01:29",
   "mode": "smart",
   "thorConnected": true,
   "serial": "192.168.1.192:5555",
-  "totalFilesChecked": 368,
+  "totalFilesChecked": 375,
   "updatedOnMacCount": 0,
   "updatedOnThorCount": 0,
   "profiles": [
@@ -201,6 +201,19 @@
       "updatedOnThor": [],
       "details": [],
       "status": "offline_mac_ssd_only"
+    },
+    {
+      "id": "pokopia_native",
+      "name": "Pokémon Pokopia (Switch 2) — nxnative Mac ↔ AYN Thor Banana Native",
+      "icon": "🌱",
+      "mode": "smart",
+      "thorConnected": true,
+      "totalFiles": 7,
+      "identical": 7,
+      "updatedOnMac": [],
+      "updatedOnThor": [],
+      "details": [],
+      "status": "ok"
     },
     {
       "id": "switch2_lichii_mac",
