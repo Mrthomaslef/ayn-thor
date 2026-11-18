@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-15T08:30:42+00:00",
+ "generatedAt": "2026-11-18T08:00:33+00:00",
  "aynConnected": true,
  "stats": {
   "recommended": 7,
@@ -34,21 +34,262 @@
      "installed": {
       "version": "0.3.1-beta",
       "installedAt": "2026-11-05T22:32:00+00:00",
-      "seenAt": "2026-11-15T08:30:31+00:00"
+      "seenAt": "2026-11-18T08:00:25+00:00"
      },
      "live": true,
      "perf": {
-      "score": 14,
+      "score": 30,
       "top": [
-       "Galaxy Tab A9+ (Adreno 619): no mundo, de ~15 para ~19 fps, com trechos acima de 20. A GPU parada caiu para ~7,5 ms por quadro.",
-       "POCO F7 Ultra (Adreno 830): igual (~25–26 fps), porque lá o limite já é a própria GPU.",
-       "Galaxy Tab A9+ (Adreno 619): in the world, from ~15 to ~19 fps, with stretches above 20. The GPU's idle time dropped to ~7.5 ms per frame."
+       "Lento por ~10 s depois de cada carregamento (465): depois de carregar o save ou de uma viagem rápida, o \"Sync lag\" (Vídeo) ficava desligado por 300 quadros. Em GPUs mais fracas isso eram ~12 s a 17-20…",
+       "Slow for ~10 s after every load (465): after loading the save or a fast travel, \"Sync lag\" (Video) stayed off for 300 frames. On slower GPUs that was ~12 s at 17-20 fps.",
+       "Video Pipeline prewarming (experimental, off): records the pipelines used and prepares them while the save loads, for fewer hitches when entering the world. Contributed by Propinbo (475)."
       ]
      },
-     "latest": "v0.4.2-beta",
-     "latestDate": "2026-11-15T02:42:51Z",
+     "latest": "v0.4.6-beta",
+     "latestDate": "2026-11-17T17:29:24Z",
      "basis": "version",
      "releases": [
+      {
+       "tag": "v0.4.6-beta",
+       "name": "BOTWRecompAndroid 0.4.6 (beta 38): a água tem colisão de novo, e menos lentidão depois de carregar",
+       "date": "2026-11-17T17:29:24Z",
+       "pre": true,
+       "url": "https://github.com/mamcjr/BOTWRecompAndroid/releases/tag/v0.4.6-beta",
+       "highlights": [
+        {
+         "text": "Lento por ~10 s depois de cada carregamento (465): depois de carregar o save ou de uma viagem rápida, o \"Sync lag\" (Vídeo) ficava desligado por 300 quadros. Em GPUs mais fracas isso eram ~12 s a 17-20…",
+         "tags": [
+          "perf",
+          "save"
+         ]
+        },
+        {
+         "text": "Slow for ~10 s after every load (465): after loading the save or a fast travel, \"Sync lag\" (Video) stayed off for 300 frames. On slower GPUs that was ~12 s at 17-20 fps.",
+         "tags": [
+          "perf",
+          "save"
+         ]
+        },
+        {
+         "text": "Video Pipeline prewarming (experimental, off): records the pipelines used and prepares them while the save loads, for fewer hitches when entering the world. Contributed by Propinbo (475).",
+         "tags": [
+          "perf",
+          "save"
+         ]
+        },
+        {
+         "text": "4 GB de RAM: perto de 20 fps no mundo, e o fps cai quando o aparelho esquenta.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "4 GB RAM: close to 20 fps in the world, and fps drops as the device heats up.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "Mali: bilinear filtering where the GPU lacks it (436): on some Mali GPUs (Immortalis-G925), some texture formats can't be filtered, and \"phantom\" water showed on dry ground near rivers. The filter is …",
+         "tags": [
+          "fix",
+          "graphics"
+         ]
+        },
+        {
+         "text": "O jogo fechava ao abrir com a DLC danificada (472): um aoc.bin incompleto (por exemplo, uma instalação interrompida) fazia o jogo abortar. Agora o jogo roda sem a DLC, e Configurações DLC diz que o ar…",
+         "tags": [
+          "compat"
+         ]
+        },
+        {
+         "text": "Vídeo Pré-aquecimento de pipelines (experimental, desligado): grava os pipelines usados e os prepara enquanto o save carrega, para menos engasgos ao entrar no mundo. Contribuição do Propinbo (475).",
+         "tags": [
+          "save"
+         ]
+        }
+       ],
+       "more": 32
+      },
+      {
+       "tag": "v0.4.5-beta",
+       "name": "BOTWRecompAndroid 0.4.5 (beta 37): menos memória presa e melhorias vindas do TOTK",
+       "date": "2026-11-16T18:47:36Z",
+       "pre": true,
+       "url": "https://github.com/mamcjr/BOTWRecompAndroid/releases/tag/v0.4.5-beta",
+       "highlights": [
+        {
+         "text": "4 GB de RAM: perto de 20 fps no mundo, mas ainda abaixo disso na média, e o fps cai quando o aparelho esquenta.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "4 GB RAM: close to 20 fps in the world, but still below that on average, and fps drops as the device heats up.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "Shaders sem uso liberados na Mali e nas outras GPUs não Adreno (450): os shaders nunca eram liberados durante o jogo (1513 vivos depois de 30 min, quando uma Mali-G720 fechou no limite de memória do A…",
+         "tags": [
+          "android"
+         ]
+        },
+        {
+         "text": "Modo Nativo nos MediaTek (Dimensity): o contador de tempo desses aparelhos corre a 13 MHz, não aos 19,2 MHz do Switch, então no modo Nativo todo intervalo que o jogo media saía com 68% da duração. Ago…",
+         "tags": [
+          "android"
+         ]
+        },
+        {
+         "text": "FSR 1 mais leve: a análise de bordas é feita uma vez, e onde não há borda vira um filtro simples (no TOTK: 1,00 para 0,50 ms no Adreno 830). Não foi exercitado aqui, então se o FSR 1 der algum problem…",
+         "tags": [
+          "android"
+         ]
+        },
+        {
+         "text": "Unused shaders freed on Mali and other non-Adreno GPUs (450): shaders were never freed during play (1513 alive after 30 min, when a Mali-G720 closed at Android's memory limit). Now, past 1000, the one…",
+         "tags": [
+          "android"
+         ]
+        },
+        {
+         "text": "Native Mode on MediaTek (Dimensity): these phones' time counter runs at 13 MHz, not the Switch's 19.2 MHz, so in Native Mode every span the game timed came out at 68% of its length. Counter reads are …",
+         "tags": [
+          "android"
+         ]
+        },
+        {
+         "text": "Lighter FSR 1: edges are analysed once, and where there is no edge it becomes a simple filter (in TOTK: 1.00 to 0.50 ms on the Adreno 830). It wasn't exercised here, so if FSR 1 shows any image proble…",
+         "tags": [
+          "android"
+         ]
+        }
+       ],
+       "more": 26
+      },
+      {
+       "tag": "v0.4.4-beta",
+       "name": "BOTWRecompAndroid 0.4.4 (beta 36): sem queda de fps depois dos menus",
+       "date": "2026-11-15T23:51:58Z",
+       "pre": true,
+       "url": "https://github.com/mamcjr/BOTWRecompAndroid/releases/tag/v0.4.4-beta",
+       "highlights": [
+        {
+         "text": "4 GB de RAM: perto de 20 fps no mundo, mas ainda abaixo disso na média, e o fps cai quando o aparelho esquenta.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "4 GB RAM: close to 20 fps in the world, but still below that on average, and fps drops as the device heats up.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "New button: Video Frame generation Import Lossless.dll picks the file with Android's file picker and keeps a copy in the app's own files, which it can always read.",
+         "tags": [
+          "android",
+          "controller"
+         ]
+        },
+        {
+         "text": "Preso em 20 fps depois de um engasgo: um engasgo isolado (save, menu, shaders compilando) não leva mais o jogo para 20 fps. E, se ele estiver em 20 fps, tenta voltar a 30 a cada poucos segundos, em ve…",
+         "tags": [
+          "save"
+         ]
+        },
+        {
+         "text": "Geração de quadros: \"no Lossless.dll\" com o arquivo no lugar certo (437, 385): o Android mostra o arquivo em Download/ para o app, mas não deixa abrir sem a permissão de acesso a todos os arquivos.",
+         "tags": [
+          "android"
+         ]
+        },
+        {
+         "text": "Botão novo: Vídeo Geração de quadros Importar Lossless.dll escolhe o arquivo pelo seletor do Android e guarda uma cópia nos arquivos do próprio app, que o app sempre consegue ler.",
+         "tags": [
+          "android"
+         ]
+        },
+        {
+         "text": "Stuck at 20 fps after a hitch: a single hitch (a save, a menu, shaders compiling) no longer takes the game to 20 fps. And at 20 fps it tries 30 again every few seconds, instead of waiting for the work…",
+         "tags": [
+          "save"
+         ]
+        },
+        {
+         "text": "Frame generation: \"no Lossless.dll\" with the file in the right place (437, 385): Android shows the file in Download/ to the app but doesn't let it open it without All files access.",
+         "tags": [
+          "android"
+         ]
+        }
+       ],
+       "more": 26
+      },
+      {
+       "tag": "v0.4.3-beta",
+       "name": "BOTWRecompAndroid 0.4.3 (beta 35): geração de quadros em telas de 120 Hz ou mais",
+       "date": "2026-11-15T10:20:53Z",
+       "pre": true,
+       "url": "https://github.com/mamcjr/BOTWRecompAndroid/releases/tag/v0.4.3-beta",
+       "highlights": [
+        {
+         "text": "Geração de quadros sem efeito em telas rápidas: com o jogo a 40–50 fps e a tela a 60 Hz, não sobrava espaço para nenhum quadro gerado, e o jogo continuava igual. Isso acontecia mesmo em telas de 120 o…",
+         "tags": [
+          "perf",
+          "android"
+         ]
+        },
+        {
+         "text": "Agora, com a geração ligada, o app pede ao Android uma taxa com espaço para os quadros gerados: a taxa de quadros escolhida vezes o multiplicador (60 fps × 2 = 120 Hz). O sistema escolhe o modo mais p…",
+         "tags": [
+          "perf",
+          "android"
+         ]
+        },
+        {
+         "text": "Frame generation with no effect on fast screens: with the game at 40–50 fps and the screen at 60 Hz, there was no room for any generated frame, and the game looked the same. This happened even on 120 …",
+         "tags": [
+          "perf",
+          "android"
+         ]
+        },
+        {
+         "text": "Now, with frame generation on, the app asks Android for a rate with room for the generated frames: the chosen frame rate times the multiplier (60 fps × 2 = 120 Hz). The system picks the nearest mode t…",
+         "tags": [
+          "perf",
+          "android"
+         ]
+        },
+        {
+         "text": "4 GB de RAM: perto de 20 fps no mundo, mas ainda abaixo disso na média, e o fps cai quando o aparelho esquenta.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "If no frame fits even then, Video Frame generation now says so instead of \"generating\". To make room, raise the refresh rate in the phone's display or game-mode settings (on the ROG, Game Genie), or l…",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "4 GB RAM: close to 20 fps in the world, but still below that on average, and fps drops as the device heats up.",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "RADV on Xclipse: the game crashes inside the RADV driver itself when entering the world (383, 413). Please use Samsung's driver for now.",
+         "tags": [
+          "fix"
+         ]
+        }
+       ],
+       "more": 14
+      },
       {
        "tag": "v0.4.2-beta",
        "name": "BOTWRecompAndroid 0.4.2 (beta 34): mais fps no Turnip, economia de RAM no menu",
@@ -177,319 +418,12 @@
         }
        ],
        "more": 40
-      },
-      {
-       "tag": "v0.4.0-beta",
-       "name": "BOTWRecompAndroid 0.4.0 (beta 32): frame generation, new overlay, less memory on Xclipse",
-       "date": "2026-11-13T18:01:37Z",
-       "pre": true,
-       "url": "https://github.com/mamcjr/BOTWRecompAndroid/releases/tag/v0.4.0-beta",
-       "highlights": [
-        {
-         "text": "Modo compacto numa linha: FPS (o do jogo e o mostrado, com LSFG), ms, RAM e temperaturas. Um toque duplo alterna para o detalhado.",
-         "tags": [
-          "perf"
-         ]
-        },
-        {
-         "text": "O modo detalhado tem gráficos de FPS, ms e RAM, além de tempo de GPU, limite das CPUs, bateria e estado térmico.",
-         "tags": [
-          "perf"
-         ]
-        },
-        {
-         "text": "A compact one-line mode: FPS (the game's and the shown one, with LSFG), ms, RAM and temperatures. A double tap switches to the detailed mode.",
-         "tags": [
-          "perf"
-         ]
-        },
-        {
-         "text": "The detailed mode has FPS, ms and RAM charts, plus GPU time, CPU caps, battery and thermal state.",
-         "tags": [
-          "perf"
-         ]
-        },
-        {
-         "text": "Controller gyro with swapped axes (338): to try another axis order without a new APK, in Settings Driver compatibility Driver variables: LARECOMPPADGYRO=z,y,x.",
-         "tags": [
-          "compat",
-          "android",
-          "controller"
-         ]
-        },
-        {
-         "text": "Giroscópio de controle com eixos trocados (338): para testar outra ordem dos eixos sem um novo APK, em Configurações Compatibilidade do driver Variáveis do driver: LARECOMPPADGYRO=z,y,x.",
-         "tags": [
-          "compat",
-          "android"
-         ]
-        },
-        {
-         "text": "Geração de quadros (LSFG), opcional: usa a geração de quadros do Lossless Scaling com o seu próprio Lossless.dll (do Lossless Scaling para Windows, que não vem com o app). Coloque o arquivo em Downloa…",
-         "tags": [
-          "android"
-         ]
-        },
-        {
-         "text": "Xclipse (Samsung) e outras GPUs que não são Adreno: o limite de 1.500 pipelines, que já valia na Mali, agora vale para qualquer GPU que não seja Adreno (327, 345). No Xclipse, o app guardava 8.000 pip…",
-         "tags": [
-          "android"
-         ]
-        }
-       ],
-       "more": 40
-      },
-      {
-       "tag": "v0.3.4-beta",
-       "name": "BOTWRecompAndroid 0.3.4 (beta 31): 6 GB RAM compatibility hotfix",
-       "date": "2026-11-09T00:58:13Z",
-       "pre": true,
-       "url": "https://github.com/mamcjr/BOTWRecompAndroid/releases/tag/v0.3.4-beta",
-       "highlights": [
-        {
-         "text": "Pequena correção de compatibilidade para aparelhos com 6 GB de RAM. A 0.3.3 ativava automaticamente o perfil de economia de memória em aparelhos que reportavam menos de 6 GiB de RAM, incluindo modelos…",
-         "tags": [
-          "compat"
-         ]
-        },
-        {
-         "text": "Esta correção foi compilada, mas ainda precisa ser confirmada nos aparelhos de 6 GB afetados. Se o problema continuar, abra uma issue com o modelo, GPU, driver e log.",
-         "tags": []
-        },
-        {
-         "text": "Instale por cima da 0.2.x ou 0.3.x; não é necessário recompilar o código do jogo. O projeto continua em beta e nenhum arquivo do jogo é incluído.",
-         "tags": []
-        }
-       ],
-       "more": 0
-      },
-      {
-       "tag": "v0.3.3-beta",
-       "name": "BOTWRecompAndroid 0.3.3 (beta 30): Mali crashes after long sessions, black grass on Mali, low-RAM phones",
-       "date": "2026-11-08T19:29:12Z",
-       "pre": true,
-       "url": "https://github.com/mamcjr/BOTWRecompAndroid/releases/tag/v0.3.3-beta",
-       "highlights": [
-        {
-         "text": "Crashes and slowdowns on Mali after ~30 minutes (310, 316): the logs showed that the app kept every graphics pipeline it had ever made, and Mali's driver holds memory for each one (5,500 pipelines and…",
-         "tags": [
-          "fix",
-          "graphics"
-         ]
-        },
-        {
-         "text": "Black, stretched grass on Mali (307, 258): the grass reads a texture in a format the GPU can't filter linearly. On those drivers such textures are now read without filtering (nothing changes where the…",
-         "tags": [
-          "compat",
-          "graphics"
-         ]
-        },
-        {
-         "text": "Crash at \"Open your eyes\" in Native mode (305): a call to an empty function now returns zero, as Recompiled mode already did.",
-         "tags": [
-          "fix"
-         ]
-        },
-        {
-         "text": "Mipmapped textures start at their second level (half the size, a quarter of the memory).",
-         "tags": [
-          "graphics"
-         ]
-        },
-        {
-         "text": "Quedas e lentidão na Mali depois de ~30 minutos (310, 316): os logs mostraram que o app guardava todos os pipelines gráficos que já tinha criado, e o driver da Mali reserva memória para cada um (5.500…",
-         "tags": []
-        },
-        {
-         "text": "Grama preta e esticada na Mali (307, 258): a grama lê uma textura num formato que a GPU não consegue filtrar de forma linear. Nesses drivers, essas texturas passam a ser lidas sem filtro (onde o drive…",
-         "tags": []
-        },
-        {
-         "text": "Queda em \"Abra os olhos\" no modo nativo (305): uma chamada a uma função vazia agora devolve zero, como já acontecia no modo recompilado.",
-         "tags": []
-        },
-        {
-         "text": "Texturas com mipmaps começam no segundo nível (metade do tamanho, um quarto da memória).",
-         "tags": []
-        }
-       ],
-       "more": 14
-      },
-      {
-       "tag": "v0.3.2-beta",
-       "name": "BOTWRecompAndroid 0.3.2 (beta 29): camera crash, red shadows on Adreno 840, unlocked-aspect HUD, minimap option",
-       "date": "2026-11-08T04:57:53Z",
-       "pre": true,
-       "url": "https://github.com/mamcjr/BOTWRecompAndroid/releases/tag/v0.3.2-beta",
-       "highlights": [
-        {
-         "text": "Benchmark embutido (PR 278, Propinbo): mede cenas fixas a partir de uma cópia do save (só pelo adb, para testes; ver o PR).",
-         "tags": [
-          "fix",
-          "save"
-         ]
-        },
-        {
-         "text": "Built-in benchmark (PR 278, Propinbo): measures fixed scenes from a copy of the save (adb only, for testing; see the PR).",
-         "tags": [
-          "fix",
-          "save"
-         ]
-        },
-        {
-         "text": "Sombras vermelhas no Adreno 840 (32): com os drivers Turnip Gen8, a sombra no chão ficava vermelha. A variável IR3SHADERDEBUG=nouboopt agora liga sozinha no Adreno 840 e acima, sem perder desempenho (…",
-         "tags": [
-          "android"
-         ]
-        },
-        {
-         "text": "Red shadows on the Adreno 840 (32): with the Turnip Gen8 drivers, shadows on the ground turned red. IR3SHADERDEBUG=nouboopt now turns on by itself on the Adreno 840 and up, with no loss of speed (than…",
-         "tags": [
-          "android"
-         ]
-        },
-        {
-         "text": "The memory mappings log now also shows the memory in use, the pipelines and the textures. If the game slows down or closes after a long session, please send the log: it shows what grows.",
-         "tags": [
-          "graphics"
-         ]
-        },
-        {
-         "text": "Minimapa no alto (Controles; 254): com a opção desligada, o minimapa fica no lugar de sempre mesmo com os controles de toque. Vem ligada, como antes.",
-         "tags": []
-        },
-        {
-         "text": "Dobráveis (PR 284, ilovz73ai-sketch): na tela interna de um dobrável (Galaxy Z Fold, Pixel Fold) o movimento do celular segue a rotação certa.",
-         "tags": []
-        },
-        {
-         "text": "Câmera do Slate fechando o jogo ao tirar fotos (300, modo recompilado): depois da leitura de um ponteiro vazio, o jogo chamava uma função que não existe. Agora essa chamada devolve zero, como a leitur…",
-         "tags": []
-        }
-       ],
-       "more": 26
       }
      ],
-     "olderHidden": 0,
+     "olderHidden": 4,
      "newerPre": null,
      "status": "recommended",
-     "reason": "6 nouvelles versions · spécifique Android, Performances, Correctifs, Compatibilité"
-    }
-   ]
-  },
-  {
-   "id": "nxnative",
-   "name": "nxnative (OoT natif Mac)",
-   "kind": "recomp",
-   "sys": "Zelda Ocarina of Time (Switch 2)",
-   "repo": "https://github.com/seedds/nxnative",
-   "notesUrl": null,
-   "rebuild": true,
-   "targets": [
-    {
-     "device": "mac",
-     "label": null,
-     "installed": {
-      "version": "a00f03b",
-      "installedAt": "2026-11-08T14:21:34+08:00",
-      "seenAt": "2026-11-15T08:30:33+00:00"
-     },
-     "live": true,
-     "latest": "b32d0bf",
-     "latestDate": "2026-11-15T07:39:20Z",
-     "basis": "commit",
-     "newerPre": null,
-     "releases": [
-      {
-       "tag": "413 commits",
-       "name": "Nouveaux commits sur main",
-       "date": "2026-11-15T07:39:20Z",
-       "pre": false,
-       "url": "https://github.com/seedds/nxnative/compare/a00f03b...main",
-       "highlights": [
-        {
-         "text": "Each nn::codec video decoder decodes on a thread of its own, and dav1d on 4 threads with 3 frames at once, so movies no longer stutter at a steady 60 fps (PR #2240): a submission queues its packet and…",
-         "tags": [
-          "focus",
-          "perf",
-          "mac",
-          "controller"
-         ]
-        },
-        {
-         "text": "nvn/pso: an archive's libraries are read ahead of Metal's open, so a cold bundled archive opens 3-6x faster (PR #2657)",
-         "tags": [
-          "perf",
-          "mac"
-         ]
-        },
-        {
-         "text": "Isolate and bound per-game regression shader caches",
-         "tags": [
-          "perf",
-          "fix"
-         ]
-        },
-        {
-         "text": "game: run Overcooked at 60 fps",
-         "tags": [
-          "perf"
-         ]
-        },
-        {
-         "text": "game: Divinity: Original Sin 2 defaults to 60 fps",
-         "tags": [
-          "perf"
-         ]
-        },
-        {
-         "text": "nvn/present: no frames left queued after a hitch (PR #2467, #2578)",
-         "tags": [
-          "perf"
-         ]
-        },
-        {
-         "text": "draw_barriers game works again while images share memory, and a fragment-only game barrier no longer forces the full one: since c484b13c the relaxed draw-pass barriers were off whenever an image famil…",
-         "tags": [
-          "focus",
-          "mac",
-          "graphics"
-         ]
-        },
-        {
-         "text": "game: Ocarina of Time documents the #2226 ordering check",
-         "tags": [
-          "focus"
-         ]
-        },
-        {
-         "text": "docs: the view cache's submit-thread saving measured on Ocarina of Time",
-         "tags": [
-          "focus"
-         ]
-        },
-        {
-         "text": "nvn/upscaler: every NDSR pack's networks are the game's upscaler, and square-rooted input is squared into MetalFX (PR #1459)",
-         "tags": [
-          "mac",
-          "controller",
-          "graphics"
-         ]
-        }
-       ],
-       "more": 199
-      }
-     ],
-     "perf": {
-      "score": 6,
-      "top": [
-       "Each nn::codec video decoder decodes on a thread of its own, and dav1d on 4 threads with 3 frames at once, so movies no longer stutter at a steady 60 fps (PR #2240): a submission queues its packet and…",
-       "nvn/pso: an archive's libraries are read ahead of Metal's open, so a cold bundled archive opens 3-6x faster (PR #2657)",
-       "Isolate and bound per-game regression shader caches"
-      ]
-     },
-     "status": "recommended",
-     "reason": "413 commits depuis ta compilation · spécifique Mac, Performances, Correctifs, Graphismes"
+     "reason": "10 nouvelles versions · spécifique Android, Performances, Correctifs, Compatibilité"
     }
    ]
   },
@@ -508,7 +442,7 @@
      "installed": {
       "version": "2.0.3",
       "installedAt": "2026-11-06T05:36:58+00:00",
-      "seenAt": "2026-11-15T08:30:28+00:00"
+      "seenAt": "2026-11-18T08:00:23+00:00"
      },
      "live": true,
      "perf": {
@@ -530,7 +464,7 @@
      "installed": {
       "version": "0.1.0",
       "installedAt": "2026-07-28T07:05:23+00:00",
-      "seenAt": "2026-11-15T08:30:28+00:00"
+      "seenAt": "2026-11-18T08:00:23+00:00"
      },
      "live": true,
      "perf": {
@@ -805,6 +739,115 @@
    ]
   },
   {
+   "id": "nxnative",
+   "name": "nxnative (OoT natif Mac)",
+   "kind": "recomp",
+   "sys": "Zelda Ocarina of Time (Switch 2)",
+   "repo": "https://github.com/seedds/nxnative",
+   "notesUrl": null,
+   "rebuild": true,
+   "targets": [
+    {
+     "device": "mac",
+     "label": null,
+     "installed": {
+      "version": "a00f03b",
+      "installedAt": "2026-11-08T14:21:34+08:00",
+      "seenAt": "2026-11-15T08:30:33+00:00"
+     },
+     "live": false,
+     "latest": "c379a90",
+     "latestDate": "2026-11-18T06:20:12Z",
+     "basis": "commit",
+     "newerPre": null,
+     "releases": [
+      {
+       "tag": "610 commits",
+       "name": "Nouveaux commits sur main",
+       "date": "2026-11-18T06:20:12Z",
+       "pre": false,
+       "url": "https://github.com/seedds/nxnative/compare/a00f03b...main",
+       "highlights": [
+        {
+         "text": "nvn/pso: an archive's libraries are read ahead of Metal's open, so a cold bundled archive opens 3-6x faster (PR #2657)",
+         "tags": [
+          "perf",
+          "mac"
+         ]
+        },
+        {
+         "text": "game/warhammer-survivors: profile, and oe::SetPerformanceConfiguration(int) hooked (PR #2318)",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "game/xcx: run at 60 fps with native engine timing",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "game: run Overcooked at 60 fps",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "game: Divinity: Original Sin 2 defaults to 60 fps",
+         "tags": [
+          "perf"
+         ]
+        },
+        {
+         "text": "game/ocarina: record GPU hang regression isolation",
+         "tags": [
+          "focus",
+          "fix"
+         ]
+        },
+        {
+         "text": "games/ocarina-of-time: held submissions do not raise memory at an area load on the iPhone 17",
+         "tags": [
+          "focus"
+         ]
+        },
+        {
+         "text": "games/ocarina: movie update takes up to three pictures a frame",
+         "tags": [
+          "focus"
+         ]
+        },
+        {
+         "text": "games/ocarina: movie player takes two pictures a frame, its frame counts pictures (PR #2456)",
+         "tags": [
+          "focus"
+         ]
+        },
+        {
+         "text": "game: Ocarina of Time documents the #2226 ordering check",
+         "tags": [
+          "focus"
+         ]
+        }
+       ],
+       "more": 231
+      }
+     ],
+     "perf": {
+      "score": 5,
+      "top": [
+       "nvn/pso: an archive's libraries are read ahead of Metal's open, so a cold bundled archive opens 3-6x faster (PR #2657)",
+       "game/warhammer-survivors: profile, and oe::SetPerformanceConfiguration(int) hooked (PR #2318)",
+       "game/xcx: run at 60 fps with native engine timing"
+      ]
+     },
+     "status": "recommended",
+     "reason": "610 commits depuis ta compilation · spécifique Mac, Performances, Correctifs"
+    }
+   ]
+  },
+  {
    "id": "wwhd",
    "name": "Wind Waker HD Recomp",
    "kind": "recomp",
@@ -819,7 +862,7 @@
      "installed": {
       "version": "0.5.1",
       "installedAt": "2026-11-11T10:39:01+00:00",
-      "seenAt": "2026-11-15T08:30:29+00:00"
+      "seenAt": "2026-11-18T08:00:24+00:00"
      },
      "live": true,
      "perf": {
@@ -833,7 +876,7 @@
      "olderHidden": 0,
      "newerPre": {
       "tag": "devel-build",
-      "date": "2026-11-15T00:53:18Z",
+      "date": "2026-11-17T12:26:56Z",
       "url": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp/releases/tag/devel-build"
      },
      "status": "uptodate",
@@ -845,7 +888,7 @@
      "installed": {
       "version": "0.5.0",
       "installedAt": "2026-11-05T16:42:04+00:00",
-      "seenAt": "2026-11-15T08:30:29+00:00"
+      "seenAt": "2026-11-18T08:00:24+00:00"
      },
      "live": true,
      "perf": {
@@ -928,7 +971,7 @@
      "olderHidden": 0,
      "newerPre": {
       "tag": "devel-build",
-      "date": "2026-11-15T00:53:18Z",
+      "date": "2026-11-17T12:26:56Z",
       "url": "https://github.com/ZeldaWWHDRecomp/ZeldaWWHDRecomp/releases/tag/devel-build"
      },
      "status": "recommended",
@@ -953,16 +996,16 @@
       "installedAt": "2026-11-04T22:50:36+01:00",
       "seenAt": "2026-11-15T08:30:31+00:00"
      },
-     "live": true,
-     "latest": "3edfb0b",
-     "latestDate": "2026-11-14T12:07:12Z",
+     "live": false,
+     "latest": "a0cd113",
+     "latestDate": "2026-11-18T07:24:34Z",
      "basis": "commit",
      "newerPre": null,
      "releases": [
       {
        "tag": "9 commits",
        "name": "Nouveaux commits sur main",
-       "date": "2026-11-14T12:07:12Z",
+       "date": "2026-11-18T07:24:34Z",
        "pre": false,
        "url": "https://github.com/ly05010419/MacNativeGames/compare/5843ee5...main",
        "highlights": [
@@ -975,11 +1018,25 @@
          ]
         },
         {
-         "text": "fix(botw): a saved native 2K + MetalFX keeps MetalFX after the first present (#1806)",
+         "text": "fix: BOTW 1.9.0 and 1.6.0 draw small UI captures (cutscene name cards, location and quest names, button prompts) k = canvas height / 720 times finer, so the name card heading is sharp on a large canva…",
          "tags": [
           "focus",
           "fix",
-          "mac"
+          "controller"
+         ]
+        },
+        {
+         "text": "fix: the work-folder copy writes links into shared/ as their files, so TotK and BotW build again",
+         "tags": [
+          "focus",
+          "fix"
+         ]
+        },
+        {
+         "text": "fix: BOTW 1.9.0 and 1.6.0 sharp UI captures leave icon and gauge panes as shipped: only panes at least 150 layout units wide are drawn finer, so the stamina ring has no vertical line.",
+         "tags": [
+          "focus",
+          "fix"
          ]
         },
         {
@@ -1004,28 +1061,13 @@
          ]
         },
         {
-         "text": "fix: the express update of Tears of the Kingdom and Breath of the Wild starts again",
+         "text": "perf(botw): no preemption signal to a core owner in a host function or with one still pending",
          "tags": [
-          "focus",
-          "fix"
+          "focus"
          ]
         },
         {
-         "text": "feat: 截图分享 for TotK, BotW and OoT on Mac: every screenshot shared anonymously while the switch is on",
-         "tags": [
-          "focus",
-          "mac"
-         ]
-        },
-        {
-         "text": "fix: shader issues are checked for the bind states of every game's pipelines, not only TotK's and BotW's",
-         "tags": [
-          "focus",
-          "fix"
-         ]
-        },
-        {
-         "text": "perf: Breath of the Wild, Ocarina of Time and the Switch 2 games take the verified game data instead of extracting it again",
+         "text": "perf(botw): the encode stage waits 20 us on an empty queue before sleeping, as in Ocarina of Time",
          "tags": [
           "focus"
          ]
@@ -1041,7 +1083,7 @@
       ]
      },
      "status": "recommended",
-     "reason": "9 commits sur ton jeu depuis ta compilation · spécifique Mac, Performances, Correctifs, Graphismes"
+     "reason": "9 commits sur ton jeu depuis ta compilation · Performances, Correctifs, Graphismes, Manettes"
     }
    ]
   },
@@ -1060,7 +1102,7 @@
      "installed": {
       "version": "0.1-12442-gdd4a0eb77",
       "installedAt": "2026-10-25T01:51:16+00:00",
-      "seenAt": "2026-11-15T08:30:24+00:00"
+      "seenAt": "2026-11-18T08:00:19+00:00"
      },
      "live": true,
      "perf": {
@@ -1142,7 +1184,7 @@
      "olderHidden": 0,
      "newerPre": {
       "tag": "preview",
-      "date": "2026-11-15T07:49:39Z",
+      "date": "2026-11-17T14:48:18Z",
       "url": "https://github.com/stenzek/duckstation/releases/tag/preview"
      },
      "status": "recommended",
@@ -1165,17 +1207,70 @@
      "installed": {
       "version": "1.3.4",
       "installedAt": "2026-11-05T22:32:10+00:00",
-      "seenAt": "2026-11-15T08:30:18+00:00"
+      "seenAt": "2026-11-18T08:00:13+00:00"
      },
      "live": true,
      "perf": {
       "score": 0,
       "top": []
      },
-     "latest": "v1.3.5.1",
-     "latestDate": "2026-11-10T23:32:16Z",
+     "latest": "v1.4.0",
+     "latestDate": "2026-11-15T17:17:38Z",
      "basis": "version",
      "releases": [
+      {
+       "tag": "v1.4.0",
+       "name": "Eden Duo 1.4.0",
+       "date": "2026-11-15T17:17:38Z",
+       "pre": false,
+       "url": "https://github.com/igawa6/eden-duo/releases/tag/v1.4.0",
+       "highlights": [
+        {
+         "text": "Runtime 25: pane size values (@screen.panew, @screen.paneh) and a second canvas (canvasalt, rectalt) so one companion can fit both a second display and a shared screen, stick clicks (L3, R3) as button…",
+         "tags": [
+          "compat",
+          "controller"
+         ]
+        },
+        {
+         "text": "Companions on one screen. A new Simulated mode shows the game and its companion together on a single display, so phones, tablets and foldables can use companions without a second screen. Find it in Se…",
+         "tags": [
+          "graphics"
+         ]
+        },
+        {
+         "text": "Portrait layout with touch controls. On a phone held upright without a controller, the screen splits into game, companion and touch controls.",
+         "tags": [
+          "controller"
+         ]
+        },
+        {
+         "text": "Eden Duo is updated to the latest Eden nightly (v1794693050.6828dc59dc, 2026-11-14), with upstream's newest emulation fixes. All companions keep working.",
+         "tags": [
+          "fix"
+         ]
+        },
+        {
+         "text": "Requires Android 13+ (arm64). A second display is no longer needed.",
+         "tags": [
+          "android"
+         ]
+        },
+        {
+         "text": "Automatic (default): uses the second display when there is one, otherwise Simulated.",
+         "tags": []
+        },
+        {
+         "text": "Physical: the companion goes to the second display, as before.",
+         "tags": []
+        },
+        {
+         "text": "Simulated: game and companion share one screen.",
+         "tags": []
+        }
+       ],
+       "more": 12
+      },
       {
        "tag": "v1.3.5.1",
        "name": "Eden Duo 1.3.5.1",
@@ -1241,7 +1336,7 @@
      "olderHidden": 0,
      "newerPre": null,
      "status": "recommended",
-     "reason": "2 nouvelles versions · spécifique Android, Correctifs, Graphismes"
+     "reason": "3 nouvelles versions · spécifique Android, Correctifs, Compatibilité, Graphismes"
     }
    ]
   },
@@ -1260,7 +1355,7 @@
      "installed": {
       "version": "2.41",
       "installedAt": "2026-08-06T05:58:30+00:00",
-      "seenAt": "2026-11-15T08:30:22+00:00"
+      "seenAt": "2026-11-18T08:00:16+00:00"
      },
      "live": true,
      "perf": {
@@ -1312,7 +1407,7 @@
      "installed": {
       "version": "2609a",
       "installedAt": "2026-10-08T01:08:05+00:00",
-      "seenAt": "2026-11-15T08:30:15+00:00"
+      "seenAt": "2026-11-18T08:00:10+00:00"
      },
      "live": true,
      "perf": {
@@ -1344,7 +1439,7 @@
      "installed": {
       "version": "2606",
       "installedAt": "2026-06-25T15:35:59+00:00",
-      "seenAt": "2026-11-15T08:30:15+00:00"
+      "seenAt": "2026-11-18T08:00:10+00:00"
      },
      "live": true,
      "perf": {
@@ -1414,7 +1509,7 @@
      "installed": {
       "version": "2126.2",
       "installedAt": "2026-10-08T21:50:54+00:00",
-      "seenAt": "2026-11-15T08:30:10+00:00"
+      "seenAt": "2026-11-18T08:00:04+00:00"
      },
      "live": true,
      "perf": {
@@ -1440,7 +1535,7 @@
      "installed": {
       "version": "2126.2-vanilla",
       "installedAt": "2026-11-11T10:38:13+00:00",
-      "seenAt": "2026-11-15T08:30:10+00:00"
+      "seenAt": "2026-11-18T08:00:04+00:00"
      },
      "live": true,
      "perf": {
@@ -1477,7 +1572,7 @@
      "installed": {
       "version": "2.6.0",
       "installedAt": "2025-02-06T12:03:46+00:00",
-      "seenAt": "2026-11-15T08:30:16+00:00"
+      "seenAt": "2026-11-18T08:00:11+00:00"
      },
      "live": true,
      "perf": {
@@ -1510,7 +1605,7 @@
      "installed": {
       "version": "1f6734c",
       "installedAt": "2026-06-23T09:48:51+00:00",
-      "seenAt": "2026-11-15T08:30:17+00:00"
+      "seenAt": "2026-11-18T08:00:12+00:00"
      },
      "live": true,
      "perf": {
@@ -1543,7 +1638,7 @@
      "installed": {
       "version": "1.4.0",
       "installedAt": "2026-11-11T10:38:35+00:00",
-      "seenAt": "2026-11-15T08:30:27+00:00"
+      "seenAt": "2026-11-18T08:00:22+00:00"
      },
      "live": true,
      "perf": {
@@ -1578,7 +1673,7 @@
       "installedAt": "2026-11-05T07:18:57+00:00",
       "seenAt": "2026-11-15T08:30:38+00:00"
      },
-     "live": true,
+     "live": false,
      "perf": {
       "score": 0,
       "top": []
@@ -1609,7 +1704,7 @@
      "installed": {
       "version": "2.4.1",
       "installedAt": "2023-12-30T00:16:26+00:00",
-      "seenAt": "2026-11-15T08:30:26+00:00"
+      "seenAt": "2026-11-18T08:00:21+00:00"
      },
      "live": true,
      "perf": {
@@ -1642,7 +1737,7 @@
      "installed": {
       "version": "v2.8.2",
       "installedAt": "2026-09-04T16:20:46+00:00",
-      "seenAt": "2026-11-15T08:30:20+00:00"
+      "seenAt": "2026-11-18T08:00:15+00:00"
      },
      "live": true,
      "perf": {
@@ -1655,9 +1750,9 @@
      "releases": [],
      "olderHidden": 0,
      "newerPre": {
-      "tag": "v2.9.179",
-      "date": "2026-11-13T18:50:39Z",
-      "url": "https://github.com/PCSX2/pcsx2/releases/tag/v2.9.179"
+      "tag": "v2.9.181",
+      "date": "2026-11-16T22:15:09Z",
+      "url": "https://github.com/PCSX2/pcsx2/releases/tag/v2.9.181"
      },
      "status": "uptodate",
      "reason": "Tu as la dernière version."
@@ -1681,7 +1776,7 @@
       "installedAt": "2026-11-09T21:40:19+00:00",
       "seenAt": "2026-11-15T08:30:42+00:00"
      },
-     "live": true,
+     "live": false,
      "perf": {
       "score": 0,
       "top": []
@@ -1712,7 +1807,7 @@
      "installed": {
       "version": "1.20.4",
       "installedAt": "2026-05-16T12:44:42+00:00",
-      "seenAt": "2026-11-15T08:30:25+00:00"
+      "seenAt": "2026-11-18T08:00:20+00:00"
      },
      "live": true,
      "perf": {
@@ -1734,7 +1829,7 @@
      "installed": {
       "version": "v1.20.4",
       "installedAt": "2026-06-23T09:50:03+00:00",
-      "seenAt": "2026-11-15T08:30:25+00:00"
+      "seenAt": "2026-11-18T08:00:20+00:00"
      },
      "live": true,
      "perf": {
@@ -1767,7 +1862,7 @@
      "installed": {
       "version": "1.22.2",
       "installedAt": "2025-11-20T02:38:16+00:00",
-      "seenAt": "2026-11-15T08:30:26+00:00"
+      "seenAt": "2026-11-18T08:00:20+00:00"
      },
      "live": true,
      "perf": {
@@ -1789,7 +1884,7 @@
      "installed": {
       "version": "1.22.2_GIT",
       "installedAt": "2026-06-23T09:50:39+00:00",
-      "seenAt": "2026-11-15T08:30:26+00:00"
+      "seenAt": "2026-11-18T08:00:21+00:00"
      },
      "live": true,
      "perf": {
@@ -1822,7 +1917,7 @@
      "installed": {
       "version": "0.0.43",
       "installedAt": "2026-10-30T13:26:30+00:00",
-      "seenAt": "2026-11-15T08:30:21+00:00"
+      "seenAt": "2026-11-18T08:00:15+00:00"
      },
      "live": true,
      "perf": {
@@ -1855,7 +1950,7 @@
      "installed": {
       "version": "20250425",
       "installedAt": "2026-06-23T09:50:15+00:00",
-      "seenAt": "2026-11-15T08:30:22+00:00"
+      "seenAt": "2026-11-18T08:00:17+00:00"
      },
      "live": true,
      "perf": {
@@ -1890,7 +1985,7 @@
       "installedAt": "2025-10-11T07:19:21+00:00",
       "seenAt": "2026-11-15T08:30:17+00:00"
      },
-     "live": true,
+     "live": false,
      "perf": {
       "score": 0,
       "top": []
@@ -1921,7 +2016,7 @@
      "installed": {
       "version": "2.0.2",
       "installedAt": "2026-11-05T22:41:43+00:00",
-      "seenAt": "2026-11-15T08:30:38+00:00"
+      "seenAt": "2026-11-18T08:00:31+00:00"
      },
      "live": true,
      "perf": {
@@ -1954,7 +2049,7 @@
      "installed": {
       "version": "2.1.0",
       "installedAt": "2026-11-05T22:18:36+00:00",
-      "seenAt": "2026-11-15T08:30:40+00:00"
+      "seenAt": "2026-11-18T08:00:32+00:00"
      },
      "live": true,
      "perf": {
@@ -1987,7 +2082,7 @@
      "installed": {
       "version": "0b11201",
       "installedAt": "2026-08-27T07:15:30+00:00",
-      "seenAt": "2026-11-15T08:30:23+00:00"
+      "seenAt": "2026-11-18T08:00:18+00:00"
      },
      "live": true,
      "perf": {
