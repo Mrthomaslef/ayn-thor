@@ -1,5 +1,5 @@
 window.AYN_THOR_DATA = {
-  "generatedAt": "18/11/2026 03:01:44",
+  "generatedAt": "19/11/2026 03:00:35",
   "host": {
     "name": "Mac-mini-de-Thomas.local",
     "lanIp": "192.168.1.111",
@@ -15,17 +15,11 @@ window.AYN_THOR_DATA = {
     "idProduct": 0,
     "usbMode": "disconnected",
     "usbModeLabel": "Non branchée",
-    "adbReady": true,
-    "adbDevices": [
-      {
-        "id": "192.168.1.192:5555",
-        "state": "device",
-        "raw": "192.168.1.192:5555     device product:kalama model:AYN_Thor device:kalama transport_id:6"
-      }
-    ]
+    "adbReady": false,
+    "adbDevices": []
   },
   "summary": {
-    "saveFoldersCount": 26,
+    "saveFoldersCount": 27,
     "saveFilesCount": 52591,
     "saveTotalMB": 10194.1,
     "romSystemsCount": 20,
@@ -213,6 +207,20 @@ window.AYN_THOR_DATA = {
         "files/saves/Pokemon - SoulSilver Version (Europe).sav"
       ],
       "updatedAt": "11/11/2026 11:28"
+    },
+    {
+      "id": "PS1_DuckStation_Memcards",
+      "label": "PS1 DuckStation Memcards",
+      "emulator": "Android Emulator",
+      "category": "Autres",
+      "icon": "💾",
+      "localPath": "/Volumes/GamingSSD/Games/Sauvegardes_AYN_Thor/PS1_DuckStation_Memcards",
+      "androidPath": "/sdcard/Saves/PS1_DuckStation_Memcards",
+      "fileCount": 0,
+      "sizeBytes": 0,
+      "sizeMB": 0.0,
+      "sampleFiles": [],
+      "updatedAt": "31/10/2026"
     },
     {
       "id": "PS1_DuckStation_States",
